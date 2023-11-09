@@ -26,6 +26,15 @@ class _SettingState extends State<SettingsPage> {
         header: banner(context,
             image: imagePNG("settings"), title: "设置", subtitle: "SETTINGS"),
         children: [
+          title("内核设置", level: 2),
+          Card(
+              child: ListTile(
+            title: text("内核版本"),
+            subtitle: text("Core Version"),
+            leading: const Icon(FluentIcons.cube_shape_solid),
+            trailing: text(bus.hardwareQuery.version),
+          )),
+          height40,
           title("外观设置", level: 2),
           Card(
               child: ListTile(

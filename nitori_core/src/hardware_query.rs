@@ -4,7 +4,6 @@ use wmi::{COMLibrary, Variant, WMIConnection};
 //Win32_LogicalDisk
 //Win32_Processor
 
-const DIR_NAME: &'static str = ".win32info";
 const MANIFEST: [&'static str; 4] = [
     "Win32_BaseBoard",
     "Win32_Processor",
@@ -12,37 +11,39 @@ const MANIFEST: [&'static str; 4] = [
     "Win32_OperatingSystem",
 ];
 
-pub fn generate_info() {
+type DATA = HashMap<&'static str, Vec<HashMap<String, Variant>>>;
+
+pub fn generate_info_in(pathto: &str) {
     let com = COMLibrary::new().unwrap();
     let con = WMIConnection::new(com).unwrap();
-    if !Path::new(DIR_NAME).is_dir() {
-        fs::create_dir(DIR_NAME).unwrap();
+    if !Path::new(pathto).is_dir() {
+        fs::create_dir_all(pathto).unwrap();
     }
 
     for member in MANIFEST.iter() {
-        make_info(&con, member);
+        make_info_in(&con, member, pathto);
     }
 }
 
-pub fn make_info(con: &WMIConnection, name: &str) {
-    let mut content: HashMap<&'static str, Vec<HashMap<String, Variant>>> = HashMap::new();
+pub fn make_info_in(con: &WMIConnection, name: &str, pathto: &str) {
+    let mut content: DATA = HashMap::new();
     content.insert(
         "data",
         con.raw_query(format!("SELECT * FROM {}", name)).unwrap(),
     );
     fs::write(
-        format!("{}/{}.json", DIR_NAME, name),
+        format!("{}/{}.json", pathto, name),
         serde_json::to_string(&content).unwrap(),
     )
     .unwrap();
 }
 
-pub fn make_info_name(name: &str) {
+pub fn make_info_name_in(name: &str, pathto: &str) {
     let com = COMLibrary::new().unwrap();
     let con = WMIConnection::new(com).unwrap();
-    if !Path::new(DIR_NAME).is_dir() {
-        fs::create_dir(DIR_NAME).unwrap();
+    if !Path::new(pathto).is_dir() {
+        fs::create_dir_all(pathto).unwrap();
     }
 
-    make_info(&con, name)
+    make_info_in(&con, name, pathto)
 }

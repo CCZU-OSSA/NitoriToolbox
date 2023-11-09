@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/config.dart';
+import 'package:nitoritoolbox/core/ffi.dart';
 import 'package:provider/provider.dart';
 
 class ApplicationBus {
   ApplicationConfig config = ApplicationConfig("app.config.json");
+  HardwareQuery hardwareQuery = HardwareQuery();
   static final Map<String, dynamic> env = Platform.environment;
 
   Function? appSetState;

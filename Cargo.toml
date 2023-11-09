@@ -1,4 +1,3 @@
 [workspace]
-members = [
-    "nitori_core"
-]
+resolver = "2"
+members = ["nitori_core"]

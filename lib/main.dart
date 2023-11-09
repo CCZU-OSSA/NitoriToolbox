@@ -1,6 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nitoritoolbox/page/sysinfo.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nitoritoolbox/app/abc/io.dart';
@@ -46,6 +47,7 @@ class StateApplicationMain extends State<ApplicationMain> {
           icon: const Icon(FluentIcons.home),
           body: const HomePage()),
       PaneItemSeparator(),
+      PaneItem(icon: const Icon(FluentIcons.info), body: const SystemInfoPage())
     ], footer: [
       PaneItem(
           title: text("设置"),
