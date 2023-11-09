@@ -46,3 +46,4 @@ app.*.map.json
 target/**
 app.config.json
 */.win32info/**
+nitori_core.dll
