@@ -10,6 +10,7 @@ on:
     paths:
       - 'nitori_core/**'
   pull_request:
+    paths:
       - 'nitori_core/**'
 
 env:
