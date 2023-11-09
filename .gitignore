@@ -43,5 +43,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-/target/**
+target/**
 app.config.json
+*/.win32info/**
