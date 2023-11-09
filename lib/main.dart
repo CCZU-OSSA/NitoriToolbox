@@ -1,12 +1,11 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:provider/provider.dart';
 
+import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
-import 'package:nitoritoolbox/app/config.dart';
 import 'package:nitoritoolbox/app/router/router.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/app/widgets/keys.dart';
@@ -54,7 +53,7 @@ class StateApplicationMain extends State<ApplicationMain> {
           body: const SettingsPage()),
       PaneItem(
           title: text("关于"),
-          icon: const Icon(FluentIcons.accounts),
+          icon: const Icon(FluentIcons.chat),
           body: const AboutPage())
     ], setState: setState);
   }
@@ -63,7 +62,7 @@ class StateApplicationMain extends State<ApplicationMain> {
   Widget build(BuildContext context) {
     ApplicationBus bus = ApplicationBus.instance(context);
     bus.appSetState = setState;
-    //Window.setEffect(effect: WindowEffect.mica, dark: isDark(context));
+    applyWindowEffect(context);
     return FluentApp(
         key: rootKey,
         title: 'Nitori Toolbox',
@@ -78,7 +77,7 @@ class StateApplicationMain extends State<ApplicationMain> {
                     : Colors.white
                         .withOpacity(bus.config.getOrWrite("opacity", 0.9))),
             child: Container(
-                decoration: const BoxDecoration(),
+                decoration: BoxDecoration(image: getWallpaper(context)),
                 child: NavigationView(
                   appBar: const NavigationAppBar(
                       leading: Icon(FluentIcons.toolbox),

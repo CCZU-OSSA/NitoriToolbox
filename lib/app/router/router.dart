@@ -4,6 +4,7 @@ class PaneRouter {
   List<NavigationPaneItem> body = [];
   List<NavigationPaneItem> footer = [];
   int total = -1;
+  /// inner page index
   int select = 0;
 
   Function setState;
@@ -14,6 +15,7 @@ class PaneRouter {
     __allocateID(footer);
   }
 
+  /// use to allocate the page id
   void __allocateID(List<NavigationPaneItem> list) {
     int ct = 0;
     for (var element in list) {
