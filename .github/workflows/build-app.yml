@@ -20,17 +20,19 @@ jobs:
    runs-on: windows-latest
    steps:
      - uses: actions/checkout@v3
-     - name: Build Project
+     - name: Build Core
        run: cargo build --release
      - uses: subosito/flutter-action@v2
        with:
          channel: 'stable'
-     - name: Build Project
+     - name: Build Application
        run: |
         flutter config --enable-windows-desktop
         flutter build windows
+        ls
         cp README.md build/windows/runner/Release/
-        cp target/release/nitroi_core.dll build/windows/runner/Release/
+        ls target/release
+        cp target/release/nitori_core.dll build/windows/runner/Release/
      - name: Upload Artifact
        uses: actions/upload-artifact@v3.1.2
        with:

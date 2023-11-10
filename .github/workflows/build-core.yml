@@ -21,8 +21,10 @@ jobs:
    runs-on: windows-latest
    steps:
      - uses: actions/checkout@v3
-     - name: Build Project
-       run: cargo build --release
+     - name: Build Core
+       run: |
+        cargo test --verbose
+        cargo build --release --verbose
      - name: Upload Artifact
        uses: actions/upload-artifact@v3.1.2
        with:

@@ -1,3 +1,5 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'dart:ffi';
 
 // ignore: depend_on_referenced_packages
@@ -11,8 +13,7 @@ class HardwareQuery extends FFI {
   }
 
   DynamicLibrary? __library;
-  void Function(Pointer<Utf8> pathto)? _generateInfo;
-  void Function(Pointer<Utf8> name, Pointer<Utf8> pathto)? _makeInfoName;
+  Pointer<Utf8> Function(Pointer<Utf8> target)? _query;
   Pointer<Utf8> Function()? _version;
   String version = "未安装";
   bool installed = false;
@@ -25,25 +26,18 @@ class HardwareQuery extends FFI {
           .lookup<NativeFunction<Pointer<Utf8> Function()>>("version")
           .asFunction();
       version = _version!().toDartString();
-      _generateInfo = __library!
-          .lookup<NativeFunction<Void Function(Pointer<Utf8>)>>("generate_info")
-          .asFunction();
-      _makeInfoName = __library!
-          .lookup<NativeFunction<Void Function(Pointer<Utf8>, Pointer<Utf8>)>>(
-              "make_info_name")
+      _query = __library!
+          .lookup<NativeFunction<Pointer<Utf8> Function(Pointer<Utf8>)>>(
+              "query")
           .asFunction();
     }
   }
 
-  void makeInfoName(String name, String pathto) {
-    if (_makeInfoName != null) {
-      _makeInfoName!(name.toNativeUtf8(), pathto.toNativeUtf8());
+  HashMap<String, dynamic>? query(List<String> target) {
+    if (_query != null) {
+      return jsonDecode(_query!(jsonEncode({"target": target}).toNativeUtf8())
+          .toDartString());
     }
-  }
-
-  void generateInfo(String name, String pathto) {
-    if (_generateInfo != null) {
-      _generateInfo!(pathto.toNativeUtf8());
-    }
+    return null;
   }
 }
