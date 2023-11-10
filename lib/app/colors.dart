@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mui;
@@ -101,24 +100,24 @@ String getWindowsWallpaper() {
       .path;
 }
 
-Uint8List? getWallpaperMemory(BuildContext context) {
+File? getWallpaperFile(BuildContext context) {
   ApplicationBus bus = ApplicationBus.instance(context);
   switch (bus.config.getOrWrite("bg_type", 0)) {
     case 1:
       if (File(bus.config.getOrWrite("bg_path", "")).existsSync()) {
-        return File(bus.config.getOrWrite("bg_path", "")).readAsBytesSync();
+        return File(bus.config.getOrWrite("bg_path", ""));
       } else {
         return null;
       }
     default:
-      return File(getWindowsWallpaper()).readAsBytesSync();
+      return File(getWindowsWallpaper());
   }
 }
 
 DecorationImage? getWallpaper(BuildContext context) {
   ApplicationBus bus = ApplicationBus.instance(context);
   if (!bus.config.getOrWrite("use_custom_bg", false) ||
-      getWallpaperMemory(context) == null) {
+      getWallpaperFile(context) == null) {
     return null;
   }
   ImageProvider image;
@@ -129,7 +128,7 @@ DecorationImage? getWallpaper(BuildContext context) {
     }
     image = NetworkImage(url);
   } else {
-    image = MemoryImage(getWallpaperMemory(context)!);
+    image = FileImage(getWallpaperFile(context)!);
   }
 
   return DecorationImage(

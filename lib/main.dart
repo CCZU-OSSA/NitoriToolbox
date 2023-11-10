@@ -47,7 +47,10 @@ class StateApplicationMain extends State<ApplicationMain> {
           icon: const Icon(FluentIcons.home),
           body: const HomePage()),
       PaneItemSeparator(),
-      PaneItem(icon: const Icon(FluentIcons.info), body: const SystemInfoPage())
+      PaneItem(
+          title: text("系统信息"),
+          icon: const Icon(FluentIcons.info),
+          body: const SystemInfoPage())
     ], footer: [
       PaneItem(
           title: text("设置"),
