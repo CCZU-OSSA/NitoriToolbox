@@ -16,25 +16,39 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
- build:
-   runs-on: windows-latest
-   steps:
-     - uses: actions/checkout@v3
-     - name: Build Core
-       run: cargo build --release
-     - uses: subosito/flutter-action@v2
-       with:
-         channel: 'stable'
-     - name: Build Application
-       run: |
-        flutter config --enable-windows-desktop
-        flutter build windows
-        ls
-        cp README.md build/windows/runner/Release/
-        ls target/release
-        cp target/release/nitori_core.dll build/windows/runner/Release/
-     - name: Upload Artifact
-       uses: actions/upload-artifact@v3.1.2
-       with:
-         name: NitoriToolbox
-         path: 'build/windows/runner/Release/*'
+  test_core:
+    uses: ./.github/workflows/build-core.yml
+  build:
+    runs-on: windows-latest
+    needs: test_core
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Core
+        run: cargo build --release
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Build Application
+        run: |
+          flutter clean
+          flutter config --enable-windows-desktop
+          flutter build windows
+          cp README.md build/windows/runner/Release/
+          cp target/release/nitori_core.dll build/windows/runner/Release/
+      - name: Upload Zip
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: NitoriToolbox Zip
+          path: 'build/windows/runner/Release/*'
+      - name: Build MSIX
+        run: |
+          flutter clean
+          dart run msix:build
+          cp README.md build/windows/runner/Release/
+          cp target/release/nitori_core.dll build/windows/runner/Release/
+          dart run msix:pack
+      - name: Upload Zip
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: NitoriToolbox MSIX
+          path: 'build/windows/runner/Release/*.msix'
