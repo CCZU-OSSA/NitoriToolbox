@@ -1,16 +1,20 @@
-use std::ffi::{c_char, CStr};
+use std::ffi::{c_char, CStr, CString};
 
 pub mod hardware_query;
 pub mod protocol;
 
 #[no_mangle]
-pub extern "C" fn version() -> *const u8 {
-    "1.0.0 Preview".as_ptr()
+pub extern "C" fn version() -> *const c_char {
+    CString::new("1.0.0-Preview").unwrap().into_raw()
 }
 
 #[no_mangle]
-pub extern "C" fn query(target: *const c_char) -> *const u8 {
-    hardware_query::query(unsafe { CStr::from_ptr(target).to_str().unwrap() }).as_ptr()
+pub extern "C" fn query(target: *const c_char) -> *const c_char {
+    CString::new(hardware_query::query(unsafe {
+        CStr::from_ptr(target).to_str().unwrap()
+    }))
+    .unwrap()
+    .into_raw()
 }
 
 #[cfg(test)]
