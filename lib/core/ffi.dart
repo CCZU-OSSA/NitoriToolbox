@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:ffi';
 
@@ -6,7 +5,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:nitoritoolbox/core/abc/dynlib.dart';
 
-class HardwareQuery extends FFI {
+class NitoriCore extends FFI {
   @override
   String path() {
     return "./nitori_core.dll";
@@ -18,7 +17,7 @@ class HardwareQuery extends FFI {
   String version = "未安装";
   bool installed = false;
 
-  HardwareQuery() {
+  NitoriCore() {
     __library = getDynamicLib();
     if (__library != null) {
       installed = true;
@@ -33,11 +32,15 @@ class HardwareQuery extends FFI {
     }
   }
 
-  HashMap<String, dynamic>? query(List<String> target) {
+  Map<String, dynamic>? query(List<String> target) {
     if (_query != null) {
       return jsonDecode(_query!(jsonEncode({"target": target}).toNativeUtf8())
           .toDartString());
     }
     return null;
+  }
+
+  Map<String, dynamic>? querySingle(String target) {
+    return query([target]);
   }
 }

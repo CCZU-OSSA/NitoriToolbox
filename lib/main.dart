@@ -67,6 +67,7 @@ class StateApplicationMain extends State<ApplicationMain> {
   Widget build(BuildContext context) {
     ApplicationBus bus = ApplicationBus.instance(context);
     bus.appSetState = setState;
+    bus.router = __router;
     applyWindowEffect(context);
     return FluentApp(
         key: rootKey,

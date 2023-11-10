@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
@@ -6,6 +8,7 @@ import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:nitoritoolbox/core/ffi.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -32,8 +35,35 @@ class _SettingState extends State<SettingsPage> {
             title: text("内核版本"),
             subtitle: text("Core Version"),
             leading: const Icon(FluentIcons.cube_shape_solid),
-            trailing: text(bus.hardwareQuery.version),
+            trailing: text(bus.nitoriCore.version,
+                color: bus.nitoriCore.installed ? null : Colors.red),
           )),
+          bus.nitoriCore.installed ? shrink : height05,
+          bus.nitoriCore.installed
+              ? shrink
+              : Card(
+                  child: ListTile(
+                  leading: const Icon(FluentIcons.installation),
+                  title: text("安装内核"),
+                  subtitle: text("Install Core"),
+                  trailing: Button(
+                      child: text("选择"),
+                      onPressed: () {
+                        FilePicker.platform.pickFiles(
+                          allowMultiple: false,
+                          type: FileType.custom,
+                          allowedExtensions: ["dll"],
+                        ).then((value) => setState(() {
+                              bus.appSetState!(() {
+                                if (value != null) {
+                                  File(value.paths[0]!)
+                                      .copySync("./nitori_core.dll");
+                                  bus.nitoriCore = NitoriCore();
+                                }
+                              });
+                            }));
+                      }),
+                )),
           height40,
           title("外观设置", level: 2),
           Card(
@@ -175,32 +205,27 @@ class _SettingState extends State<SettingsPage> {
                       ),
                       height05,
                       ListTile(
-                        title: text("本地图片地址"),
-                        trailing: Column(
-                          children: [
-                            Button(
-                                child: text("更换"),
-                                onPressed: () {
-                                  FilePicker.platform
-                                      .pickFiles(type: FileType.image)
-                                      .then((value) => setState(() {
-                                            bus.appSetState!(() {
-                                              if (value != null &&
-                                                  value.isSinglePick) {
-                                                bus.config.writeKey(
-                                                    "bg_path", value.paths[0]);
-                                              }
-                                            });
-                                          }));
-                                }),
-                            height05,
-                            SizedBox(
-                              width: 400,
-                              child: text(
-                                  bus.config.getOrDefault("bg_path", ""),
-                                  size: 12),
-                            ),
-                          ],
+                        leading: text("本地图片地址", size: 16),
+                        title: Button(
+                            child: text("更换"),
+                            onPressed: () {
+                              FilePicker.platform
+                                  .pickFiles(
+                                      type: FileType.image,
+                                      allowMultiple: false)
+                                  .then((value) => setState(() {
+                                        bus.appSetState!(() {
+                                          if (value != null) {
+                                            bus.config.writeKey(
+                                                "bg_path", value.paths[0]);
+                                          }
+                                        });
+                                      }));
+                            }),
+                        trailing: SizedBox(
+                          width: 400,
+                          child: text(bus.config.getOrDefault("bg_path", ""),
+                              size: 12),
                         ),
                       ),
                       height05,

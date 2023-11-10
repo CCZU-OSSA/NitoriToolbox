@@ -26,6 +26,14 @@ const width20 = SizedBox(
 const width40 = SizedBox(
   width: 40,
 );
+
+const shrink = SizedBox.shrink();
+
+const loading = Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [ProgressRing(), height20, Text("请耐心等待")],
+);
+
 Widget banner(BuildContext context,
     {String? image, String? title, String? subtitle}) {
   return Row(
@@ -74,11 +82,18 @@ Widget displaytitle(String data, {Color? color}) {
   );
 }
 
-Widget text(String data, {double? size}) {
-  return Text(
-    data,
-    style: TextStyle(fontFamily: "Default", fontSize: size),
-  );
+Widget text(String data,
+    {double? size, Color? color, bool selectable = false}) {
+  var style = TextStyle(fontFamily: "Default", fontSize: size, color: color);
+  return selectable
+      ? SelectableText(
+          data,
+          style: style,
+        )
+      : Text(
+          data,
+          style: style,
+        );
 }
 
 Container shadow(Widget child,
