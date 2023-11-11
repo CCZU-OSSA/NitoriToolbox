@@ -23,27 +23,23 @@ jobs:
     needs: test_core
     steps:
       - uses: actions/checkout@v3
-      - name: Rustup
-        run: rustup toolchain install stable --profile minimal
-      - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2
       - name: Build Core
         run: cargo build --release
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
       - name: Generate Contributors Images
         uses: jaywcjlove/github-action-contributors@main
         with:
           filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
-          output: resource/images/CONTRIBUTORS.svg
+          output: CONTRIBUTORS.svg
           avatarSize: 42
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
       - name: Build Application
         run: |
           flutter clean
           flutter config --enable-windows-desktop
           flutter build windows
-          ls
+          cp CONTRIBUTORS.svg resource/images/
           cp README.md build/windows/runner/Release/
           cp target/release/nitori_core.dll build/windows/runner/Release/
       - name: Upload Zip
