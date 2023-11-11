@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-// ignore: depend_on_referenced_packages
 import 'package:ffi/ffi.dart';
 import 'package:nitoritoolbox/core/abc/dynlib.dart';
 
