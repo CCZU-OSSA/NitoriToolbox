@@ -49,3 +49,4 @@ nitori_core.dll
 
 /Cargo.lock
 resource/images/CONTRIBUTERS.svg
+/cache/*

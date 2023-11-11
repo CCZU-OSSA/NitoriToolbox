@@ -46,6 +46,7 @@ dependencies:
   ffi: ^2.1.0
   flutter_vector_icons: ^2.0.0
   dio: ^5.3.3
+  url_launcher: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +79,7 @@ flutter:
     - resource/images/info.png
     - resource/images/settings.png
     - resource/images/about.png
+    - resource/images/avatar.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
