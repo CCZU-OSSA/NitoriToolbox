@@ -1,9 +1,8 @@
 extension JoinEx<T> on List<T> {
   List<T> joinElement(T sep) {
     if (length > 1) {
-      for (var i = 1; i < length; i++) {
+      for (var i = 1; i < length; i += 2) {
         insert(i, sep);
-        i++;
       }
     }
     return this;

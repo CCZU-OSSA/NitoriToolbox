@@ -8,8 +8,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.scrollable(children: [
-      shadow(
-          Row(
+      Card(
+          borderColor: isDark(context)
+              ? Colors.white.withOpacity(0.8)
+              : Colors.black.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(8),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               displaytitle("NITORI",
@@ -20,9 +24,7 @@ class HomePage extends StatelessWidget {
                       ? Colors.white.withOpacity(0.8)
                       : Colors.black.withOpacity(0.8))
             ],
-          ),
-          background: getMUITheme(context).cardColor,
-          radius: BorderRadius.circular(8)),
+          )),
       height40,
       title("欢迎使用 Nitori Toolbox", level: 1)
     ]);

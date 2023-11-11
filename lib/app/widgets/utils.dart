@@ -43,21 +43,22 @@ Widget banner(BuildContext context,
       Column(
         children: [
           height05,
-          shadow(
-            Image.asset(image ?? imagePNG("info")),
-            background: getMUITheme(context).cardColor,
-            radius: BorderRadius.circular(8),
-            height: 128,
-            width: 128,
-          ),
+          SizedBox(
+              child: Card(
+            borderColor: isDark(context)
+                ? Colors.white.withOpacity(0.8)
+                : Colors.black.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(image ?? imagePNG("info")),
+          )),
           height20
         ],
       ),
       width40,
       Column(
         children: [
-          text(title ?? "信息", size: 40),
-          text(subtitle ?? "INFO", size: 30),
+          text(title ?? "系统信息", size: 40),
+          text(subtitle ?? "SYSTEM INFO", size: 30),
         ],
       )
     ],

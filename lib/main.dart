@@ -1,6 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/page/sysinfo.dart';
 import 'package:provider/provider.dart';
 
@@ -86,7 +87,7 @@ class StateApplicationMain extends State<ApplicationMain> {
                 decoration: BoxDecoration(image: getWallpaper(context)),
                 child: NavigationView(
                   appBar: const NavigationAppBar(
-                      leading: Icon(FluentIcons.toolbox),
+                      leading: Icon(FontAwesomeIcons.microsoft),
                       title: Text(
                         "Nitori Toolbox",
                         style: TextStyle(fontSize: 20),

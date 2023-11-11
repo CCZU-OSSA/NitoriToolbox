@@ -28,10 +28,20 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
+      - run: mkdir -p build
+      - name: Generate Contributors Images
+        uses: jaywcjlove/github-action-contributors@main
+        with:
+          filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
+          output: build/CONTRIBUTORS.svg
+          avatarSize: 42
+
       - name: Build Application
         run: |
           flutter clean
           flutter config --enable-windows-desktop
+          cp build/CONTRIBUTORS.svg resource/images/
           flutter build windows
           cp README.md build/windows/runner/Release/
           cp target/release/nitori_core.dll build/windows/runner/Release/

@@ -6,6 +6,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
+import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/ffi.dart';
@@ -30,19 +31,17 @@ class _SettingState extends State<SettingsPage> {
             image: imagePNG("settings"), title: "设置", subtitle: "SETTINGS"),
         children: [
           title("内核设置", level: 2),
-          Card(
-              child: ListTile(
+          CardListTile(
             title: text("内核版本"),
             subtitle: text("Core Version"),
             leading: const Icon(FluentIcons.cube_shape_solid),
             trailing: text(bus.nitoriCore.version,
                 color: bus.nitoriCore.installed ? null : Colors.red),
-          )),
+          ),
           bus.nitoriCore.installed ? shrink : height05,
           bus.nitoriCore.installed
               ? shrink
-              : Card(
-                  child: ListTile(
+              : CardListTile(
                   leading: const Icon(FluentIcons.installation),
                   title: text("安装内核"),
                   subtitle: text("Install Core"),
@@ -63,11 +62,10 @@ class _SettingState extends State<SettingsPage> {
                               });
                             }));
                       }),
-                )),
+                ),
           height40,
           title("外观设置", level: 2),
-          Card(
-              child: ListTile(
+          CardListTile(
             leading: const Icon(FluentIcons.color),
             title: text("应用主题"),
             subtitle: text("Theme"),
@@ -84,10 +82,9 @@ class _SettingState extends State<SettingsPage> {
                         }),
                       )),
             ),
-          )),
+          ),
           height05,
-          Card(
-              child: ListTile(
+          CardListTile(
             leading: const Icon(FluentIcons.graph_symbol),
             title: text("背景透明度"),
             subtitle: text("Opacity"),
@@ -102,7 +99,7 @@ class _SettingState extends State<SettingsPage> {
                 onChangeEnd: (value) => bus.appSetState!(() {
                       bus.config.writeKey("opacity", opacity);
                     })),
-          )),
+          ),
           height05,
           Card(
               child: ListTile(

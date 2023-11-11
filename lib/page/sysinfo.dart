@@ -5,6 +5,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/bus.dart';
+import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/ffi.dart';
 import 'package:nitoritoolbox/core/lang.dart';
@@ -82,36 +83,32 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
 
     return ScaffoldPage.scrollable(header: banner(context), children: [
       title("软件信息"),
-      Card(
-          child: ListTile(
+      CardListTile(
         leading: const Icon(FontAwesomeIcons.computer),
         title: text("本机名称"),
         subtitle: text("Machine Name"),
         trailing: text(sysinfo["CSName"], selectable: true),
-      )),
+      ),
       height05,
-      Card(
-          child: ListTile(
-              leading: const Icon(FluentIcons.info_solid),
-              title: text("系统版本"),
-              subtitle: text("System Version"),
-              trailing: text("${sysinfo["Caption"]}#${sysinfo["Version"]}",
-                  selectable: true))),
+      CardListTile(
+          leading: const Icon(FluentIcons.info_solid),
+          title: text("系统版本"),
+          subtitle: text("System Version"),
+          trailing: text("${sysinfo["Caption"]}#${sysinfo["Version"]}",
+              selectable: true)),
       height05,
-      Card(
-          child: ListTile(
-              leading: const Icon(FluentIcons.cube_shape_solid),
-              title: text("系统架构"),
-              subtitle: text("System Arch"),
-              trailing: text(sysinfo["OSArchitecture"], selectable: true))),
+      CardListTile(
+          leading: const Icon(FluentIcons.cube_shape_solid),
+          title: text("系统架构"),
+          subtitle: text("System Arch"),
+          trailing: text(sysinfo["OSArchitecture"], selectable: true)),
       height05,
-      Card(
-          child: ListTile(
+      CardListTile(
         leading: const Icon(FluentIcons.user_window),
         title: text("注册用户"),
         subtitle: text("Registered User"),
         trailing: text(sysinfo["RegisteredUser"], selectable: true),
-      )),
+      ),
       height20,
       title("硬件信息"),
       Expander(
@@ -211,7 +208,8 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         title: text("频率 (实际/标称)"),
                         subtitle: text("Clock Speed(Real/Configured)"),
                         trailing: text(
-                            "${mdata.data["ConfiguredClockSpeed"]} / ${mdata.data["Speed"]}MHz"),
+                            "${mdata.data["ConfiguredClockSpeed"]} / ${mdata.data["Speed"]}MHz",
+                            selectable: true),
                       )
                     ],
                   ));
