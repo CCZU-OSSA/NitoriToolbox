@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:fluent_ui/fluent_ui.dart';
@@ -28,7 +29,9 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
       "Win32_PhysicalMemory",
       "Win32_VideoController",
       "Win32_NetworkAdapter",
-      "Win32_SoundDevice"
+      "Win32_SoundDevice",
+      "Win32_DiskDrive",
+      "Win32_LogicalDisk"
     ])!["data"]);
   }
 
@@ -94,7 +97,8 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
         .toList();
 
     List soundDevices = data["Win32_SoundDevice"];
-    //debugPrint(jsonEncode(soundDevices));
+    List diskdrive = data["Win32_DiskDrive"];
+    debugPrint(jsonEncode(diskdrive));
 
     return ScaffoldPage.scrollable(header: banner(context), children: [
       title("软件信息"),
@@ -319,6 +323,29 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
           )),
       height05,
       Expander(
+          leading: const Icon(FluentIcons.hard_drive),
+          header: text(
+              "硬盘 ${(diskdrive.fold(0.toDouble(), (previousValue, element) => previousValue += element["Size"].toDouble()) / 1073741824).toStringAsFixed(2)}G"),
+          content: Column(
+            children: List.generate(
+                diskdrive.length,
+                (index) => Expander(
+                    header: text(diskdrive[index]["Caption"], selectable: true),
+                    content: Column(
+                      children: [
+                        ListTile(
+                            title: text("大小"),
+                            trailing: text(
+                                "${(diskdrive[index]["Size"] / 1073741824 as double).toStringAsFixed(2)}G")),
+                        ListTile(
+                          title: text("媒体类型"),
+                          trailing: text(diskdrive[index]["MediaType"]),
+                        )
+                      ],
+                    ))),
+          )),
+      height05,
+      Expander(
         leading: const Icon(FontAwesomeIcons.internetExplorer),
         header: text(
             "网络适配器 ${networkadapter.isEmpty ? "无" : networkadapter[0]["Name"]}"),
@@ -371,10 +398,18 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
           header: text("声音设备"),
           content: Column(
             children: List.generate(
-                    soundDevices.length,
-                    (index) =>
-                        Expander(header: text("data"), content: text("data")))
-                .joinElement<Widget>(height05),
+                soundDevices.length,
+                (index) => Expander(
+                    header: text(soundDevices[index]["Name"], selectable: true),
+                    content: Column(
+                      children: [
+                        ListTile(
+                          title: text("制造商"),
+                          trailing: text(soundDevices[index]["Manufacturer"],
+                              selectable: true),
+                        ),
+                      ],
+                    ))).joinElement<Widget>(height05),
           ))
     ]);
   }
