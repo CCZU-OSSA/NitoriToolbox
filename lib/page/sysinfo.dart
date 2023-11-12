@@ -183,7 +183,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                 title: text("频率 (当前/最大)"),
                 subtitle: text("Clock Speed(Current/Max)"),
                 trailing: text(
-                    "${processor["CurrentClockSpeed"] / 1000}GHz / ${processor["MaxClockSpeed"] / 1000}GHz",
+                    "${(processor["CurrentClockSpeed"] / 1000 as double).toStringAsFixed(1)}GHz / ${processor["MaxClockSpeed"] / 1000}GHz",
                     selectable: true),
               )
             ],
@@ -240,7 +240,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
       Expander(
           leading: const Icon(FluentIcons.screen),
           header: text(
-              "显卡 ${videoctrs[0]["Name"]} ${videoctrs[0]["AdapterRAM"] / 1073741824}G"),
+              "显卡 ${videoctrs[0]["Name"]} ${(videoctrs[0]["AdapterRAM"] / 1073741824 as double).toStringAsFixed(2)}G"),
           content: Column(
             children: List.generate(videoctrs.length, (index) {
               return Expander(
@@ -273,7 +273,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         title: text("适配器内存"),
                         subtitle: text("Adapter RAM"),
                         trailing: text(
-                          "${videoctrs[index]["AdapterRAM"] / 1073741824}GB",
+                          "${(videoctrs[0]["AdapterRAM"] / 1073741824 as double).toStringAsFixed(2)}G",
                           selectable: true,
                         ),
                       ),
