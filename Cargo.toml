@@ -1,3 +1,9 @@
 [workspace]
 resolver = "2"
 members = ["nitori_core"]
+
+[profile.release]
+opt-level = 'z'
+panic = 'abort'
+codegen-units = 1
+lto = true

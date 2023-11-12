@@ -27,7 +27,7 @@ class _ContributorState extends State<Contributor> {
     if (!await dir.exists()) {
       await dir.create();
     }
-    var name = base64.encode(utf8.encode(widget.avatar)).substring(0, 15);
+    var name = base64.encode(utf8.encode(widget.avatar));
 
     var path = "cache/$name";
     var f = File(path);
@@ -37,9 +37,13 @@ class _ContributorState extends State<Contributor> {
           widget.avatar,
           path,
           onReceiveProgress: (count, total) {
-            setState(() {
+            if (mounted) {
+              setState(() {
+                prograss = count / total;
+              });
+            } else {
               prograss = count / total;
-            });
+            }
           },
         );
       }
@@ -48,8 +52,9 @@ class _ContributorState extends State<Contributor> {
     } catch (e) {
       data.setData(const AssetImage("resource/images/avatar.png"));
     }
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -74,6 +79,7 @@ class _ContributorState extends State<Contributor> {
                         data.getData() is AssetImage
                             ? const BoxShadow(color: Colors.transparent)
                             : BoxShadow(
+                                offset: const Offset(0, 3),
                                 color: Colors.black.withOpacity(0.4),
                                 blurRadius: 10)
                       ]),
@@ -83,7 +89,9 @@ class _ContributorState extends State<Contributor> {
                   ),
                 )
               : ProgressRing(value: prograss),
+          height05,
           text(widget.name ?? "匿名"),
+          height05,
           text(widget.role ?? "贡献者")
         ]));
   }

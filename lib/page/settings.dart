@@ -30,6 +30,38 @@ class _SettingState extends State<SettingsPage> {
         header: banner(context,
             image: imagePNG("settings"), title: "设置", subtitle: "SETTINGS"),
         children: [
+          title("通用设置", level: 2),
+          CardListTile(
+            title: text("缓存"),
+            subtitle: text("Cache"),
+            trailing: Row(children: [
+              text(() {
+                var cache = Directory("cache");
+                if (cache.existsSync()) {
+                  double total = 0;
+                  cache.listSync(recursive: true).forEach((element) {
+                    var status = element.statSync();
+                    if (status.type == FileSystemEntityType.file) {
+                      total += status.size / 1024 / 1024;
+                    }
+                  });
+                  return "${total.toStringAsFixed(2)}MB";
+                }
+                return "0.00MB";
+              }()),
+              width20,
+              Button(
+                  child: text("清空"),
+                  onPressed: () {
+                    setState(() {
+                      var cache = Directory("cache");
+                      cache
+                          .listSync(recursive: true)
+                          .forEach((element) => element.delete());
+                    });
+                  })
+            ]),
+          ),
           title("内核设置", level: 2),
           CardListTile(
             title: text("内核版本"),

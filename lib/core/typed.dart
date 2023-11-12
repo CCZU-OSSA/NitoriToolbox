@@ -30,7 +30,12 @@ class Device {
   Device(this.data);
 
   bool eq(Device rhs) {
-    return data.toString() == rhs.data.toString();
+    for (var k in data.keys) {
+      if (data[k] != rhs.data[k]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Device equalMerge(Device rhs) {

@@ -37,7 +37,6 @@ jobs:
           flutter clean
           flutter config --enable-windows-desktop
           flutter build windows
-          cp README.md build/windows/runner/Release/
           cp target/release/nitori_core.dll build/windows/runner/Release/
       - name: Upload Zip
         uses: actions/upload-artifact@v3.1.2

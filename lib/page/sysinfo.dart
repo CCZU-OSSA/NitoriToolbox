@@ -25,7 +25,10 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
       "Win32_OperatingSystem",
       "Win32_BaseBoard",
       "Win32_Processor",
-      "Win32_PhysicalMemory"
+      "Win32_PhysicalMemory",
+      "Win32_VideoController",
+      "Win32_NetworkAdapter",
+      "Win32_SoundDevice"
     ])!["data"]);
   }
 
@@ -80,6 +83,18 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
           }));
       sumsize += i["Capacity"] as int;
     }
+
+    var videoctrs = data["Win32_VideoController"];
+    List networkadapter = (data["Win32_NetworkAdapter"] as List)
+        .where(
+          (element) =>
+              element["NetEnabled"] == true &&
+              element["PhysicalAdapter"] == true,
+        )
+        .toList();
+
+    List soundDevices = data["Win32_SoundDevice"];
+    //debugPrint(jsonEncode(soundDevices));
 
     return ScaffoldPage.scrollable(header: banner(context), children: [
       title("软件信息"),
@@ -179,18 +194,18 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
               var totalsize = mdata.data["Capacity"] * mdata.count;
               return Expander(
                   header: text(
-                      "${phimemory.keys.toList()[index]} ${totalsize / 1073741824}G - ${totalsize / sumsize * 100}%",
-                      selectable: true),
+                    "${phimemory.keys.toList()[index]} ${totalsize / 1073741824}G(${totalsize / sumsize * 100}%) ${mdata.data["ConfiguredClockSpeed"]}/${mdata.data["Speed"]}MHz",
+                    selectable: true,
+                  ),
                   content: Column(
                     children: [
                       ListTile(
                         title: text("制造商"),
                         subtitle: text("Manufacturer"),
                         trailing: text(
-                            phimemory.values
-                                .toList()[index]
-                                .data["Manufacturer"],
-                            selectable: true),
+                          phimemory.values.toList()[index].data["Manufacturer"],
+                          selectable: true,
+                        ),
                       ),
                       ListTile(
                         title: text("数量"),
@@ -201,19 +216,165 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         title: text("内存大小"),
                         subtitle: text("Sum"),
                         trailing: text(
-                            "${mdata.data["Capacity"]} * ${mdata.count} = ${mdata.data["Capacity"] * mdata.count} = ${totalsize}G",
-                            selectable: true),
+                          "${mdata.data["Capacity"]} * ${mdata.count} = ${mdata.data["Capacity"] * mdata.count} = ${totalsize / 1073741824}G",
+                          selectable: true,
+                        ),
                       ),
                       ListTile(
                         title: text("频率 (实际/标称)"),
                         subtitle: text("Clock Speed(Real/Configured)"),
                         trailing: text(
-                            "${mdata.data["ConfiguredClockSpeed"]} / ${mdata.data["Speed"]}MHz",
-                            selectable: true),
+                          "${mdata.data["ConfiguredClockSpeed"]} / ${mdata.data["Speed"]}MHz",
+                          selectable: true,
+                        ),
                       )
                     ],
                   ));
             }).joinElement(height05),
+          )),
+      height05,
+      Expander(
+          leading: const Icon(FluentIcons.screen),
+          header: text(
+              "显卡 ${videoctrs[0]["Name"]} ${videoctrs[0]["AdapterRAM"] / 1073741824}G"),
+          content: Column(
+            children: List.generate(videoctrs.length, (index) {
+              return Expander(
+                  header: text(videoctrs[index]["Name"]),
+                  content: Column(
+                    children: [
+                      ListTile(
+                        title: text("分辨率"),
+                        subtitle: text("Resolution"),
+                        trailing: text(
+                            "${videoctrs[index]["CurrentHorizontalResolution"]} x ${videoctrs[index]["CurrentVerticalResolution"]}"),
+                      ),
+                      ListTile(
+                        title: text("视频模式"),
+                        subtitle: text("Video Mode"),
+                        trailing: text(
+                          "${videoctrs[index]["VideoModeDescription"]}",
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("视频处理器"),
+                        subtitle: text("Video Processor"),
+                        trailing: text(
+                          "${videoctrs[index]["VideoProcessor"]}",
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("适配器内存"),
+                        subtitle: text("Adapter RAM"),
+                        trailing: text(
+                          "${videoctrs[index]["AdapterRAM"] / 1073741824}GB",
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("刷新率 (最小/当前/最大)"),
+                        subtitle: text("Refresh Rate(Min/Current/Max)"),
+                        trailing: text(
+                          "${videoctrs[index]["MinRefreshRate"]} / ${videoctrs[index]["CurrentRefreshRate"]} / ${videoctrs[index]["MaxRefreshRate"]}",
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("适配器DAC类型"),
+                        subtitle: text("Adapter DAC Type"),
+                        trailing: text(
+                          "${videoctrs[index]["AdapterDACType"]}",
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("驱动版本"),
+                        subtitle: text("Driver Version"),
+                        trailing: text(
+                          "${videoctrs[index]["DriverVersion"]}",
+                          selectable: true,
+                        ),
+                      ),
+                    ],
+                  ));
+            }).joinElement<Widget>(height05),
+          )),
+      height05,
+      Expander(
+          leading: const Icon(Feather.monitor),
+          header: text("显示器 ${core.monitors[0]["driver_id"]}"),
+          content: Column(
+            children: List.generate(
+                core.monitors.length,
+                (index) => Expander(
+                    header: text(core.monitors[index]["driver_id"],
+                        selectable: true),
+                    content: ListTile(
+                      title: text("ID"),
+                      trailing:
+                          text(core.monitors[index]["id"], selectable: true),
+                    ))).joinElement<Widget>(height05),
+          )),
+      height05,
+      Expander(
+        leading: const Icon(FontAwesomeIcons.internetExplorer),
+        header: text(
+            "网络适配器 ${networkadapter.isEmpty ? "无" : networkadapter[0]["Name"]}"),
+        content: Column(
+          children: List.generate(
+              networkadapter.length,
+              (index) => Expander(
+                  header: text(networkadapter[index]["Name"]),
+                  content: Column(
+                    children: [
+                      ListTile(
+                        title: text("制造商"),
+                        subtitle: text("Manufacturer"),
+                        trailing: text(
+                          networkadapter[index]["Manufacturer"],
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("MAC地址"),
+                        subtitle: text("MAC Address"),
+                        trailing: text(
+                          networkadapter[index]["MACAddress"],
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("适配器类型"),
+                        subtitle: text("Adapter Type"),
+                        trailing: text(
+                          networkadapter[index]["AdapterType"],
+                          selectable: true,
+                        ),
+                      ),
+                      ListTile(
+                        title: text("速度"),
+                        subtitle: text("Speed"),
+                        trailing: text(
+                          "${(networkadapter[index]["Speed"] / 8 / 1024 / 1024 as double).toStringAsFixed(2)}MB/S",
+                          selectable: true,
+                        ),
+                      ),
+                    ],
+                  ))).joinElement<Widget>(height05),
+        ),
+      ),
+      height05,
+      Expander(
+          leading: const Icon(FluentIcons.microphone),
+          header: text("声音设备"),
+          content: Column(
+            children: List.generate(
+                    soundDevices.length,
+                    (index) =>
+                        Expander(header: text("data"), content: text("data")))
+                .joinElement<Widget>(height05),
           ))
     ]);
   }

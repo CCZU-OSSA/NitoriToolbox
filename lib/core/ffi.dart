@@ -13,7 +13,9 @@ class NitoriCore extends FFI {
   DynamicLibrary? __library;
   Pointer<Utf8> Function(Pointer<Utf8> target)? _query;
   Pointer<Utf8> Function()? _version;
+  Pointer<Utf8> Function()? _getmontiors;
   String version = "未安装";
+  List monitors = [];
   bool installed = false;
 
   NitoriCore() {
@@ -28,6 +30,10 @@ class NitoriCore extends FFI {
           .lookup<NativeFunction<Pointer<Utf8> Function(Pointer<Utf8>)>>(
               "query")
           .asFunction();
+      _getmontiors = __library!
+          .lookup<NativeFunction<Pointer<Utf8> Function()>>("get_montiors")
+          .asFunction();
+      monitors = jsonDecode(_getmontiors!().toDartString())["data"];
     }
   }
 

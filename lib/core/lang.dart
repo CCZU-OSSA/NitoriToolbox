@@ -1,11 +1,12 @@
-extension JoinEx<T> on List<T> {
-  List<T> joinElement(T sep) {
+extension JoinExra<T> on List<T> {
+  List<RT> joinElement<RT>(RT sep) {
+    List<RT> res = List.from(this);
     if (length > 1) {
-      for (var i = 1; i < length; i += 2) {
-        insert(i, sep);
+      for (var i = 1, c = 0; c < length; i += 2, c++) {
+        res.insert(i, sep);
       }
     }
-    return this;
+    return res;
   }
 }
 
