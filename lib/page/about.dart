@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/widgets/contributor.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
+import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/lang.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -89,7 +90,7 @@ class _StateAboutPage extends State<AboutPage> {
             future: rootBundle.loadString("LICENSE"),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return text(snapshot.data!);
+                return NitoriText(snapshot.data!);
               } else {
                 return loading;
               }

@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
+import 'package:nitoritoolbox/app/widgets/text.dart';
 
 const height05 = SizedBox(
   height: 5,
@@ -57,8 +58,8 @@ Widget banner(BuildContext context,
       width40,
       Column(
         children: [
-          text(title ?? "系统信息", size: 40),
-          text(subtitle ?? "SYSTEM INFO", size: 30),
+          NitoriText(title ?? "系统信息", size: 40),
+          NitoriText(subtitle ?? "SYSTEM INFO", size: 30),
         ],
       )
     ],
@@ -83,20 +84,6 @@ Widget displaytitle(String data, {Color? color}) {
   );
 }
 
-Widget text(String data,
-    {double? size, Color? color, bool selectable = false}) {
-  var style = TextStyle(fontFamily: "Default", fontSize: size, color: color);
-  return selectable
-      ? SelectableText(
-          data,
-          style: style,
-        )
-      : Text(
-          data,
-          style: style,
-        );
-}
-
 Container shadow(Widget child,
     {Color? background, BorderRadius? radius, double? height, double? width}) {
   return Container(
@@ -111,4 +98,18 @@ Container shadow(Widget child,
     ]),
     child: child,
   );
+}
+
+Widget text(String data,
+    {double? size, Color? color, bool selectable = false}) {
+  var style = TextStyle(fontFamily: "Default", fontSize: size, color: color);
+  return selectable
+      ? SelectableText(
+          data,
+          style: style,
+        )
+      : Text(
+          data,
+          style: style,
+        );
 }

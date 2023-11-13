@@ -8,6 +8,7 @@ import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
+import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/ffi.dart';
 
@@ -32,10 +33,10 @@ class _SettingState extends State<SettingsPage> {
         children: [
           title("通用设置", level: 2),
           CardListTile(
-            title: text("缓存"),
-            subtitle: text("Cache"),
+            title: const NitoriText("缓存"),
+            subtitle: const NitoriText("Cache"),
             trailing: Row(children: [
-              text(() {
+              NitoriText(() {
                 var cache = Directory("cache");
                 if (cache.existsSync()) {
                   double total = 0;
@@ -51,7 +52,7 @@ class _SettingState extends State<SettingsPage> {
               }()),
               width20,
               Button(
-                  child: text("清空"),
+                  child: const NitoriText("清空"),
                   onPressed: () {
                     setState(() {
                       var cache = Directory("cache");
@@ -64,10 +65,10 @@ class _SettingState extends State<SettingsPage> {
           ),
           title("内核设置", level: 2),
           CardListTile(
-            title: text("内核版本"),
-            subtitle: text("Core Version"),
+            title: const NitoriText("内核版本"),
+            subtitle: const NitoriText("Core Version"),
             leading: const Icon(FluentIcons.cube_shape_solid),
-            trailing: text(bus.nitoriCore.version,
+            trailing: NitoriText(bus.nitoriCore.version,
                 color: bus.nitoriCore.installed ? null : Colors.red),
           ),
           bus.nitoriCore.installed ? shrink : height05,
@@ -75,10 +76,10 @@ class _SettingState extends State<SettingsPage> {
               ? shrink
               : CardListTile(
                   leading: const Icon(FluentIcons.installation),
-                  title: text("安装内核"),
-                  subtitle: text("Install Core"),
+                  title: const NitoriText("安装内核"),
+                  subtitle: const NitoriText("Install Core"),
                   trailing: Button(
-                      child: text("选择"),
+                      child: const NitoriText("选择"),
                       onPressed: () {
                         FilePicker.platform.pickFiles(
                           allowMultiple: false,
@@ -99,14 +100,15 @@ class _SettingState extends State<SettingsPage> {
           title("外观设置", level: 2),
           CardListTile(
             leading: const Icon(FluentIcons.color),
-            title: text("应用主题"),
-            subtitle: text("Theme"),
+            title: const NitoriText("应用主题"),
+            subtitle: const NitoriText("Theme"),
             trailing: DropDownButton(
-              title: text(getThememodeTranslate(context)),
+              title: NitoriText(getThememodeTranslate(context)),
               items: List.generate(
                   3,
                   (index) => MenuFlyoutItem(
-                        text: text(translateThememode(ThemeMode.values[index])),
+                        text: NitoriText(
+                            translateThememode(ThemeMode.values[index])),
                         onPressed: () => setState(() {
                           bus.appSetState!(() {
                             bus.config.writeKey("thememode", index);
@@ -118,8 +120,8 @@ class _SettingState extends State<SettingsPage> {
           height05,
           CardListTile(
             leading: const Icon(FluentIcons.graph_symbol),
-            title: text("背景透明度"),
-            subtitle: text("Opacity"),
+            title: const NitoriText("背景透明度"),
+            subtitle: const NitoriText("Opacity"),
             trailing: Slider(
                 value: opacity!,
                 label: "$opacity",
@@ -135,15 +137,15 @@ class _SettingState extends State<SettingsPage> {
           height05,
           Card(
               child: ListTile(
-            title: text("窗口材质"),
-            subtitle: text("Material"),
+            title: const NitoriText("窗口材质"),
+            subtitle: const NitoriText("Material"),
             leading: const Icon(FluentIcons.cube_shape),
             trailing: DropDownButton(
-                title: text(getWindowEffectTranslate(context)),
+                title: NitoriText(getWindowEffectTranslate(context)),
                 items: List.generate(
                   5,
                   (index) => MenuFlyoutItem(
-                      text: text(translateWindowEffect(index)),
+                      text: NitoriText(translateWindowEffect(index)),
                       onPressed: () => setState(() {
                             bus.appSetState!(() {
                               bus.config.writeKey("wineffect", index);
@@ -160,21 +162,21 @@ class _SettingState extends State<SettingsPage> {
                             bus.appSetState!(
                                 () => bus.config.writeKey("use_custom_bg", v));
                           })),
-                  header: Row(
+                  header: const Row(
                     children: [
                       height20,
-                      const Icon(FluentIcons.image_pixel),
-                      const SizedBox(
+                      Icon(FluentIcons.image_pixel),
+                      SizedBox(
                         width: 10,
                       ),
-                      text("背景图片"),
+                      NitoriText("背景图片"),
                       height20
                     ],
                   ),
                   content: Column(
                     children: [
                       ListTile(
-                        title: text("图片透明度"),
+                        title: const NitoriText("图片透明度"),
                         trailing: Slider(
                             value: bgOpactiy!,
                             label: "$bgOpactiy",
@@ -191,13 +193,13 @@ class _SettingState extends State<SettingsPage> {
                       ),
                       height05,
                       ListTile(
-                        title: text("背景图片类型"),
+                        title: const NitoriText("背景图片类型"),
                         trailing: Row(
                           children: [
                             RadioButton(
                                 checked:
                                     bus.config.getOrWrite("bg_type", 0) == 0,
-                                content: text("系统壁纸"),
+                                content: const NitoriText("系统壁纸"),
                                 onChanged: (v) {
                                   setState(() {
                                     bus.appSetState!(() {
@@ -209,7 +211,7 @@ class _SettingState extends State<SettingsPage> {
                             RadioButton(
                                 checked:
                                     bus.config.getOrWrite("bg_type", 0) == 1,
-                                content: text("本地图片"),
+                                content: const NitoriText("本地图片"),
                                 onChanged: (v) {
                                   setState(() {
                                     bus.appSetState!(() {
@@ -221,7 +223,7 @@ class _SettingState extends State<SettingsPage> {
                             RadioButton(
                                 checked:
                                     bus.config.getOrWrite("bg_type", 0) == 2,
-                                content: text("网络图片"),
+                                content: const NitoriText("网络图片"),
                                 onChanged: (v) {
                                   setState(() {
                                     bus.appSetState!(() {
@@ -234,9 +236,9 @@ class _SettingState extends State<SettingsPage> {
                       ),
                       height05,
                       ListTile(
-                        leading: text("本地图片地址", size: 16),
+                        leading: const NitoriText("本地图片地址", size: 16),
                         title: Button(
-                            child: text("更换"),
+                            child: const NitoriText("更换"),
                             onPressed: () {
                               FilePicker.platform
                                   .pickFiles(
@@ -253,13 +255,14 @@ class _SettingState extends State<SettingsPage> {
                             }),
                         trailing: SizedBox(
                           width: 400,
-                          child: text(bus.config.getOrDefault("bg_path", ""),
+                          child: NitoriText(
+                              bus.config.getOrDefault("bg_path", ""),
                               size: 12),
                         ),
                       ),
                       height05,
                       ListTile(
-                          title: text("网络图片地址"),
+                          title: const NitoriText("网络图片地址"),
                           trailing: SizedBox(
                               width: 300,
                               child: TextBox(

@@ -2,14 +2,15 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nitoritoolbox/page/sysinfo.dart';
+import 'package:nitoritoolbox/app/widgets/text.dart';
+import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:nitoritoolbox/page/plugins/sysinfo.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/router/router.dart';
-import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/app/widgets/keys.dart';
 import 'package:nitoritoolbox/page/settings.dart';
 import 'package:nitoritoolbox/page/home.dart';
@@ -48,10 +49,13 @@ class StateApplicationMain extends State<ApplicationMain> {
           icon: const Icon(FluentIcons.home),
           body: const HomePage()),
       PaneItemSeparator(),
+      PaneItemHeader(header: const NitoriText("官方插件")),
       PaneItem(
           title: text("系统信息"),
           icon: const Icon(FluentIcons.info),
-          body: const SystemInfoPage())
+          body: const SystemInfoPage()),
+      PaneItemSeparator(),
+      PaneItemHeader(header: const NitoriText("社区插件"))
     ], footer: [
       PaneItem(
           title: text("设置"),
