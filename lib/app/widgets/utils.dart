@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:markdown_widget/markdown_widget.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
@@ -46,9 +45,9 @@ Widget banner(BuildContext context,
           height05,
           SizedBox(
               child: Card(
-            borderColor: isDark(context)
-                ? Colors.white.withOpacity(0.8)
-                : Colors.black.withOpacity(0.8),
+            borderColor: getCurrentThemePriColor(context,
+                dark: Colors.white.withOpacity(0.8),
+                light: Colors.grey.withOpacity(0.8)),
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(image ?? imagePNG("info")),
           )),
@@ -63,13 +62,6 @@ Widget banner(BuildContext context,
         ],
       )
     ],
-  );
-}
-
-Widget title(String data, {int level = 2}) {
-  return MarkdownWidget(
-    data: "${"#" * level} $data",
-    shrinkWrap: true,
   );
 }
 

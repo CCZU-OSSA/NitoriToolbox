@@ -31,7 +31,7 @@ class _SettingState extends State<SettingsPage> {
         header: banner(context,
             image: imagePNG("settings"), title: "设置", subtitle: "SETTINGS"),
         children: [
-          title("通用设置", level: 2),
+          const NitoriTitle("通用设置", level: 2),
           CardListTile(
             title: const NitoriText("缓存"),
             subtitle: const NitoriText("Cache"),
@@ -63,7 +63,7 @@ class _SettingState extends State<SettingsPage> {
                   })
             ]),
           ),
-          title("内核设置", level: 2),
+          const NitoriTitle("内核设置", level: 2),
           CardListTile(
             title: const NitoriText("内核版本"),
             subtitle: const NitoriText("Core Version"),
@@ -97,12 +97,13 @@ class _SettingState extends State<SettingsPage> {
                       }),
                 ),
           height40,
-          title("外观设置", level: 2),
+          const NitoriTitle("外观设置", level: 2),
           CardListTile(
             leading: const Icon(FluentIcons.color),
             title: const NitoriText("应用主题"),
             subtitle: const NitoriText("Theme"),
             trailing: DropDownButton(
+              menuColor: getCurrentThemePriColor(context),
               title: NitoriText(getThememodeTranslate(context)),
               items: List.generate(
                   3,
@@ -141,6 +142,7 @@ class _SettingState extends State<SettingsPage> {
             subtitle: const NitoriText("Material"),
             leading: const Icon(FluentIcons.cube_shape),
             trailing: DropDownButton(
+                menuColor: getCurrentThemePriColor(context),
                 title: NitoriText(getWindowEffectTranslate(context)),
                 items: List.generate(
                   5,

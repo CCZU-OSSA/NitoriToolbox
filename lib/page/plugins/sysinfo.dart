@@ -100,7 +100,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
       List diskdrive = data["Win32_DiskDrive"];
       //debugPrint(jsonEncode(diskdrive));
       return ScaffoldPage.scrollable(header: banner(context), children: [
-        title("软件信息"),
+        const NitoriTitle("软件信息"),
         CardListTile(
           leading: const Icon(FontAwesomeIcons.computer),
           title: const NitoriText("本机名称"),
@@ -128,7 +128,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
           trailing: NitoriText(sysinfo["RegisteredUser"], selectable: true),
         ),
         height20,
-        title("硬件信息"),
+        const NitoriTitle("硬件信息"),
         Expander(
             leading: const Icon(FluentIcons.view_dashboard),
             header: NitoriText("基板 ${baseboard["Product"]}"),
@@ -230,7 +230,8 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         ),
                         ListTile(
                           title: const NitoriText("频率 (实际/标称)"),
-                          subtitle: const NitoriText("Clock Speed(Real/Configured)"),
+                          subtitle:
+                              const NitoriText("Clock Speed(Real/Configured)"),
                           trailing: NitoriText(
                             "${mdata.data["ConfiguredClockSpeed"]} / ${mdata.data["Speed"]}MHz",
                             selectable: true,
@@ -243,12 +244,12 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
         height05,
         Expander(
             leading: const Icon(FluentIcons.screen),
-            header:  NitoriText(
+            header: NitoriText(
                 "显卡 ${videoctrs[0]["Name"]} ${videoctrs[0]["AdapterRAM"] == null ? "Null" : "${(videoctrs[0]["AdapterRAM"] / 1073741824 as double).toStringAsFixed(2)}G"}"),
             content: Column(
               children: List.generate(videoctrs.length, (index) {
                 return Expander(
-                    header:  NitoriText(videoctrs[index]["Name"]),
+                    header: NitoriText(videoctrs[index]["Name"]),
                     content: Column(
                       children: [
                         ListTile(
@@ -285,7 +286,8 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         ),
                         ListTile(
                           title: const NitoriText("刷新率 (最小/当前/最大)"),
-                          subtitle: const NitoriText("Refresh Rate(Min/Current/Max)"),
+                          subtitle:
+                              const NitoriText("Refresh Rate(Min/Current/Max)"),
                           trailing: NitoriText(
                             "${videoctrs[index]["MinRefreshRate"]} / ${videoctrs[index]["CurrentRefreshRate"]} / ${videoctrs[index]["MaxRefreshRate"]}",
                             selectable: true,
@@ -323,8 +325,8 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                           selectable: true),
                       content: ListTile(
                         title: const NitoriText("ID"),
-                        trailing:
-                            NitoriText(core.monitors[index]["id"], selectable: true),
+                        trailing: NitoriText(core.monitors[index]["id"],
+                            selectable: true),
                       ))).joinElement<Widget>(height05),
             )),
         height05,
@@ -336,8 +338,8 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
               children: List.generate(
                   diskdrive.length,
                   (index) => Expander(
-                      header:
-                          NitoriText(diskdrive[index]["Caption"], selectable: true),
+                      header: NitoriText(diskdrive[index]["Caption"],
+                          selectable: true),
                       content: Column(
                         children: [
                           ListTile(
@@ -365,7 +367,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                       children: [
                         ListTile(
                           title: const NitoriText("制造商"),
-                          subtitle:const NitoriText("Manufacturer"),
+                          subtitle: const NitoriText("Manufacturer"),
                           trailing: NitoriText(
                             networkadapter[index]["Manufacturer"],
                             selectable: true,
@@ -407,13 +409,14 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
               children: List.generate(
                   soundDevices.length,
                   (index) => Expander(
-                      header:
-                          NitoriText(soundDevices[index]["Name"], selectable: true),
+                      header: NitoriText(soundDevices[index]["Name"],
+                          selectable: true),
                       content: Column(
                         children: [
                           ListTile(
                             title: const NitoriText("制造商"),
-                            trailing: NitoriText(soundDevices[index]["Manufacturer"],
+                            trailing: NitoriText(
+                                soundDevices[index]["Manufacturer"],
                                 selectable: true),
                           ),
                         ],

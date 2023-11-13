@@ -42,7 +42,7 @@ class _StateAboutPage extends State<AboutPage> {
         header: banner(context,
             image: imagePNG("about"), title: "关于", subtitle: "ABOUT"),
         children: [
-          title("开发者名单"),
+          const NitoriTitle("开发者名单"),
           const Contributor(
             "https://avatars.githubusercontent.com/u/150149909",
             home: "https://github.com/CCZU-OSSA",
@@ -55,7 +55,7 @@ class _StateAboutPage extends State<AboutPage> {
               children: contributors.joinElement(const SizedBox(
                 width: 15,
               ))),
-          title("链接"),
+          const NitoriTitle("链接"),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -84,7 +84,7 @@ class _StateAboutPage extends State<AboutPage> {
                       "https://github.com/CCZU-OSSA/NitoriToolbox/issues"))
             ],
           ),
-          title("开源协议"),
+          const NitoriTitle("开源协议"),
           Card(
               child: FutureBuilder(
             future: rootBundle.loadString("LICENSE"),

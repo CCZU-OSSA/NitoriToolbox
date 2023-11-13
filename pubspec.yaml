@@ -47,6 +47,7 @@ dependencies:
   flutter_vector_icons: ^2.0.0
   dio: ^5.3.3
   url_launcher: ^6.2.1
+  archive: ^3.4.9
 
 dev_dependencies:
   flutter_test:
@@ -107,7 +108,7 @@ flutter:
   fonts:
     - family: Default
       fonts:
-        - asset: resource/fonts/GlowSansSC-Normal-ExtraBold.otf
+        - asset: resource/fonts/GlowSansSC-Normal-Bold.otf
     - family: Display
       fonts:
         - asset: resource/fonts/poppins-extrabold.ttf

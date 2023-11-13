@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:nitoritoolbox/page/plugins/archiver.dart';
 import 'package:nitoritoolbox/page/plugins/sysinfo.dart';
 import 'package:provider/provider.dart';
 
@@ -51,6 +52,10 @@ class StateApplicationMain extends State<ApplicationMain> {
       PaneItemSeparator(),
       PaneItemHeader(header: const NitoriText("官方插件")),
       PaneItem(
+          title: text("解压缩"),
+          icon: const Icon(FluentIcons.archive),
+          body: const SNZipPage()),
+      PaneItem(
           title: text("系统信息"),
           icon: const Icon(FluentIcons.info),
           body: const SystemInfoPage()),
@@ -82,11 +87,12 @@ class StateApplicationMain extends State<ApplicationMain> {
         themeMode: getThemeMode(context),
         home: NavigationPaneTheme(
             data: NavigationPaneThemeData(
-                backgroundColor: isDark(context)
-                    ? Colors.grey
-                        .withOpacity(bus.config.getOrWrite("opacity", 0.9))
-                    : Colors.white
-                        .withOpacity(bus.config.getOrWrite("opacity", 0.9))),
+              backgroundColor: getCurrentThemePriColor(context,
+                  dark: Colors.grey
+                      .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
+                  light: Colors.white
+                      .withOpacity(bus.config.getOrWrite("opacity", 0.9))),
+            ),
             child: Container(
                 decoration: BoxDecoration(image: getWallpaper(context)),
                 child: NavigationView(

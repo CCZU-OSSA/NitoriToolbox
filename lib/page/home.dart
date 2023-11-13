@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/colors.dart';
+import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,9 +10,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScaffoldPage.scrollable(children: [
       Card(
-          borderColor: isDark(context)
-              ? Colors.white.withOpacity(0.8)
-              : Colors.black.withOpacity(0.8),
+          borderColor: getCurrentThemePriColor(context,
+              dark: Colors.white.withOpacity(0.8),
+              light: Colors.grey.withOpacity(0.8)),
           borderRadius: BorderRadius.circular(8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -20,13 +21,13 @@ class HomePage extends StatelessWidget {
                   color:
                       Colors.blue.withOpacity(0.8).lerpWith(Colors.white, 0.1)),
               displaytitle("TOOLBOX",
-                  color: isDark(context)
-                      ? Colors.white.withOpacity(0.8)
-                      : Colors.black.withOpacity(0.8))
+                  color: getCurrentThemePriColor(context,
+                      dark: Colors.white.withOpacity(0.8),
+                      light: Colors.grey.withOpacity(0.8)))
             ],
           )),
       height40,
-      title("欢迎使用 Nitori Toolbox", level: 1)
+      const NitoriTitle("欢迎使用 Nitori Toolbox", level: 1)
     ]);
   }
 }

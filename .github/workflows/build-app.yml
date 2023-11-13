@@ -47,7 +47,6 @@ jobs:
         run: |
           flutter clean
           dart run msix:build
-          cp README.md build/windows/runner/Release/
           cp target/release/nitori_core.dll build/windows/runner/Release/
           dart run msix:pack
       - name: Upload Zip
