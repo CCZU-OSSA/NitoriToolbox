@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
 use monitor_control_win::Monitor;
+use serde::Serialize;
 use wmi::{COMLibrary, WMIConnection};
 
-use crate::protocol::{MonitorInfo, QueryArg, QueryResult, DATAMAP};
+use crate::protocol::{MonitorInfo, QueryArg, DATAMAP};
 
 pub fn query(target: &'static str) -> String {
     let con = COMLibrary::new().unwrap();
@@ -17,9 +18,7 @@ pub fn query(target: &'static str) -> String {
             data.insert(t, wmi.raw_query(format!("SELECT * FROM {}", t)).unwrap());
         });
 
-    let mut result: QueryResult = HashMap::new();
-    result.insert("data", data);
-    serde_json::to_string(&result).unwrap()
+    datalize(data)
 }
 
 pub fn get_montiors() -> String {
@@ -28,7 +27,11 @@ pub fn get_montiors() -> String {
         .iter()
         .map(|v| MonitorInfo::from_monitor(v))
         .collect();
-    let mut result: HashMap<&str, Vec<MonitorInfo>> = HashMap::new();
-    result.insert("data", monitors);
-    return serde_json::to_string(&result).unwrap();
+    datalize(monitors)
+}
+
+pub fn datalize<T: Serialize>(v: T) -> String {
+    let mut result: HashMap<&str, T> = HashMap::new();
+    result.insert("data", v);
+    serde_json::to_string(&result).unwrap()
 }
