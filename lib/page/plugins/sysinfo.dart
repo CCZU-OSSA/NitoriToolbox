@@ -425,7 +425,11 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
       ]);
     } catch (e, trace) {
       return Column(children: [
-        displaytitle("发生错误"),
+        const NitoriText(
+          "发生错误",
+          isdisplay: true,
+          size: 60,
+        ),
         height40,
         NitoriText(e.toString()),
         NitoriText(trace.toString())

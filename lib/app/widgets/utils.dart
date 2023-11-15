@@ -65,17 +65,6 @@ Widget banner(BuildContext context,
   );
 }
 
-Widget displaytitle(String data, {Color? color}) {
-  return Text(
-    data,
-    style: TextStyle(
-        fontSize: 60,
-        fontFamily: "Display",
-        color: color,
-        fontStyle: FontStyle.italic),
-  );
-}
-
 Container shadow(Widget child,
     {Color? background, BorderRadius? radius, double? height, double? width}) {
   return Container(

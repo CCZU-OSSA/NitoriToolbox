@@ -48,6 +48,7 @@ dependencies:
   dio: ^5.3.3
   url_launcher: ^6.2.1
   archive: ^3.4.9
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,8 @@ flutter:
     - resource/images/settings.png
     - resource/images/about.png
     - resource/images/avatar.png
+    - resource/images/store.png
+    - resource/images/nitori_icon.png
     - LICENSE
     - README.md
   # An image asset can refer to one or more resolution-specific "variants", see

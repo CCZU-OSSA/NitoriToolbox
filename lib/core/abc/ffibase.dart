@@ -17,4 +17,3 @@ extension FFIImpl on FFI {
     return DynamicLibrary.open(path());
   }
 }
-

@@ -1,9 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
 class PaneRouter {
-  List<NavigationPaneItem> body = [];
-  List<NavigationPaneItem> footer = [];
+  Map<String, NavigationPaneItem> body = {};
+  Map<String, NavigationPaneItem> footer = {};
+  final Map<String, int> _nameindex = {};
+
   int total = -1;
+
   /// inner page index
   int select = 0;
 
@@ -15,22 +18,28 @@ class PaneRouter {
     __allocateID(footer);
   }
 
+  void pushName(String name) {
+    setState(() {
+      select = _nameindex.containsKey(name) ? _nameindex[name]! : 0;
+    });
+  }
+
   /// use to allocate the page id
-  void __allocateID(List<NavigationPaneItem> list) {
-    int ct = 0;
-    for (var element in list) {
-      if (element is PaneItem) {
+  void __allocateID(Map<String, NavigationPaneItem> map) {
+    for (var element in map.entries) {
+      var val = element.value;
+      if (val is PaneItem) {
         total++;
         int v = total;
-        list[ct] = element.copyWith(
+        map[element.key] = val.copyWith(
           onTap: () {
             setState(() {
               select = v;
             });
           },
         );
+        _nameindex[element.key] = v;
       }
-      ct++;
     }
   }
 }

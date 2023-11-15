@@ -33,6 +33,18 @@ class _SettingState extends State<SettingsPage> {
         children: [
           const NitoriTitle("通用设置", level: 2),
           CardListTile(
+            leading: const Icon(FluentIcons.size_legacy),
+            title: const NitoriText("保存窗口大小"),
+            subtitle: const NitoriText("Save Window Size"),
+            trailing: ToggleSwitch(
+                checked: bus.config.getOrWrite("save_win_size", false),
+                onChanged: (v) => setState(() {
+                      bus.config.writeKey("save_win_size", v);
+                    })),
+          ),
+          height05,
+          CardListTile(
+            leading: const Icon(FluentIcons.broom),
             title: const NitoriText("缓存"),
             subtitle: const NitoriText("Cache"),
             trailing: Row(children: [

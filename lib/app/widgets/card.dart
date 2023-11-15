@@ -22,3 +22,19 @@ class CardListTile extends ListTile {
     return Card(child: super.build(context));
   }
 }
+
+class SquareCard extends StatelessWidget {
+  final double size;
+  const SquareCard({super.key, this.size = 240});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          height: size,
+          width: size,
+          child: const Row(),
+        ));
+  }
+}

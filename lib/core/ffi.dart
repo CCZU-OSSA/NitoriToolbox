@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
-import 'package:nitoritoolbox/core/abc/dynlib.dart';
+import 'package:nitoritoolbox/core/abc/ffibase.dart';
 
 class NitoriCore extends FFI {
   @override
@@ -48,4 +48,7 @@ class NitoriCore extends FFI {
   Map<String, dynamic>? querySingle(String target) {
     return query([target]);
   }
+
+  
+
 }
