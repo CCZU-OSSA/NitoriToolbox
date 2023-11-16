@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
@@ -34,19 +35,20 @@ class _StateStorePage extends State<StorePage> {
                       children: [
                         const Column(children: [
                           NitoriText(
-                            "启动",
-                            size: 60,
+                            "基础组合包",
+                            size: 45,
                           ),
                           NitoriText(
-                            "BOOTSTRAP",
-                            size: 30,
+                            "BASIC",
+                            size: 20,
                           )
                         ]),
-                        const SquareCard(),
-                        const SquareCard(),
-                        const SquareCard(),
-                        const SquareCard(),
-                        const SquareCard()
+                        SquareCard(
+                          title: "7-ZIP",
+                          subtitle: "解压缩",
+                          icon: const Icon(FontAwesomeIcons.fileZipper),
+                          onPressed: () {},
+                        ),
                       ].joinElement<Widget>(width20),
                     ),
                   )))

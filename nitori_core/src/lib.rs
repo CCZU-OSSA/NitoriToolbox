@@ -1,27 +1,23 @@
 use std::ffi::{c_char, CStr, CString};
+use lang::FFIString;
 
 pub mod hardware_query;
+pub mod lang;
 pub mod protocol;
 
 #[no_mangle]
 pub extern "C" fn version() -> *const c_char {
-    CString::new("1.0.0-Preview.2").unwrap().into_raw()
+    CString::new("1.0.0-Preview.3").unwrap().into_raw()
 }
 
 #[no_mangle]
 pub extern "C" fn query(target: *const c_char) -> *const c_char {
-    CString::new(hardware_query::query(unsafe {
-        CStr::from_ptr(target).to_str().unwrap()
-    }))
-    .unwrap()
-    .into_raw()
+    hardware_query::query(unsafe { CStr::from_ptr(target).to_str().unwrap() }).cstring_ptr()
 }
 
 #[no_mangle]
 pub extern "C" fn get_montiors() -> *const c_char {
-    CString::new(hardware_query::get_montiors())
-        .unwrap()
-        .into_raw()
+    hardware_query::get_montiors().cstring_ptr()
 }
 
 #[cfg(test)]

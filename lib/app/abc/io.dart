@@ -8,6 +8,7 @@ abstract class Serializer {
   Map<K, V> decode<K, V, I>(I data);
 }
 
+
 abstract class KVIO extends IO implements Serializer {}
 
 extension KVImpl on KVIO {
