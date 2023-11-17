@@ -19,7 +19,7 @@ jobs:
   test_core:
     uses: ./.github/workflows/build-core.yml
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: test_core
     steps:
       - uses: actions/checkout@v3
