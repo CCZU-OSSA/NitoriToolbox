@@ -24,6 +24,10 @@ class PaneRouter {
     });
   }
 
+  void pop(BuildContext context) {
+    Navigator.pop(context);
+  }
+
   /// use to allocate the page id
   void __allocateID(Map<String, NavigationPaneItem> map) {
     for (var element in map.entries) {
