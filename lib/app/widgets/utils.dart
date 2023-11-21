@@ -45,9 +45,7 @@ Widget banner(BuildContext context,
           height05,
           SizedBox(
               child: Card(
-            borderColor: getCurrentThemePriColor(context,
-                dark: Colors.white.withOpacity(0.8),
-                light: Colors.grey.withOpacity(0.8)),
+            borderColor: getCurrentThemePriColor(context).withOpacity(0.8),
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(image ?? imagePNG("info")),
           )),

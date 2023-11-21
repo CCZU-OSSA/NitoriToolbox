@@ -36,11 +36,18 @@ class _StateStorePage extends State<StorePage> {
                   subtitle: al.subtitle,
                   content: List.generate(al.apps.length, (index) {
                     var sa = al.apps[index];
-                    return SquareCard(
+                    var card = SquareCard(
                         title: sa.title,
                         subtitle: sa.subtitle,
+                        background: sa.background,
                         onPressed: () => launchUrlString(sa.open),
                         icon: sa.buildIcon());
+                    return sa.details != null
+                        ? Tooltip(
+                            message: sa.details,
+                            child: card,
+                          )
+                        : card;
                   }),
                 );
               }),

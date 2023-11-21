@@ -5,18 +5,20 @@ class SingleApplication extends JsonSerializer implements TypeMap {
   final dynamic icon;
   final String title;
   final String subtitle;
-  final String background;
+  final String? background;
   final String open;
-  final bool imgicon;
+  final String? details;
+  final bool usefonticon;
   static final empty = SingleApplication();
 
   SingleApplication({
     this.title = "",
     this.subtitle = "",
-    this.background = "",
+    this.background,
     this.icon = "",
     this.open = "",
-    this.imgicon = false,
+    this.details,
+    this.usefonticon = false,
   });
 
   @override
@@ -26,8 +28,9 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       "subtitle": subtitle,
       "background": background,
       "icon": icon,
-      "imgicon": imgicon,
-      "open": open
+      "usefonticon": usefonticon,
+      "open": open,
+      "details": details
     }.cast<K, V>();
   }
 
@@ -42,12 +45,13 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       background: data["background"],
       icon: data["icon"],
       open: data["open"],
-      imgicon: data["imgicon"] ?? false,
+      details: data["details"],
+      usefonticon: data["usefonticon"] ?? false,
     );
   }
 
   Widget buildIcon() {
-    if (imgicon) {
+    if (!usefonticon) {
       return Image.network(
         icon,
         height: 45,

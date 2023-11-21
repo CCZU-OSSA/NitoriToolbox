@@ -50,10 +50,11 @@ class SquareCard extends StatelessWidget {
         height: size,
         width: size,
         child: Container(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("resource/images/nitori_icon.png"),
-                  opacity: 0.5)),
+          decoration: BoxDecoration(
+              image: background != null && background != ""
+                  ? DecorationImage(
+                      image: NetworkImage(background!), opacity: 0.5)
+                  : null),
           child: Card(
             borderRadius: BorderRadius.circular(8),
             child: const SizedBox.expand(),

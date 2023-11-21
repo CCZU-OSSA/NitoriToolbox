@@ -100,11 +100,8 @@ class StateApplicationMain extends State<ApplicationMain> {
         themeMode: getThemeMode(context),
         home: NavigationPaneTheme(
             data: NavigationPaneThemeData(
-              backgroundColor: getCurrentThemePriColor(context,
-                  dark: Colors.grey
-                      .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
-                  light: Colors.white
-                      .withOpacity(bus.config.getOrWrite("opacity", 0.9))),
+              backgroundColor: getCurrentThemePriColor(context)
+                  .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
             ),
             child: Container(
                 decoration: BoxDecoration(image: getWallpaper(context)),
