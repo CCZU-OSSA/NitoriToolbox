@@ -94,3 +94,24 @@ Widget text(String data,
           style: style,
         );
 }
+
+class SmartFutureBuilder<T> extends FutureBuilder<T> {
+  final Widget Function(BuildContext context, T data) smartbuilder;
+  final Widget Function(BuildContext context)? nullhandler;
+  SmartFutureBuilder(
+      {super.key,
+      this.nullhandler,
+      required super.future,
+      required this.smartbuilder})
+      : super(builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var data = snapshot.data;
+            if (data != null) {
+              return smartbuilder(context, data);
+            } else if (nullhandler != null) {
+              return nullhandler(context);
+            }
+          }
+          return loading;
+        });
+}

@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 
 class CardListTile extends ListTile {
@@ -29,12 +30,14 @@ class SquareCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String button;
+  final String? background;
   final Widget icon;
   final Function() onPressed;
   const SquareCard(
       {super.key,
       this.size = 256,
       this.button = "OPEN",
+      this.background,
       required this.title,
       required this.subtitle,
       required this.onPressed,
@@ -58,13 +61,15 @@ class SquareCard extends StatelessWidget {
         ),
       ),
       Container(
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8)),
-            color: Colors.grey),
+        decoration: BoxDecoration(
+            borderRadius: background == null
+                ? BorderRadius.circular(8)
+                : const BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8)),
+            color: getCurrentThemePriColor(context)),
         child: SizedBox(
-          height: size / 2.5,
+          height: background == null ? size : size / 2.5,
           width: size,
         ),
       ),

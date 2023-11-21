@@ -1,0 +1,18 @@
+{
+    "title": "日常使用",
+    "subtitle": "DAILY",
+    "apps": [
+        {
+            "title": "7-ZIP",
+            "subtitle": "解压缩",
+            "open": "https://www.7-zip.org/download.html",
+            "background": "",
+            "iconimg": false,
+            "icon": {
+                "code": "0xf1c6",
+                "fontfamily": "FontAwesomeRegular",
+                "fontpackage": "font_awesome_flutter"
+            }
+        }
+    ]
+}

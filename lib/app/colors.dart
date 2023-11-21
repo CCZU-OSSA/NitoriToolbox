@@ -59,8 +59,8 @@ String translateThememode(ThemeMode mode) {
 }
 
 Color getCurrentThemePriColor(BuildContext context,
-    {Color? dark, Color? light}) {
-  return isDark(context) ? dark ?? Colors.grey : light ?? Colors.white;
+    {Color? dark, Color? light, bool reverse = false}) {
+  return isDark(context) == true ? dark ?? Colors.grey : light ?? Colors.white;
 }
 
 String getThememodeTranslate(BuildContext context) {

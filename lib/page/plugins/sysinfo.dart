@@ -239,7 +239,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         )
                       ],
                     ));
-              }).joinElement(height05),
+              }).joinElementF(height05),
             )),
         height05,
         Expander(
@@ -311,7 +311,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         ),
                       ],
                     ));
-              }).joinElement<Widget>(height05),
+              }).joinElementF<Widget>(height05),
             )),
         height05,
         Expander(
@@ -327,7 +327,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                         title: const NitoriText("ID"),
                         trailing: NitoriText(core.monitors[index]["id"],
                             selectable: true),
-                      ))).joinElement<Widget>(height05),
+                      ))).joinElementF<Widget>(height05),
             )),
         height05,
         Expander(
@@ -398,7 +398,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                           ),
                         ),
                       ],
-                    ))).joinElement<Widget>(height05),
+                    ))).joinElementF<Widget>(height05),
           ),
         ),
         height05,
@@ -420,7 +420,7 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
                                 selectable: true),
                           ),
                         ],
-                      ))).joinElement<Widget>(height05),
+                      ))).joinElementF<Widget>(height05),
             ))
       ]);
     } catch (e, trace) {

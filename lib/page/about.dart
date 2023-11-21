@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/widgets/contributor.dart';
 import 'package:nitoritoolbox/app/widgets/resource.dart';
@@ -52,7 +51,7 @@ class _StateAboutPage extends State<AboutPage> {
           height20,
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: contributors.joinElement(const SizedBox(
+              children: contributors.joinElementF(const SizedBox(
                 width: 15,
               ))),
           const NitoriTitle("链接"),
@@ -85,17 +84,7 @@ class _StateAboutPage extends State<AboutPage> {
             ],
           ),
           const NitoriTitle("开源协议"),
-          Card(
-              child: FutureBuilder(
-            future: rootBundle.loadString("LICENSE"),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return NitoriText(snapshot.data!);
-              } else {
-                return loading;
-              }
-            },
-          ))
+          const Card(child: NitoriAsset("LICENSE"))
         ]);
   }
 }

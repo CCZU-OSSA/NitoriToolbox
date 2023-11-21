@@ -84,6 +84,8 @@ flutter:
     - resource/images/avatar.png
     - resource/images/store.png
     - resource/images/nitori_icon.png
+    - resource/text/markdown/store.md
+    - resource/data/store/daily.json
     - LICENSE
     - README.md
   # An image asset can refer to one or more resolution-specific "variants", see

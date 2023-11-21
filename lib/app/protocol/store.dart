@@ -1,32 +1,33 @@
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
 
-enum IconType { images, icon }
-
-String iconType2String(IconType type) {
-  switch (type) {
-    case IconType.icon:
-      return "icon";
-    default:
-      return "image";
-  }
-}
-
 class SingleApplication extends JsonSerializer implements TypeMap {
-  final IconType iconType;
+  final dynamic icon;
   final String title;
   final String subtitle;
   final String background;
-  static final empty = SingleApplication("", "", "", IconType.icon);
+  final String open;
+  final bool imgicon;
+  static final empty = SingleApplication();
 
-  SingleApplication(this.title, this.subtitle, this.background, this.iconType);
+  SingleApplication({
+    this.title = "",
+    this.subtitle = "",
+    this.background = "",
+    this.icon = "",
+    this.open = "",
+    this.imgicon = false,
+  });
 
   @override
   Map<K, V> toMap<K, V>() {
     return {
-      "iconType": iconType2String(iconType),
       "title": title,
       "subtitle": subtitle,
-      "background": background
+      "background": background,
+      "icon": icon,
+      "imgicon": imgicon,
+      "open": open
     }.cast<K, V>();
   }
 
@@ -36,28 +37,68 @@ class SingleApplication extends JsonSerializer implements TypeMap {
 
   static SingleApplication fromMap(Map data) {
     return SingleApplication(
-        data["title"], data["subtitle"], data["background"], IconType.images);
+      title: data["title"],
+      subtitle: data["subtitle"],
+      background: data["background"],
+      icon: data["icon"],
+      open: data["open"],
+      imgicon: data["imgicon"] ?? false,
+    );
+  }
+
+  Widget buildIcon() {
+    if (imgicon) {
+      return Image.network(
+        icon,
+        height: 45,
+        width: 45,
+      );
+    } else {
+      return Icon(
+        IconData(
+          int.parse(icon["code"]),
+          fontFamily: icon["fontfamily"],
+          fontPackage: icon["fontpackage"],
+        ),
+        color: Colors.grey,
+        size: 45,
+      );
+    }
   }
 }
 
 class ApplicationList extends JsonSerializer implements TypeMap {
   final List<SingleApplication> apps;
+  final String title;
+  final String subtitle;
   static final empty = ApplicationList([]);
 
-  ApplicationList(this.apps);
+  ApplicationList(
+    this.apps, {
+    this.title = "",
+    this.subtitle = "",
+  });
 
   static ApplicationList fetch() {
-    return fromString("{data}");
+    throw UnimplementedError("TODO");
   }
 
   @override
   Map<K, V> toMap<K, V>() {
-    return {"apps": apps.map((e) => e.toMap()).toList()}.cast<K, V>();
+    return {
+      "apps": apps.map((e) => e.toMap()).toList(),
+      "title": title,
+      "subtitle": subtitle
+    }.cast<K, V>();
   }
 
   static ApplicationList fromString(String data) {
-    List<Map> apps = JsonSerializerStatic.decode(data)["apps"];
-    return ApplicationList(List.generate(
-        apps.length, (index) => SingleApplication.fromMap(apps[index])));
+    Map<String, dynamic> map = JsonSerializerStatic.decode(data);
+    return ApplicationList(
+      List.generate(map["apps"].length,
+          (index) => SingleApplication.fromMap(map["apps"][index])),
+      title: map["title"],
+      subtitle: map["subtitle"],
+    );
   }
 }

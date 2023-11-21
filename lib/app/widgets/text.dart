@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:markdown_widget/widget/markdown.dart';
+import 'package:nitoritoolbox/app/widgets/utils.dart';
 
 class NitoriText extends StatelessWidget {
   final bool selectable;
@@ -32,6 +34,24 @@ class NitoriText extends StatelessWidget {
             data,
             style: style,
           );
+  }
+}
+
+class NitoriAsset extends StatelessWidget {
+  final String asset;
+  const NitoriAsset(this.asset, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SmartFutureBuilder(
+      future: rootBundle.loadString(asset),
+      smartbuilder: (context, data) {
+        return MarkdownWidget(
+          data: data,
+          shrinkWrap: true,
+        );
+      },
+    );
   }
 }
 
