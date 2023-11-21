@@ -37,12 +37,12 @@ jobs:
           flutter clean
           flutter config --enable-windows-desktop
           flutter build windows
-          cp target/release/nitori_core.dll build/windows/runner/Release/
+          cp target/release/nitori_core.dll build/windows/x64/runner/Release/
       - name: Upload Zip
         uses: actions/upload-artifact@v3.1.2
         with:
           name: NitoriToolbox Zip
-          path: 'build/windows/runner/Release/*'
+          path: 'build/windows/x64/runner/Release/*'
       - name: Build MSIX
         run: |
           flutter clean
@@ -53,4 +53,4 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: NitoriToolbox MSIX
-          path: 'build/windows/runner/Release/*.msix'
+          path: 'build/windows/x64/runner/Release/*.msix'
