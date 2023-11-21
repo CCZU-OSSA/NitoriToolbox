@@ -47,7 +47,7 @@ jobs:
         run: |
           flutter clean
           dart run msix:build
-          cp target/release/nitori_core.dll build/windows/runner/Release/
+          cp target/release/nitori_core.dll build/windows/x64/runner/Release/
           dart run msix:pack
       - name: Upload Zip
         uses: actions/upload-artifact@v3.1.2
