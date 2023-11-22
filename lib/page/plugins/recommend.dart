@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:nitoritoolbox/app/protocol/store.dart';
+import 'package:nitoritoolbox/app/protocol/recommend.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/widgets/scrollable.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
@@ -20,15 +20,16 @@ class _StateStorePage extends State<StorePage> {
     return ScaffoldPage.scrollable(
         header: banner(
           context,
-          image: "resource/images/store.png",
-          title: "商店",
-          subtitle: "STORE",
+          image: "resource/images/recommend.png",
+          title: "应用推荐",
+          subtitle: "RECOMMEMD",
         ),
         children: [
-          const NitoriAsset("resource/text/markdown/store.md"),
+          const NitoriAsset("resource/text/markdown/recommend.md"),
           const NitoriTitle("Build-In Packages"),
           SmartFutureBuilder(
-              future: rootBundle.loadString("resource/data/store/daily.json"),
+              future:
+                  rootBundle.loadString("resource/data/recommend/daily.json"),
               smartbuilder: (context, data) {
                 var al = ApplicationList.fromString(data);
                 return NitoriHorizonScrollView(

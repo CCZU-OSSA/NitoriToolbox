@@ -5,7 +5,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
-import 'package:nitoritoolbox/page/plugins/store.dart';
+import 'package:nitoritoolbox/page/plugins/recommend.dart';
 import 'package:nitoritoolbox/page/plugins/sysinfo.dart';
 import 'package:provider/provider.dart';
 
@@ -61,8 +61,8 @@ class StateApplicationMain extends State<ApplicationMain> {
       "sep0": PaneItemSeparator(),
       "header0": PaneItemHeader(header: const NitoriText("官方插件")),
       "archiver": PaneItem(
-          title: text("商店"),
-          icon: const Icon(FluentIcons.archive),
+          title: text("应用推荐"),
+          icon: const Icon(FluentIcons.like),
           body: const StorePage()),
       "sysinfo": PaneItem(
           title: text("系统信息"),
