@@ -43,14 +43,14 @@ jobs:
         with:
           name: NitoriToolbox Zip
           path: 'build/windows/x64/runner/Release/*'
-      - name: Build MSIX
-        run: |
-          flutter clean
-          dart run msix:build
-          cp target/release/nitori_core.dll build/windows/x64/runner/Release/
-          dart run msix:pack
-      - name: Upload Zip
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: NitoriToolbox MSIX
-          path: 'build/windows/x64/runner/Release/*.msix'
+      #- name: Build MSIX
+      #  run: |
+      #    flutter clean
+      #    dart run msix:build
+      #    cp target/release/nitori_core.dll build/windows/x64/runner/Release/
+      #    dart run msix:pack
+      #- name: Upload Zip
+      #  uses: actions/upload-artifact@v3.1.2
+      #  with:
+      #    name: NitoriToolbox MSIX
+      #    path: 'build/windows/x64/runner/Release/*.msix'

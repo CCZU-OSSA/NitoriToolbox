@@ -82,7 +82,6 @@ flutter:
     - resource/images/settings.png
     - resource/images/about.png
     - resource/images/avatar.png
-    - resource/images/store.png
     - resource/images/nitori_icon.png
     - resource/images/recommend.png
     - resource/text/markdown/recommend.md
