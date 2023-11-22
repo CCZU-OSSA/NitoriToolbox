@@ -7,7 +7,7 @@ import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
-import 'package:nitoritoolbox/app/widgets/resource.dart';
+import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/ffi.dart';

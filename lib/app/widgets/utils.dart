@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/colors.dart';
-import 'package:nitoritoolbox/app/widgets/resource.dart';
+import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 
 const height05 = SizedBox(
@@ -102,6 +102,10 @@ class SmartFutureBuilder<T> extends FutureBuilder<T> {
       required super.future,
       required this.smartbuilder})
       : super(builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            debugPrint(snapshot.error.toString());
+            debugPrint(snapshot.stackTrace.toString());
+          }
           if (snapshot.hasData) {
             var data = snapshot.data;
             if (data != null) {

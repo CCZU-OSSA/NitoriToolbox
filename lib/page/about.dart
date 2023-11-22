@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/widgets/contributor.dart';
-import 'package:nitoritoolbox/app/widgets/resource.dart';
+import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/lang.dart';

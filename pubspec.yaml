@@ -85,6 +85,7 @@ flutter:
     - resource/images/nitori_icon.png
     - resource/images/recommend.png
     - resource/text/markdown/recommend.md
+    - resource/data/recommend/pkg.json
     - resource/data/recommend/daily.json
     - LICENSE
     - README.md
