@@ -31,17 +31,20 @@ class SquareCard extends StatelessWidget {
   final String subtitle;
   final String button;
   final String? background;
+  final double? titleScale;
   final Widget icon;
   final Function() onPressed;
-  const SquareCard(
-      {super.key,
-      this.size = 256,
-      this.button = "OPEN",
-      this.background,
-      required this.title,
-      required this.subtitle,
-      required this.onPressed,
-      required this.icon});
+  const SquareCard({
+    super.key,
+    this.size = 256,
+    this.button = "OPEN",
+    this.background,
+    this.titleScale = 1,
+    required this.title,
+    required this.subtitle,
+    required this.onPressed,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +104,7 @@ class SquareCard extends StatelessWidget {
               children: [
                 NitoriText(
                   title,
-                  size: size / 2 / 10 * 3,
+                  size: size / 2 / 10 * 3 * titleScale!,
                 ),
                 NitoriText(
                   subtitle,

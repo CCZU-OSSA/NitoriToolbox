@@ -13,6 +13,30 @@
                 "fontfamily": "FontAwesomeRegular",
                 "fontpackage": "font_awesome_flutter"
             }
+        },
+        {
+            "title": "OTP",
+            "subtitle": "部署Office全家桶",
+            "open": "https://otp.landian.vip/zh-cn/download.html",
+            "details": "建议下载 \"包含框架\" 的zip版本",
+            "usefonticon": true,
+            "icon": {
+                "code": "0xedce",
+                "fontfamily": "FluentIcons",
+                "fontpackage": "fluent_ui"
+            }
+        },
+        {
+            "title": "Steam++",
+            "titleScale": 0.6,
+            "subtitle": "泛用反代加速软件",
+            "open": "https://steampp.net/",
+            "usefonticon": true,
+            "icon": {
+                "code": "0xf135",
+                "fontfamily": "FontAwesomeSolid",
+                "fontpackage": "font_awesome_flutter"
+            }
         }
     ]
 }

@@ -41,6 +41,7 @@ class _StateStorePage extends State<StorePage> {
                         title: sa.title,
                         subtitle: sa.subtitle,
                         background: sa.background,
+                        titleScale: sa.titleScale,
                         onPressed: () => launchUrlString(sa.open),
                         icon: sa.buildIcon());
                     return sa.details != null

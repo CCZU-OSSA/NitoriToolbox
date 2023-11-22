@@ -1,21 +1,24 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
 
 class SingleApplication extends JsonSerializer implements TypeMap {
   final dynamic icon;
   final String title;
   final String subtitle;
-  final String? background;
   final String open;
-  final String? details;
   final bool usefonticon;
+  final double? titleScale;
+  final String? background;
+  final String? details;
   static final empty = SingleApplication();
 
   SingleApplication({
     this.title = "",
     this.subtitle = "",
     this.background,
-    this.icon = "",
+    this.titleScale = 1,
+    this.icon,
     this.open = "",
     this.details,
     this.usefonticon = false,
@@ -25,6 +28,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
   Map<K, V> toMap<K, V>() {
     return {
       "title": title,
+      "titleScale": titleScale,
       "subtitle": subtitle,
       "background": background,
       "icon": icon,
@@ -47,10 +51,18 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       open: data["open"],
       details: data["details"],
       usefonticon: data["usefonticon"] ?? false,
+      titleScale: data["titleScale"] ?? 1.0,
     );
   }
 
   Widget buildIcon() {
+    if (icon == null) {
+      return const Icon(
+        FontAwesome5Solid.icons,
+        color: Colors.grey,
+        size: 45,
+      );
+    }
     if (!usefonticon) {
       return Image.network(
         icon,
