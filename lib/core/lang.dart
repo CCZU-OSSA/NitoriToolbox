@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:fluent_ui/fluent_ui.dart';
+
 extension JoinExra<T> on List<T> {
   List<RT> joinElementF<RT>(RT sep) {
     List<RT> res = List.from(this);
@@ -48,5 +52,40 @@ extension FPObj on Object {
 
   RT? eqThen<RT>(Object rhs, RT Function() F) {
     return this == rhs ? F() : null;
+  }
+}
+
+extension DirUtils on Directory {
+  Directory check({bool recursive = true}) {
+    if (!absolute.existsSync() ||
+        absolute.statSync().type != FileSystemEntityType.directory) {
+      absolute.createSync(recursive: recursive);
+    }
+    return this;
+  }
+
+  Directory subdir(String name) {
+    return Directory(subpath(name));
+  }
+
+  String subpath(String name) {
+    return "${absolute.path}/$name";
+  }
+
+  File subfile(String name) {
+    return File(subpath(name));
+  }
+
+  Directory move(Directory target) {
+    throw UnimplementedError("TODO");
+  }
+}
+
+extension TooltipUtils on Widget {
+  Tooltip tooltip(String message) {
+    return Tooltip(
+      message: message,
+      child: this,
+    );
   }
 }

@@ -37,6 +37,17 @@
                 "fontfamily": "FontAwesomeSolid",
                 "fontpackage": "font_awesome_flutter"
             }
+        },
+        {
+            "title": "Geek",
+            "subtitle": "免费卸载软件",
+            "open": "https://geekuninstaller.com/download",
+            "usefonticon": true,
+            "icon": {
+                "code": "0xe74d",
+                "fontfamily": "FluentIcons",
+                "fontpackage": "fluent_ui"
+            }
         }
     ]
 }

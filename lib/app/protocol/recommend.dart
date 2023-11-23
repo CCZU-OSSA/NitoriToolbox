@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
 
 class SingleApplication extends JsonSerializer implements TypeMap {
@@ -8,6 +9,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
   final String subtitle;
   final String open;
   final bool usefonticon;
+  final bool usefaicon;
   final double? titleScale;
   final String? background;
   final String? details;
@@ -22,6 +24,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
     this.open = "",
     this.details,
     this.usefonticon = false,
+    this.usefaicon = false,
   });
 
   @override
@@ -33,6 +36,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       "background": background,
       "icon": icon,
       "usefonticon": usefonticon,
+      "usefaicon": usefaicon,
       "open": open,
       "details": details
     }.cast<K, V>();
@@ -51,6 +55,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       open: data["open"],
       details: data["details"],
       usefonticon: data["usefonticon"] ?? false,
+      usefaicon: data["usefaicon"] ?? false,
       titleScale: data["titleScale"] ?? 1.0,
     );
   }
@@ -70,15 +75,22 @@ class SingleApplication extends JsonSerializer implements TypeMap {
         width: 45,
       );
     } else {
-      return Icon(
-        IconData(
-          int.parse(icon["code"]),
-          fontFamily: icon["fontfamily"],
-          fontPackage: icon["fontpackage"],
-        ),
-        color: Colors.grey,
-        size: 45,
+      var data = IconData(
+        int.parse(icon["code"]),
+        fontFamily: icon["fontfamily"],
+        fontPackage: icon["fontpackage"],
       );
+      return usefaicon
+          ? FaIcon(
+              data,
+              color: Colors.grey,
+              size: 45,
+            )
+          : Icon(
+              data,
+              color: Colors.grey,
+              size: 45,
+            );
     }
   }
 }

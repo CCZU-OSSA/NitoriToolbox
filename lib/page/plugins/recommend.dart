@@ -53,10 +53,7 @@ class _StateStorePage extends State<StorePage> {
                                   onPressed: () => launchUrlString(sa.open),
                                   icon: sa.buildIcon());
                               return sa.details != null
-                                  ? Tooltip(
-                                      message: sa.details,
-                                      child: card,
-                                    )
+                                  ? card.tooltip(sa.details!)
                                   : card;
                             }),
                           );

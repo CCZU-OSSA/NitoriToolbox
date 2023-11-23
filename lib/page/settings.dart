@@ -20,13 +20,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingState extends State<SettingsPage> {
-  double? opacity;
-  double? bgOpactiy;
+  late double opacity;
+  late double bgOpactiy;
   @override
   Widget build(BuildContext context) {
     ApplicationBus bus = ApplicationBus.instance(context);
-    opacity ??= bus.config.getOrWrite("opacity", 0.9);
-    bgOpactiy ??= bus.config.getOrWrite("custom_bg_opactiy", 0.2);
+    opacity = bus.config.getOrWrite("opacity", 0.9);
+    bgOpactiy = bus.config.getOrWrite("custom_bg_opactiy", 0.2);
     return ScaffoldPage.scrollable(
         header: banner(context,
             image: imagePNG("settings"), title: "设置", subtitle: "SETTINGS"),
@@ -136,7 +136,7 @@ class _SettingState extends State<SettingsPage> {
             title: const NitoriText("背景透明度"),
             subtitle: const NitoriText("Opacity"),
             trailing: Slider(
-                value: opacity!,
+                value: opacity,
                 label: "$opacity",
                 max: 1,
                 min: 0,
@@ -192,7 +192,7 @@ class _SettingState extends State<SettingsPage> {
                       ListTile(
                         title: const NitoriText("图片透明度"),
                         trailing: Slider(
-                            value: bgOpactiy!,
+                            value: bgOpactiy,
                             label: "$bgOpactiy",
                             max: 1,
                             min: 0,

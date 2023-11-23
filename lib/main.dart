@@ -48,12 +48,12 @@ class ApplicationMain extends StatefulWidget {
 }
 
 class StateApplicationMain extends State<ApplicationMain> {
-  PaneRouter? __router;
+  late PaneRouter __router;
 
   @override
   void initState() {
     super.initState();
-    __router ??= PaneRouter(body: {
+    __router = PaneRouter(body: {
       "home": PaneItem(
           title: text("主页"),
           icon: const Icon(FluentIcons.home),
@@ -117,9 +117,9 @@ class StateApplicationMain extends State<ApplicationMain> {
                         style: TextStyle(fontSize: 20),
                       )),
                   pane: NavigationPane(
-                      selected: __router!.select,
-                      items: __router!.body.values.toList(),
-                      footerItems: __router!.footer.values.toList()),
+                      selected: __router.select,
+                      items: __router.body.values.toList(),
+                      footerItems: __router.footer.values.toList()),
                 ))));
   }
 }

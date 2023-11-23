@@ -59,29 +59,46 @@ class _StateAboutPage extends State<AboutPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                  icon: const Icon(
-                    FontAwesomeIcons.github,
-                    size: 80,
-                  ),
-                  onPressed: () => launchUrlString(
-                      "https://github.com/CCZU-OSSA/NitoriToolbox")),
-              width05,
+                      icon: const FaIcon(
+                        FontAwesomeIcons.github,
+                        size: 80,
+                      ),
+                      onPressed: () => launchUrlString(
+                          "https://github.com/CCZU-OSSA/NitoriToolbox"))
+                  .tooltip("项目地址"),
               IconButton(
-                  icon: const Icon(
-                    FontAwesomeIcons.qq,
-                    size: 80,
-                  ),
-                  onPressed: () => launchUrlString(
-                      "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=7pLS1X9ZExK2yc0OOYtU3_EgxrAO-4HG&authKey=ZcNnuiuKh3sW5HrahOHnlJ0elCdTBX3N1L3wxNXHbmJNu%2BCQ50iivsgL%2FXY4AX%2Ft&noverify=0&group_code=947560153")),
-              width05,
+                      icon: const FaIcon(
+                        FontAwesomeIcons.qq,
+                        size: 80,
+                      ),
+                      onPressed: () => launchUrlString(
+                          "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=7pLS1X9ZExK2yc0OOYtU3_EgxrAO-4HG&authKey=ZcNnuiuKh3sW5HrahOHnlJ0elCdTBX3N1L3wxNXHbmJNu%2BCQ50iivsgL%2FXY4AX%2Ft&noverify=0&group_code=947560153"))
+                  .tooltip("QQ群"),
               IconButton(
-                  icon: const Icon(
-                    FluentIcons.bug_solid,
-                    size: 80,
-                  ),
-                  onPressed: () => launchUrlString(
-                      "https://github.com/CCZU-OSSA/NitoriToolbox/issues"))
-            ],
+                      icon: const Icon(
+                        FluentIcons.home_solid,
+                        size: 80,
+                      ),
+                      onPressed: () =>
+                          launchUrlString("https://cczu-ossa.github.io/home/"))
+                  .tooltip("OSSA主页"),
+              IconButton(
+                      icon: const FaIcon(
+                        FontAwesomeIcons.discord,
+                        size: 80,
+                      ),
+                      onPressed: () =>
+                          launchUrlString("https://discord.gg/4GcpTTCh"))
+                  .tooltip("Discord频道"),
+              IconButton(
+                      icon: const FaIcon(
+                        FluentIcons.bug_solid,
+                        size: 80,
+                      ),
+                      onPressed: () => launchUrlString(
+                          "https://github.com/CCZU-OSSA/NitoriToolbox/issues"))
+                  .tooltip("汇报错误/提供意见")
+            ].joinElementF(width05),
           ),
           const NitoriTitle("开源协议"),
           const Card(child: NitoriAsset("LICENSE"))
