@@ -53,33 +53,37 @@ class StateApplicationMain extends State<ApplicationMain> {
   @override
   void initState() {
     super.initState();
-    __router = PaneRouter(body: {
-      "home": PaneItem(
-          title: text("主页"),
-          icon: const Icon(FluentIcons.home),
-          body: const HomePage()),
-      "sep0": PaneItemSeparator(),
-      "header0": PaneItemHeader(header: const NitoriText("官方插件")),
-      "archiver": PaneItem(
-          title: text("应用推荐"),
-          icon: const Icon(FluentIcons.like),
-          body: const StorePage()),
-      "sysinfo": PaneItem(
-          title: text("系统信息"),
-          icon: const Icon(FluentIcons.info),
-          body: const SystemInfoPage()),
-      "sep1": PaneItemSeparator(),
-      "header1": PaneItemHeader(header: const NitoriText("社区插件"))
-    }, footer: {
-      "settings": PaneItem(
-          title: text("设置"),
-          icon: const Icon(FluentIcons.settings),
-          body: const SettingsPage()),
-      "abouts": PaneItem(
-          title: text("关于"),
-          icon: const Icon(FluentIcons.chat),
-          body: const AboutPage())
-    }, setState: setState);
+    __router = PaneRouter(
+      body: {
+        "home": PaneItem(
+            title: text("主页"),
+            icon: const Icon(FluentIcons.home),
+            body: const HomePage()),
+        "sep0": PaneItemSeparator(),
+        "header0": PaneItemHeader(header: const NitoriText("官方插件")),
+        "archiver": PaneItem(
+            title: text("应用推荐"),
+            icon: const Icon(FluentIcons.like),
+            body: const StorePage()),
+        "sysinfo": PaneItem(
+            title: text("系统信息"),
+            icon: const Icon(FluentIcons.info),
+            body: const SystemInfoPage()),
+        "sep1": PaneItemSeparator(),
+        "header1": PaneItemHeader(header: const NitoriText("社区插件")),
+      },
+      footer: {
+        "settings": PaneItem(
+            title: text("设置"),
+            icon: const Icon(FluentIcons.settings),
+            body: const SettingsPage()),
+        "abouts": PaneItem(
+            title: text("关于"),
+            icon: const Icon(FluentIcons.chat),
+            body: const AboutPage())
+      },
+      setState: setState,
+    );
   }
 
   @override

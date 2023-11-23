@@ -43,7 +43,17 @@ class PaneRouter {
           },
         );
         _nameindex[element.key] = v;
+        if (val is NitoriPaneItemExpander) {
+          __allocateID(val.itemmap);
+        }
       }
     }
   }
+}
+
+class NitoriPaneItemExpander extends PaneItemExpander {
+  final Map<String, NavigationPaneItem> itemmap;
+  NitoriPaneItemExpander(
+      {required super.icon, required this.itemmap, required super.body})
+      : super(items: itemmap.values.toList());
 }

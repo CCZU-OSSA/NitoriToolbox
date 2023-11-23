@@ -11,6 +11,7 @@ import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/ffi.dart';
+import 'package:nitoritoolbox/core/lang.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -49,7 +50,8 @@ class _SettingState extends State<SettingsPage> {
             subtitle: const NitoriText("Cache"),
             trailing: Row(children: [
               NitoriText(() {
-                var cache = Directory("cache");
+                var cache =
+                    bus.dataManager.getDirectory().subdir("cache").check();
                 if (cache.existsSync()) {
                   double total = 0;
                   cache.listSync(recursive: true).forEach((element) {
@@ -67,8 +69,10 @@ class _SettingState extends State<SettingsPage> {
                   child: const NitoriText("清空"),
                   onPressed: () {
                     setState(() {
-                      var cache = Directory("cache");
-                      cache
+                      bus.dataManager
+                          .getDirectory()
+                          .subdir("cache")
+                          .check()
                           .listSync(recursive: true)
                           .forEach((element) => element.delete());
                     });

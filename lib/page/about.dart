@@ -22,7 +22,7 @@ class _StateAboutPage extends State<AboutPage> {
         "https://avatars.githubusercontent.com/u/88923783",
         home: "https://github.com/H2Sxxa",
         name: "H2Sxxa",
-        role: "程序 / 美术",
+        role: "程序",
       ),
       const Contributor(
         "https://avatars.githubusercontent.com/u/139380707",
