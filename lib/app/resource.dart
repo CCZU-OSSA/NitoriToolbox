@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
+import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/core/lang.dart';
 
 const String root = "resource";
@@ -34,5 +36,7 @@ class LocalDataManager {
     throw UnimplementedError("TODO");
   }
 
-  
+  static LocalDataManager instance(BuildContext context) {
+    return ApplicationBus.instance(context).dataManager;
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:nitoritoolbox/app/abc/serial.dart';
 import 'package:nitoritoolbox/app/protocol/recommend.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
@@ -17,8 +18,29 @@ class StorePage extends StatefulWidget {
 }
 
 class _StateStorePage extends State<StorePage> {
+  Widget buildView(ApplicationList applicationList) {
+    return NitoriHorizonScrollView(
+      title: applicationList.title,
+      subtitle: applicationList.subtitle,
+      content: List.generate(applicationList.apps.length, (index) {
+        var sa = applicationList.apps[index];
+        var card = SquareCard(
+            title: sa.title,
+            subtitle: sa.subtitle,
+            background: sa.background,
+            titleScale: sa.titleScale,
+            onPressed: () => launchUrlString(sa.open),
+            icon: sa.buildIcon());
+        return sa.details != null ? card.tooltip(sa.details!) : card;
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    var dm = LocalDataManager.instance(context);
+    var rd = dm.getDirectory().subdir("recommend-local").check();
+    var localpkg = rd.subfile("pkg.json");
     return SmartFutureBuilder(
         future: recommends(),
         smartbuilder: (context, locals) {
@@ -38,32 +60,21 @@ class _StateStorePage extends State<StorePage> {
                     locals.length,
                     (index) => SmartFutureBuilder(
                         future: rootBundle.loadString(locals[index]),
-                        smartbuilder: (context, data) {
-                          var al = ApplicationList.fromString(data);
-                          return NitoriHorizonScrollView(
-                            title: al.title,
-                            subtitle: al.subtitle,
-                            content: List.generate(al.apps.length, (index) {
-                              var sa = al.apps[index];
-                              var card = SquareCard(
-                                  title: sa.title,
-                                  subtitle: sa.subtitle,
-                                  background: sa.background,
-                                  titleScale: sa.titleScale,
-                                  onPressed: () => launchUrlString(sa.open),
-                                  icon: sa.buildIcon());
-                              return sa.details != null
-                                  ? card.tooltip(sa.details!)
-                                  : card;
-                            }),
-                          );
-                        }),
+                        smartbuilder: (context, data) =>
+                            buildView(ApplicationList.fromString(data))),
                   ))
-                  .expandAll(
-                [
-                  const NitoriTitle("Local Packages"),
-                ],
-              ));
+                  .expandAll(localpkg.existsSync()
+                      ? [
+                          const NitoriTitle("Local Packages"),
+                        ].castF<Widget>().expandAll(ListUtils.generatefrom(
+                          JsonSerializerStatic.decoden(
+                                  localpkg.readAsStringSync())["packages"]
+                              as List<String>,
+                          (v) => SmartFutureBuilder(
+                              future: rd.subfile("$v.json").readAsString(),
+                              smartbuilder: (context, data) =>
+                                  buildView(ApplicationList.fromString(data)))))
+                      : []));
         });
   }
 }

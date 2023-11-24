@@ -19,6 +19,14 @@ extension JsonSerializerStatic on JsonSerializer {
     return jsonDecode(data.toString());
   }
 
+  static Map<K, V> decoden<K, V, I>(I data) {
+    try {
+      return jsonDecode(data.toString());
+    } catch (_) {
+      return {};
+    }
+  }
+
   static String encode<K, V>(Map<K, V> map) {
     return jsonEncode(map);
   }

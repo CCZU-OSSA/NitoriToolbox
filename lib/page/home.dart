@@ -12,7 +12,8 @@ class HomePage extends StatelessWidget {
     var bus = ApplicationBus.instance(context);
     return ScaffoldPage.scrollable(children: [
       Card(
-          borderColor: getCurrentThemePriColor(context).withOpacity(0.8),
+          borderColor:
+              getCurrentThemePriColor(context, reverse: true).withOpacity(0.8),
           borderRadius: BorderRadius.circular(8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

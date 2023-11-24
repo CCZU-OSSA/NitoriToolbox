@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 
-extension JoinExra<T> on List<T> {
+extension ListUtils<T> on List<T> {
   List<RT> joinElementF<RT>(RT sep) {
     List<RT> res = List.from(this);
     if (length > 1) {
@@ -25,6 +25,15 @@ extension JoinExra<T> on List<T> {
 
   List<T> expandAll(Iterable<T> i) {
     addAll(i);
+    return this;
+  }
+
+  static List<RT> generatefrom<I, RT>(List<I> v, RT Function(I) generator) {
+    return List.generate(v.length, (index) => generator(v[index]));
+  }
+
+  List<T> expandT(T i) {
+    add(i);
     return this;
   }
 
