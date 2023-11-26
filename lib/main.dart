@@ -5,6 +5,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:nitoritoolbox/page/plugins/localbin.dart';
 import 'package:nitoritoolbox/page/plugins/recommend.dart';
 import 'package:nitoritoolbox/page/plugins/sysinfo.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +65,11 @@ class StateApplicationMain extends State<ApplicationMain> {
         "archiver": PaneItem(
             title: text("应用推荐"),
             icon: const Icon(FluentIcons.like),
-            body: const StorePage()),
+            body: const RecommendPage()),
+        "localbin": PaneItem(
+            title: text("本地应用"),
+            icon: const Icon(FluentIcons.all_apps),
+            body: const LocalBinPage()),
         "sysinfo": PaneItem(
             title: text("系统信息"),
             icon: const Icon(FluentIcons.info),

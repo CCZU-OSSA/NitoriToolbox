@@ -90,11 +90,29 @@ extension DirUtils on Directory {
   }
 }
 
-extension TooltipUtils on Widget {
+extension WidgetUtils on Widget {
   Tooltip tooltip(String message) {
     return Tooltip(
       message: message,
       child: this,
+    );
+  }
+
+  Widget makeButton({
+    VoidCallback? onPressed,
+    VoidCallback? onLongPressed,
+    VoidCallback? onTapDown,
+    VoidCallback? onTapUp,
+    double insets = 5,
+  }) {
+    return IconButton(
+      icon: this,
+      onPressed: onPressed ?? () {},
+      onLongPress: onLongPressed,
+      onTapDown: onTapDown,
+      onTapUp: onTapUp,
+      style: ButtonStyle(
+          padding: ButtonState.resolveWith((states) => EdgeInsets.all(insets))),
     );
   }
 }

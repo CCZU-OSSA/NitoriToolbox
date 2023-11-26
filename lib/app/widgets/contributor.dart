@@ -65,34 +65,34 @@ class _ContributorState extends State<Contributor> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => widget.home != null ? launchUrlString(widget.home!) : (),
-        child: Column(children: [
-          data.hasData
-              ? Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: data.getData(),
-                      ),
-                      borderRadius: BorderRadius.circular(1000),
-                      boxShadow: [
-                        data.getData() is AssetImage
-                            ? const BoxShadow(color: Colors.transparent)
-                            : BoxShadow(
-                                offset: const Offset(0, 3),
-                                color: Colors.black.withOpacity(0.4),
-                                blurRadius: 10)
-                      ]),
-                  child: const SizedBox(
-                    height: 80,
-                    width: 80,
+    return Column(children: [
+      data.hasData
+          ? Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: data.getData(),
                   ),
-                )
-              : ProgressRing(value: prograss),
-          height05,
-          NitoriText(widget.name ?? "匿名"),
-          height05,
-          NitoriText(widget.role ?? "贡献者")
-        ]));
+                  borderRadius: BorderRadius.circular(1000),
+                  boxShadow: [
+                    data.getData() is AssetImage
+                        ? const BoxShadow(color: Colors.transparent)
+                        : BoxShadow(
+                            offset: const Offset(0, 3),
+                            color: Colors.black.withOpacity(0.4),
+                            blurRadius: 10)
+                  ]),
+              child: const SizedBox(
+                height: 80,
+                width: 80,
+              ),
+            )
+          : ProgressRing(value: prograss),
+      height05,
+      NitoriText(widget.name ?? "匿名"),
+      height05,
+      NitoriText(widget.role ?? "贡献者")
+    ]).makeButton(
+      onPressed: () => widget.home != null ? launchUrlString(widget.home!) : (),
+    );
   }
 }

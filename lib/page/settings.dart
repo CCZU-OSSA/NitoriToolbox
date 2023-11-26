@@ -43,7 +43,6 @@ class _SettingState extends State<SettingsPage> {
                       bus.config.writeKey("save_win_size", v);
                     })),
           ),
-          height05,
           CardListTile(
             leading: const Icon(FluentIcons.broom),
             title: const NitoriText("缓存"),
@@ -134,7 +133,6 @@ class _SettingState extends State<SettingsPage> {
                       )),
             ),
           ),
-          height05,
           CardListTile(
             leading: const Icon(FluentIcons.graph_symbol),
             title: const NitoriText("背景透明度"),
@@ -151,9 +149,7 @@ class _SettingState extends State<SettingsPage> {
                       bus.config.writeKey("opacity", opacity);
                     })),
           ),
-          height05,
-          Card(
-              child: ListTile(
+          CardListTile(
             title: const NitoriText("窗口材质"),
             subtitle: const NitoriText("Material"),
             leading: const Icon(FluentIcons.cube_shape),
@@ -170,8 +166,7 @@ class _SettingState extends State<SettingsPage> {
                             });
                           })),
                 )),
-          )),
-          height05,
+          ),
           Card(
               child: Expander(
                   trailing: ToggleSwitch(

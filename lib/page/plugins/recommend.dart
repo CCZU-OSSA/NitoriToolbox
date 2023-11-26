@@ -10,14 +10,14 @@ import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/lang.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class StorePage extends StatefulWidget {
-  const StorePage({super.key});
+class RecommendPage extends StatefulWidget {
+  const RecommendPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _StateStorePage();
+  State<StatefulWidget> createState() => _StateRecommendPage();
 }
 
-class _StateStorePage extends State<StorePage> {
+class _StateRecommendPage extends State<RecommendPage> {
   Widget buildView(ApplicationList applicationList) {
     return NitoriHorizonScrollView(
       title: applicationList.title,

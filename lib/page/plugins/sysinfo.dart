@@ -107,20 +107,17 @@ class _StateSystemInfoPage extends State<SystemInfoPage> {
           subtitle: const NitoriText("Machine Name"),
           trailing: NitoriText(sysinfo["CSName"], selectable: true),
         ),
-        height05,
         CardListTile(
             leading: const Icon(FluentIcons.info_solid),
             title: const NitoriText("系统版本"),
             subtitle: const NitoriText("System Version"),
             trailing: NitoriText("${sysinfo["Caption"]}#${sysinfo["Version"]}",
                 selectable: true)),
-        height05,
         CardListTile(
             leading: const Icon(FluentIcons.cube_shape_solid),
             title: const NitoriText("系统架构"),
             subtitle: const NitoriText("System Arch"),
             trailing: NitoriText(sysinfo["OSArchitecture"], selectable: true)),
-        height05,
         CardListTile(
           leading: const Icon(FluentIcons.user_window),
           title: const NitoriText("注册用户"),
