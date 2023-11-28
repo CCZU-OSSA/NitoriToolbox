@@ -191,6 +191,7 @@ class _SettingState extends State<SettingsPage> {
                       ListTile(
                         title: const NitoriText("图片透明度"),
                         trailing: Slider(
+                            label: "$bgOpactiy",
                             value: bgOpactiy!,
                             max: 1,
                             min: 0,
@@ -248,28 +249,26 @@ class _SettingState extends State<SettingsPage> {
                       ),
                       height05,
                       ListTile(
-                        leading: const NitoriText("本地图片地址", size: 16),
-                        title: Button(
-                            child: const NitoriText("更换"),
-                            onPressed: () {
-                              FilePicker.platform
-                                  .pickFiles(
-                                      type: FileType.image,
-                                      allowMultiple: false)
-                                  .then((value) => setState(() {
-                                        bus.appSetState!(() {
-                                          if (value != null) {
-                                            bus.config.writeKey(
-                                                "bg_path", value.paths[0]);
-                                          }
-                                        });
-                                      }));
-                            }),
+                        title: const NitoriText("本地图片地址"),
                         trailing: SizedBox(
                           width: 400,
                           child: NitoriText(
-                              bus.config.getOrDefault("bg_path", ""),
-                              size: 12),
+                            bus.config.getOrDefault("bg_path", "无"),
+                            size: 12,
+                            overflow: TextOverflow.ellipsis,
+                          ).makeButton(onPressed: () {
+                            FilePicker.platform
+                                .pickFiles(
+                                    type: FileType.image, allowMultiple: false)
+                                .then((value) => setState(() {
+                                      bus.appSetState!(() {
+                                        if (value != null) {
+                                          bus.config.writeKey(
+                                              "bg_path", value.paths[0]);
+                                        }
+                                      });
+                                    }));
+                          }),
                         ),
                       ),
                       height05,

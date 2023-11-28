@@ -10,19 +10,24 @@ class NitoriText extends StatelessWidget {
   final double? size;
   final Color? color;
   final FontStyle? fontStyle;
-  const NitoriText(this.data,
-      {super.key,
-      this.selectable = false,
-      this.isdisplay = false,
-      this.size,
-      this.color,
-      this.fontStyle});
+  final TextOverflow? overflow;
+  const NitoriText(
+    this.data, {
+    super.key,
+    this.selectable = false,
+    this.isdisplay = false,
+    this.size,
+    this.color,
+    this.fontStyle,
+    this.overflow,
+  });
 
   @override
   Widget build(BuildContext context) {
     var style = TextStyle(
         fontFamily: isdisplay ? "Display" : "Default",
         fontSize: size,
+        overflow: overflow,
         color: color,
         fontStyle: fontStyle);
     return selectable

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
+import 'package:nitoritoolbox/core/lang.dart';
 
 class SingleApplication extends JsonSerializer implements TypeMap {
   final dynamic icon;
@@ -10,6 +13,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
   final String open;
   final bool usefonticon;
   final bool usefaicon;
+  final bool usenetworkicon;
   final double? titleScale;
   final String? background;
   final String? details;
@@ -24,6 +28,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
     this.open = "",
     this.details,
     this.usefonticon = false,
+    this.usenetworkicon = false,
     this.usefaicon = false,
   });
 
@@ -37,6 +42,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       "icon": icon,
       "usefonticon": usefonticon,
       "usefaicon": usefaicon,
+      "usenetworkicon": usenetworkicon,
       "open": open,
       "details": details
     }.cast<K, V>();
@@ -54,14 +60,15 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       icon: data["icon"],
       open: data["open"],
       details: data["details"],
+      usenetworkicon: data["usenetworkicon"] ?? false,
       usefonticon: data["usefonticon"] ?? false,
       usefaicon: data["usefaicon"] ?? false,
       titleScale: data["titleScale"] ?? 1.0,
     );
   }
 
-  Widget buildIcon() {
-    if (icon == null) {
+  Widget buildIcon({Directory? localdir}) {
+    if (icon == null || (localdir == null && !usenetworkicon)) {
       return const Icon(
         FontAwesome5Solid.icons,
         color: Colors.grey,
@@ -69,11 +76,17 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       );
     }
     if (!usefonticon) {
-      return Image.network(
-        icon,
-        height: 45,
-        width: 45,
-      );
+      return usenetworkicon
+          ? Image.network(
+              icon,
+              height: 45,
+              width: 45,
+            )
+          : Image.file(
+              localdir!.subfile(icon),
+              height: 45,
+              width: 45,
+            );
     } else {
       var data = IconData(
         int.parse(icon["code"]),

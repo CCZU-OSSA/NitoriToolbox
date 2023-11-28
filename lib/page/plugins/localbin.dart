@@ -46,7 +46,7 @@ class _StateLocalBinPage extends State<LocalBinPage> {
           height05,
           NitoriText("Application")
         ],
-      )).makeButton(),
+      )).makeButton().tooltip("message"),
     );
     //var _ =
     //    JsonSerializerStatic.decoden(localpkg.readAsStringSync())["packages"];

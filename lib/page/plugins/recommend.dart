@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
-import 'package:nitoritoolbox/app/protocol/recommend.dart';
+import 'package:nitoritoolbox/app/protocol/application.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/widgets/scrollable.dart';
@@ -18,7 +20,7 @@ class RecommendPage extends StatefulWidget {
 }
 
 class _StateRecommendPage extends State<RecommendPage> {
-  Widget buildView(ApplicationList applicationList) {
+  Widget buildView(ApplicationList applicationList, {Directory? localdir}) {
     return NitoriHorizonScrollView(
       title: applicationList.title,
       subtitle: applicationList.subtitle,
@@ -30,7 +32,7 @@ class _StateRecommendPage extends State<RecommendPage> {
             background: sa.background,
             titleScale: sa.titleScale,
             onPressed: () => launchUrlString(sa.open),
-            icon: sa.buildIcon());
+            icon: sa.buildIcon(localdir: localdir));
         return sa.details != null ? card.tooltip(sa.details!) : card;
       }),
     );
@@ -72,8 +74,9 @@ class _StateRecommendPage extends State<RecommendPage> {
                               as List<String>,
                           (v) => SmartFutureBuilder(
                               future: rd.subfile("$v.json").readAsString(),
-                              smartbuilder: (context, data) =>
-                                  buildView(ApplicationList.fromString(data)))))
+                              smartbuilder: (context, data) => buildView(
+                                  ApplicationList.fromString(data),
+                                  localdir: rd.subdir(v)))))
                       : []));
         });
   }
