@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-
 import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
+import 'package:nitoritoolbox/app/i18n.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
@@ -118,13 +118,12 @@ class _SettingState extends State<SettingsPage> {
             title: const NitoriText("应用主题"),
             subtitle: const NitoriText("Theme"),
             trailing: DropDownButton(
-              menuColor: getCurrentThemePriColor(context),
-              title: NitoriText(getThememodeTranslate(context)),
+              title:
+                  NitoriText(thememodeTR.getTranslate(getThemeMode(context))),
               items: List.generate(
                   3,
                   (index) => MenuFlyoutItem(
-                        text: NitoriText(
-                            translateThememode(ThemeMode.values[index])),
+                        text: NitoriText(thememodeTR.getTranslateIndex(index)),
                         onPressed: () => setState(() {
                           bus.appSetState!(() {
                             bus.config.writeKey("thememode", index);
@@ -155,17 +154,36 @@ class _SettingState extends State<SettingsPage> {
             leading: const Icon(FluentIcons.cube_shape),
             trailing: DropDownButton(
                 menuColor: getCurrentThemePriColor(context),
-                title: NitoriText(getWindowEffectTranslate(context)),
+                title: NitoriText(wineffectTR
+                    .getTranslateIndex(bus.config.getOrWrite("wineffect", 0))),
                 items: List.generate(
-                  5,
+                  supportEffects.length,
                   (index) => MenuFlyoutItem(
-                      text: NitoriText(translateWindowEffect(index)),
+                      text: NitoriText(wineffectTR.getTranslateIndex(index)),
                       onPressed: () => setState(() {
                             bus.appSetState!(() {
                               bus.config.writeKey("wineffect", index);
                             });
                           })),
                 )),
+          ),
+          CardListTile(
+            leading: const Icon(FluentIcons.side_panel),
+            title: const NitoriText("侧边栏布局"),
+            subtitle: const NitoriText("Pane Layout"),
+            trailing: DropDownButton(
+                title: NitoriText(panedisplayTR.getTranslate(PaneDisplayMode
+                    .values[bus.config.getOrWrite("panedisplay", 4)])),
+                items: List.generate(
+                    PaneDisplayMode.values.length,
+                    (index) => MenuFlyoutItem(
+                        text: NitoriText(panedisplayTR
+                            .getTranslate(PaneDisplayMode.values[index])),
+                        onPressed: () => setState(() {
+                              bus.appSetState!(() {
+                                bus.config.writeKey("panedisplay", index);
+                              });
+                            })))),
           ),
           Card(
               child: Expander(

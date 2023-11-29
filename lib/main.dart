@@ -126,6 +126,8 @@ class StateApplicationMain extends State<ApplicationMain> {
                         style: TextStyle(fontSize: 20),
                       )),
                   pane: NavigationPane(
+                      displayMode: PaneDisplayMode
+                          .values[bus.config.getOrWrite("panedisplay", 4)],
                       selected: __router.select,
                       items: __router.body.values.toList(),
                       footerItems: __router.footer.values.toList()),

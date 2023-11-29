@@ -15,21 +15,19 @@ class SingleApplication extends JsonSerializer implements TypeMap {
   final bool usefaicon;
   final bool usenetworkicon;
   final double? titleScale;
-  final String? background;
   final String? details;
   static final empty = SingleApplication();
 
   SingleApplication({
     this.title = "",
     this.subtitle = "",
-    this.background,
-    this.titleScale = 1,
-    this.icon,
     this.open = "",
-    this.details,
+    this.details = "",
     this.usefonticon = false,
     this.usenetworkicon = false,
     this.usefaicon = false,
+    this.titleScale = 1,
+    this.icon,
   });
 
   @override
@@ -38,7 +36,6 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       "title": title,
       "titleScale": titleScale,
       "subtitle": subtitle,
-      "background": background,
       "icon": icon,
       "usefonticon": usefonticon,
       "usefaicon": usefaicon,
@@ -56,7 +53,6 @@ class SingleApplication extends JsonSerializer implements TypeMap {
     return SingleApplication(
       title: data["title"],
       subtitle: data["subtitle"],
-      background: data["background"],
       icon: data["icon"],
       open: data["open"],
       details: data["details"],
@@ -68,7 +64,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
   }
 
   Widget buildIcon({Directory? localdir}) {
-    if (icon == null || (localdir == null && !usenetworkicon)) {
+    if (icon == null || (localdir == null && !usenetworkicon && !usefonticon)) {
       return const Icon(
         FontAwesome5Solid.icons,
         color: Colors.grey,

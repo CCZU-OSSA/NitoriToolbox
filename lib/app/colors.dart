@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mui;
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:nitoritoolbox/app/i18n.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
@@ -47,26 +48,11 @@ bool isLight(BuildContext context) {
   return getBrightness(context) == Brightness.light;
 }
 
-String translateThememode(ThemeMode mode) {
-  switch (mode) {
-    case ThemeMode.dark:
-      return "🌙深色模式";
-    case ThemeMode.light:
-      return "🔆浅色模式";
-    default:
-      return "🌗跟随系统";
-  }
-}
-
 Color getCurrentThemePriColor(BuildContext context,
     {Color? dark, Color? light, bool reverse = false}) {
   return isDark(context) != reverse
       ? dark ?? Colors.grey
       : light ?? Colors.white;
-}
-
-String getThememodeTranslate(BuildContext context) {
-  return translateThememode(getThemeMode(context));
 }
 
 FluentThemeData darkTheme = FluentThemeData.dark().copyWith(
@@ -78,26 +64,6 @@ FluentThemeData lightTheme = FluentThemeData.light().copyWith(
     accentColor: SystemTheme.accentColor.accent.toAccentColor(),
     typography: Typography.fromBrightness(color: Colors.black.withOpacity(0.87))
         .apply(fontFamily: "Default"));
-
-String getWindowEffectTranslate(BuildContext context) {
-  return translateWindowEffect(
-      ApplicationBus.instance(context).config.getOrWrite("wineffect", 0));
-}
-
-String translateWindowEffect(int effectid) {
-  switch (effectid) {
-    case 1:
-      return "Acrylic";
-    case 2:
-      return "Mica";
-    case 3:
-      return "Tabbed";
-    case 4:
-      return "Aero";
-    default:
-      return "关闭";
-  }
-}
 
 String getWindowsWallpaper() {
   return Directory(
@@ -145,19 +111,8 @@ DecorationImage? getWallpaper(BuildContext context) {
 }
 
 void applyWindowEffect(BuildContext context) async {
-  switch (ApplicationBus.instance(context).config.getOrWrite("wineffect", 0)) {
-    case 1:
-      return Window.setEffect(
-          effect: WindowEffect.acrylic, dark: isDark(context));
-    case 2:
-      return Window.setEffect(effect: WindowEffect.mica, dark: isDark(context));
-    case 3:
-      return Window.setEffect(
-          effect: WindowEffect.tabbed, dark: isDark(context));
-    case 4:
-      return Window.setEffect(effect: WindowEffect.aero, dark: isDark(context));
-    default:
-      return Window.setEffect(
-          effect: WindowEffect.disabled, dark: isDark(context));
-  }
+  Window.setEffect(
+      effect: supportEffects[
+          ApplicationBus.instance(context).config.getOrWrite("wineffect", 0)],
+      dark: isDark(context));
 }

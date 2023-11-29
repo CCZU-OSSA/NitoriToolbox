@@ -86,7 +86,7 @@ flutter:
     - resource/images/recommend.png
     - resource/text/markdown/recommend.md
     - resource/data/recommend/pkg.json
-    - resource/data/recommend/daily.json
+    - resource/data/recommend/daily/pkg.json
     - LICENSE
     - README.md
   # An image asset can refer to one or more resolution-specific "variants", see

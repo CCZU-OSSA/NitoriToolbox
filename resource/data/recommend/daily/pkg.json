@@ -18,7 +18,7 @@
             "title": "OTP",
             "subtitle": "部署Office全家桶",
             "open": "https://otp.landian.vip/zh-cn/download.html",
-            "details": "建议下载 \"包含框架\" 的zip版本",
+            "details": "Office Tool Plus, 建议下载 \"包含框架\" 的zip版本",
             "usefonticon": true,
             "icon": {
                 "code": "0xedce",

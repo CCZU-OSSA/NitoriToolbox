@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
-import 'package:nitoritoolbox/app/abc/serial.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/core/lang.dart';
 
@@ -14,13 +12,6 @@ String image(String name) {
 
 String imagePNG(String name) {
   return "$root/images/$name.png";
-}
-
-Future<List<String>> recommends() async {
-  return (JsonSerializerStatic.decode(await rootBundle
-          .loadString("resource/data/recommend/pkg.json"))["packages"] as List)
-      .map((e) => "resource/data/recommend/$e.json")
-      .toList();
 }
 
 class LocalDataManager {

@@ -1,4 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nitoritoolbox/app/abc/io.dart';
+import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/core/lang.dart';
@@ -31,7 +33,6 @@ class SquareCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String button;
-  final String? background;
   final double? titleScale;
   final Widget icon;
   final Function() onPressed;
@@ -39,7 +40,6 @@ class SquareCard extends StatelessWidget {
     super.key,
     this.size = 256,
     this.button = "OPEN",
-    this.background,
     this.titleScale = 1,
     required this.title,
     required this.subtitle,
@@ -53,28 +53,20 @@ class SquareCard extends StatelessWidget {
       SizedBox(
         height: size,
         width: size,
-        child: Container(
-          decoration: BoxDecoration(
-              image: background != null && background != ""
-                  ? DecorationImage(
-                      image: NetworkImage(background!), opacity: 0.5)
-                  : null),
-          child: Card(
-            borderRadius: BorderRadius.circular(8),
-            child: const SizedBox.expand(),
-          ),
+        child: Card(
+          borderRadius: BorderRadius.circular(8),
+          child: const SizedBox.expand(),
         ),
       ),
       Container(
         decoration: BoxDecoration(
-            borderRadius: background == null
-                ? BorderRadius.circular(8)
-                : const BorderRadius.only(
-                    bottomLeft: Radius.circular(8),
-                    bottomRight: Radius.circular(8)),
-            color: getCurrentThemePriColor(context)),
+            borderRadius: BorderRadius.circular(8),
+            color: getCurrentThemePriColor(context).withOpacity(
+                ApplicationBus.instance(context)
+                    .config
+                    .getOrDefault("opacity", 1.0))),
         child: SizedBox(
-          height: background == null ? size : size / 2.5,
+          height: size,
           width: size,
         ),
       ),

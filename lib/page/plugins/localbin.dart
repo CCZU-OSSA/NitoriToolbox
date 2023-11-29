@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nitoritoolbox/app/abc/serial.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
@@ -22,9 +23,9 @@ class _StateLocalBinPage extends State<LocalBinPage> {
 
   @override
   Widget build(BuildContext context) {
-    var bindir = _dm.getDirectory().subdir("bin").check();
+    var bindir = _dm.getDirectory().subdir("bin-local").check();
     var localpkg = bindir.subfile("pkg.json");
-    if (localpkg.existsSync()) {
+    if (!localpkg.existsSync()) {
       return const Center(
         child: NitoriText(
           "{{ 空 }}",
@@ -44,27 +45,30 @@ class _StateLocalBinPage extends State<LocalBinPage> {
             size: 48,
           ),
           height05,
-          NitoriText("Application")
+          NitoriText(
+            "Application",
+            size: 15,
+          ),
+          NitoriText(
+            "it's a app",
+            size: 10,
+          )
         ],
       )).makeButton().tooltip("message"),
     );
     //var _ =
     //    JsonSerializerStatic.decoden(localpkg.readAsStringSync())["packages"];
-    return ScaffoldPage.scrollable(header: banner(context), children: [
-      const NitoriTitle("应用"),
-      Wrap(
-        children: [
-          onecard,
-          onecard,
-          onecard,
-          onecard,
-          onecard,
-          onecard,
-          onecard,
-          onecard,
-          onecard
-        ],
-      )
-    ]);
+    return SmartFutureBuilder(
+      future: () async {
+        return (JsonSerializerStatic.decoden(
+                await localpkg.readAsString())["packages"] as List)
+            .map((e) => null)
+            .toList();
+      }(),
+      smartbuilder: (BuildContext context, data) {
+        return ScaffoldPage.scrollable(
+            children: [Wrap(children: List.generate(10, (index) => onecard))]);
+      },
+    );
   }
 }
