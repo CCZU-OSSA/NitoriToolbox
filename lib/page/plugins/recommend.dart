@@ -31,7 +31,7 @@ class _StateRecommendPage extends State<RecommendPage> {
             subtitle: sa.subtitle,
             titleScale: sa.titleScale,
             onPressed: () => launchUrlString(sa.open),
-            icon: sa.buildIcon(localdir: localdir));
+            icon: sa.buildIcon(context, localdir: localdir));
         return sa.details != null ? card.tooltip(sa.details!) : card;
       }),
     );

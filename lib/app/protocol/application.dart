@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
+import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/core/lang.dart';
 
 class SingleApplication extends JsonSerializer implements TypeMap {
@@ -63,11 +64,12 @@ class SingleApplication extends JsonSerializer implements TypeMap {
     );
   }
 
-  Widget buildIcon({Directory? localdir}) {
+  Widget buildIcon(BuildContext context,
+      {Directory? localdir, bool reverse = false}) {
     if (icon == null || (localdir == null && !usenetworkicon && !usefonticon)) {
-      return const Icon(
+      return Icon(
         FontAwesome5Solid.icons,
-        color: Colors.grey,
+        color: getCurrentThemePriColor(context, reverse: reverse),
         size: 45,
       );
     }
@@ -92,12 +94,12 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       return usefaicon
           ? FaIcon(
               data,
-              color: Colors.grey,
+              color: getCurrentThemePriColor(context, reverse: reverse),
               size: 45,
             )
           : Icon(
               data,
-              color: Colors.grey,
+              color: getCurrentThemePriColor(context, reverse: reverse),
               size: 45,
             );
     }
