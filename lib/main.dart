@@ -18,15 +18,17 @@ import 'package:nitoritoolbox/app/widgets/keys.dart';
 import 'package:nitoritoolbox/page/settings.dart';
 import 'package:nitoritoolbox/page/home.dart';
 import 'package:nitoritoolbox/page/about.dart';
+import 'package:system_theme/system_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemTheme.accentColor.load();
   await Window.initialize();
   doWhenWindowReady(() {
     final win = appWindow;
     win.title = "Nitori Toolbox";
     win.alignment = Alignment.center;
-    win.minSize = const Size(600, 450);
+    win.minSize = const Size(700, 550);
     win.show();
   });
   AppLifecycleListener(
@@ -109,6 +111,7 @@ class StateApplicationMain extends State<ApplicationMain> {
         themeMode: getThemeMode(context),
         home: NavigationPaneTheme(
             data: NavigationPaneThemeData(
+              highlightColor: SystemTheme.accentColor.accent,
               backgroundColor: getCurrentThemePriColor(context)
                   .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
             ),

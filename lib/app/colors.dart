@@ -4,9 +4,9 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mui;
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:nitoritoolbox/app/i18n.dart';
-import 'package:system_theme/system_theme.dart';
 import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
+import 'package:system_theme/system_theme.dart';
 
 mui.ThemeData getMUITheme(BuildContext context) {
   return mui.Theme.of(context);
