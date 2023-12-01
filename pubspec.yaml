@@ -50,6 +50,7 @@ dependencies:
   archive: ^3.4.9
   path: ^1.8.3
   scrollview_observer: ^1.18.2
+  fluentui_emoji_icon: ^0.0.2
 
 dev_dependencies:
   flutter_test:

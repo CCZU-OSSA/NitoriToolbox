@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:nitoritoolbox/app/widgets/contributor.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
@@ -22,19 +22,16 @@ class _StateAboutPage extends State<AboutPage> {
         "https://avatars.githubusercontent.com/u/88923783",
         home: "https://github.com/H2Sxxa",
         name: "H2Sxxa",
-        role: "程序",
       ),
       const Contributor(
         "https://avatars.githubusercontent.com/u/139380707",
         home: "https://github.com/Mikotoshire",
         name: "岚裘",
-        role: "贡献者",
       ),
       const Contributor(
         "https://avatars.githubusercontent.com/u/140062830",
         home: "https://github.com/F22cat",
         name: "SuzumeArashi",
-        role: "贡献者",
       )
     ]);
     return ScaffoldPage.scrollable(
@@ -46,29 +43,24 @@ class _StateAboutPage extends State<AboutPage> {
             "https://avatars.githubusercontent.com/u/150149909",
             home: "https://github.com/CCZU-OSSA",
             name: "常州大学开源软件协会",
-            role: "(CCZU OSSA)",
           ),
           height20,
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: contributors.joinElementF(const SizedBox(
-                width: 15,
-              ))),
+          Wrap(alignment: WrapAlignment.center, children: contributors),
           const NitoriTitle("链接"),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                      icon: const FaIcon(
-                        FontAwesomeIcons.github,
+                      icon: const Icon(
+                        FontAwesome5Brands.github,
                         size: 80,
                       ),
                       onPressed: () => launchUrlString(
                           "https://github.com/CCZU-OSSA/NitoriToolbox"))
                   .tooltip("项目地址"),
               IconButton(
-                      icon: const FaIcon(
-                        FontAwesomeIcons.qq,
+                      icon: const Icon(
+                        FontAwesome5Brands.qq,
                         size: 80,
                       ),
                       onPressed: () => launchUrlString(
@@ -83,15 +75,15 @@ class _StateAboutPage extends State<AboutPage> {
                           launchUrlString("https://cczu-ossa.github.io/home/"))
                   .tooltip("OSSA主页"),
               IconButton(
-                      icon: const FaIcon(
-                        FontAwesomeIcons.discord,
+                      icon: const Icon(
+                        FontAwesome5Brands.discord,
                         size: 80,
                       ),
                       onPressed: () =>
                           launchUrlString("https://discord.gg/4GcpTTCh"))
                   .tooltip("Discord频道"),
               IconButton(
-                      icon: const FaIcon(
+                      icon: const Icon(
                         FluentIcons.bug_solid,
                         size: 80,
                       ),

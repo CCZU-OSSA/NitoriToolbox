@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
+import 'package:fluentui_emoji_icon/fluentui_emoji_icon.dart';
 
 const height05 = SizedBox(
   height: 5,
@@ -36,31 +37,27 @@ const loading = Column(
 
 Widget banner(BuildContext context,
     {String? image, String? title, String? subtitle}) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      width40,
-      Column(
-        children: [
-          height05,
-          SizedBox(
-              child: Card(
-            borderColor: getCurrentThemePriColor(context, reverse: true)
-                .withOpacity(0.8),
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(image ?? imagePNG("info")),
-          )),
-          height20
-        ],
-      ),
-      width40,
-      Column(
-        children: [
-          NitoriText(title ?? "系统信息", size: 40),
-          NitoriText(subtitle ?? "SYSTEM INFO", size: 30),
-        ],
-      )
-    ],
+  return ListTile(
+    leading: Column(
+      children: [
+        SizedBox(
+            child: Card(
+          borderColor:
+              getCurrentThemePriColor(context, reverse: true).withOpacity(0.8),
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(image ?? imagePNG("info")),
+        )),
+      ],
+    ),
+    title: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      NitoriText(title ?? "系统信息", size: 40),
+      height05,
+      NitoriText(subtitle ?? "SYSTEM INFO", size: 30)
+    ]),
+    trailing: Row(
+      children: [Button(child: const NitoriText("test"), onPressed: () {})],
+    ),
+    contentPadding: const EdgeInsets.all(24),
   );
 }
 

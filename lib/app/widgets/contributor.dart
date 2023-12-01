@@ -13,8 +13,7 @@ class Contributor extends StatefulWidget {
   final String avatar;
   final String? home;
   final String? name;
-  final String? role;
-  const Contributor(this.avatar, {super.key, this.home, this.name, this.role});
+  const Contributor(this.avatar, {super.key, this.home, this.name});
 
   @override
   State<StatefulWidget> createState() => _ContributorState();
@@ -88,9 +87,10 @@ class _ContributorState extends State<Contributor> {
             )
           : ProgressRing(value: prograss),
       height05,
-      NitoriText(widget.name ?? "匿名"),
-      height05,
-      NitoriText(widget.role ?? "贡献者")
+      SizedBox(
+        width: 100,
+        child: NitoriText(widget.name ?? "匿名"),
+      ),
     ]).makeButton(
       onPressed: () => widget.home != null ? launchUrlString(widget.home!) : (),
     );
