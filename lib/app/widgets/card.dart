@@ -84,7 +84,7 @@ class SquareCard extends StatelessWidget {
                     color: Colors.black.withOpacity(0.4))
               ]),
               child: Card(
-                backgroundColor: Colors.white,
+                backgroundColor: getCurrentThemePriColor(context),
                 borderRadius: BorderRadius.circular(8),
                 child: SizedBox(width: size / 4, height: size / 4, child: icon),
               ),

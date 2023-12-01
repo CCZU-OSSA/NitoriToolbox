@@ -91,6 +91,11 @@ class StateApplicationMain extends State<ApplicationMain> {
       },
       setState: setState,
     );
+    ApplicationBus bus = ApplicationBus.instance(context);
+    if (bus.config.getOrDefault("save_win_size", false)) {
+      appWindow.size = Size(bus.config.getOrDefault("win_width", 600),
+          bus.config.getOrDefault("win_height", 450));
+    }
   }
 
   @override
@@ -98,10 +103,6 @@ class StateApplicationMain extends State<ApplicationMain> {
     ApplicationBus bus = ApplicationBus.instance(context);
     bus.appSetState = setState;
     bus.router = __router;
-    if (bus.config.getOrDefault("save_win_size", false)) {
-      appWindow.size = Size(bus.config.getOrDefault("win_width", 600),
-          bus.config.getOrDefault("win_height", 450));
-    }
     applyWindowEffect(context);
     return FluentApp(
         key: rootKey,

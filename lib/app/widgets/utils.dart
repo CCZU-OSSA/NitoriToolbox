@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
-import 'package:fluentui_emoji_icon/fluentui_emoji_icon.dart';
 
 const height05 = SizedBox(
   height: 5,

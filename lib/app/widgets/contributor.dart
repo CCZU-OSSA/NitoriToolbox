@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/bus.dart';
+import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/lang.dart';
@@ -47,7 +48,7 @@ class _ContributorState extends State<Contributor> {
         );
       }
 
-      data.setData(MemoryImage(await f.readAsBytes()));
+      data.setData(FileImage(f));
     } catch (e) {
       data.setData(const AssetImage("resource/images/avatar.png"));
     }
@@ -68,23 +69,22 @@ class _ContributorState extends State<Contributor> {
       data.hasData
           ? Container(
               decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: data.getData(),
-                  ),
-                  borderRadius: BorderRadius.circular(1000),
-                  boxShadow: [
-                    data.getData() is AssetImage
-                        ? const BoxShadow(color: Colors.transparent)
-                        : BoxShadow(
-                            offset: const Offset(0, 3),
-                            color: Colors.black.withOpacity(0.4),
-                            blurRadius: 10)
-                  ]),
-              child: const SizedBox(
-                height: 80,
-                width: 80,
+                border: Border.all(
+                  color: getCurrentThemePriColor(context, reverse: true),
+                  width: 4,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.4),
+                      offset: const Offset(0, 8),
+                      blurRadius: 10)
+                ],
+                shape: BoxShape.circle,
               ),
-            )
+              child: CircleAvatar(
+                radius: 45,
+                backgroundImage: data.getData(),
+              ))
           : ProgressRing(value: prograss),
       height05,
       SizedBox(

@@ -4,8 +4,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/app/abc/serial.dart';
-import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/core/lang.dart';
+import 'package:system_theme/system_theme.dart';
 
 class SingleApplication extends JsonSerializer implements TypeMap {
   final dynamic icon;
@@ -69,7 +69,7 @@ class SingleApplication extends JsonSerializer implements TypeMap {
     if (icon == null || (localdir == null && !usenetworkicon && !usefonticon)) {
       return Icon(
         FontAwesome5Solid.icons,
-        color: getCurrentThemePriColor(context, reverse: reverse),
+        color: SystemTheme.accentColor.accent,
         size: 45,
       );
     }
@@ -94,12 +94,12 @@ class SingleApplication extends JsonSerializer implements TypeMap {
       return usefaicon
           ? FaIcon(
               data,
-              color: getCurrentThemePriColor(context, reverse: reverse),
+              color: SystemTheme.accentColor.accent,
               size: 45,
             )
           : Icon(
               data,
-              color: getCurrentThemePriColor(context, reverse: reverse),
+              color: SystemTheme.accentColor.accent,
               size: 45,
             );
     }
