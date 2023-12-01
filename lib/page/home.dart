@@ -3,6 +3,7 @@ import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:system_theme/system_theme.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -21,8 +22,7 @@ class HomePage extends StatelessWidget {
               NitoriText("NITORI",
                   isdisplay: true,
                   size: 60,
-                  color:
-                      Colors.blue.withOpacity(0.8).lerpWith(Colors.white, 0.1)),
+                  color: SystemTheme.accentColor.accent),
               NitoriText("TOOLBOX",
                   isdisplay: true,
                   size: 60,
