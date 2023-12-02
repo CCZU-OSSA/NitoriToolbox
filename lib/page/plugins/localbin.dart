@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:nitoritoolbox/app/abc/serial.dart';
 import 'package:nitoritoolbox/app/protocol/application.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/scrollable.dart';
@@ -32,8 +31,14 @@ class _StateLocalBinPage extends State<LocalBinPage> {
   @override
   Widget build(BuildContext context) {
     var bindir = _dm.getDirectory().subdir("bin-local").check();
-    var localpkg = bindir.subfile("pkg.json");
-    if (!localpkg.existsSync()) {
+    var pkgs = bindir
+        .listSync()
+        .where((element) =>
+            element.statSync().type == FileSystemEntityType.directory &&
+            (element as Directory).subfile("pkg.json").existsSync())
+        .map((e) => (e as Directory))
+        .toList();
+    if (!pkgs.isNotEmpty) {
       return const Center(
         child: NitoriText(
           "{{ 空 }}",
@@ -41,98 +46,79 @@ class _StateLocalBinPage extends State<LocalBinPage> {
         ),
       );
     }
-    return SmartFutureBuilder(
-      future: () async {
-        return (JsonSerializerStatic.decoden(
-            await localpkg.readAsString())["packages"] as List);
-      }(),
-      smartbuilder: (BuildContext context, data) {
-        return ScaffoldPage.scrollable(
-            scrollController: _scr,
-            header: Button(
-                child: const Text("jump"),
-                onPressed: () => _obscr.animateTo(
-                    index: 0,
-                    duration: const Duration(seconds: 1),
-                    curve: Curves.ease)),
-            children: List.generate(
-                data.length,
-                (index) => SmartFutureBuilder(
-                    future: () async {
-                      return ApplicationList.fromString(await bindir
-                          .subfile("${data[index]}/pkg.json")
-                          .readAsString());
-                    }(),
-                    smartbuilder: (context, al) => Column(
-                          children: [
-                            Card(
-                                child: SizedBox(
-                              width: 100000,
-                              child: Column(
-                                children: [
-                                  NitoriText(
-                                    al.title,
-                                    size: 30,
-                                  ),
-                                  NitoriText(al.subtitle)
-                                ],
+    return ScaffoldPage.scrollable(
+        scrollController: _scr,
+        header: banner(context),
+        children: List.generate(
+            pkgs.length,
+            (index) => SmartFutureBuilder(
+                future: () async {
+                  return ApplicationList.fromString(
+                      await pkgs[index].subfile("pkg.json").readAsString());
+                }(),
+                smartbuilder: (context, al) => Column(
+                      children: [
+                        Card(
+                            child: SizedBox(
+                          width: 100000,
+                          child: Column(
+                            children: [
+                              NitoriText(
+                                al.title,
+                                size: 30,
                               ),
-                            )),
-                            height05,
-                            Wrap(
-                              children: List.generate(
-                                  al.apps.length,
-                                  (index) => SizedBox(
-                                        height: 148,
-                                        width: 148,
-                                        child: Card(
-                                                child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            al.apps[index].buildIcon(context,
-                                                reverse: true,
-                                                localdir:
-                                                    bindir.subdir(data[index])),
-                                            height05,
-                                            NitoriText(
-                                              al.apps[index].title,
-                                              size: 15 *
-                                                  (al.apps[index].titleScale ??
-                                                      1),
-                                            ),
-                                            NitoriText(
-                                              al.apps[index].subtitle,
-                                              size: 10,
-                                            )
-                                          ],
-                                        ))
-                                            .makeButton(
-                                                onLongPressed: () =>
-                                                    Process.run(
-                                                        "start",
-                                                        [
-                                                          bindir
-                                                              .subdir(
-                                                                  data[index])
-                                                              .subfile(al
-                                                                  .apps[index]
-                                                                  .open)
-                                                              .absolute
-                                                              .path
-                                                        ],
-                                                        runInShell: true))
-                                            .tooltip(
-                                                al.apps[index].details ?? ""),
-                                      )),
-                            ),
-                            height20,
-                            const SizedBox(
-                              height: 1000,
-                            )
-                          ],
-                        )))).observer(controller: _obscr);
-      },
-    );
+                              NitoriText(al.subtitle)
+                            ],
+                          ),
+                        )),
+                        height05,
+                        Wrap(
+                          children: List.generate(
+                              al.apps.length,
+                              (index) => SizedBox(
+                                    height: 148,
+                                    width: 148,
+                                    child: Card(
+                                            child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        al.apps[index].buildIcon(
+                                          context,
+                                          reverse: true,
+                                          localdir: pkgs[index],
+                                        ),
+                                        height05,
+                                        NitoriText(
+                                          al.apps[index].title,
+                                          size: 15 *
+                                              (al.apps[index].titleScale ?? 1),
+                                        ),
+                                        NitoriText(
+                                          al.apps[index].subtitle,
+                                          size: 10,
+                                        )
+                                      ],
+                                    ))
+                                        .makeButton(
+                                            onLongPressed: () => Process.run(
+                                                "start",
+                                                [
+                                                  pkgs[index]
+                                                      .subfile(
+                                                          al.apps[index].open)
+                                                      .absolute
+                                                      .path
+                                                ],
+                                                runInShell: true))
+                                        .tooltip(al.apps[index].details ?? ""),
+                                  )),
+                        ),
+                        height20,
+                        const SizedBox(
+                          height: 1000,
+                        )
+                      ],
+                    )))).observer(controller: _obscr);
   }
 }

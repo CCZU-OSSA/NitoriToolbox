@@ -41,7 +41,13 @@ class _StateRecommendPage extends State<RecommendPage> {
   Widget build(BuildContext context) {
     var dm = LocalDataManager.instance(context);
     var rd = dm.getDirectory().subdir("recommend-local").check();
-    var localpkg = rd.subfile("pkg.json");
+    var pkgs = rd
+        .listSync()
+        .where((element) =>
+            element.statSync().type == FileSystemEntityType.directory &&
+            (element as Directory).subfile("pkg.json").existsSync())
+        .map((e) => (e as Directory))
+        .toList();
     return SmartFutureBuilder(future: () async {
       return (JsonSerializerStatic.decode(await rootBundle.loadString(
               "resource/data/recommend/pkg.json"))["packages"] as List)
@@ -67,17 +73,16 @@ class _StateRecommendPage extends State<RecommendPage> {
                     smartbuilder: (context, data) =>
                         buildView(ApplicationList.fromString(data))),
               ))
-              .expandAll(localpkg.existsSync()
+              .expandAll(pkgs.isNotEmpty
                   ? [
                       const NitoriTitle("Local Packages"),
-                    ].castF<Widget>().expandAll(ListUtils.generatefrom(
-                      JsonSerializerStatic.decoden(localpkg.readAsStringSync())[
-                          "packages"] as List<String>,
-                      (v) => SmartFutureBuilder(
-                          future: rd.subfile("$v/pkg.json").readAsString(),
+                    ].castF<Widget>().expandAll(List.generate(
+                      pkgs.length,
+                      (idx) => SmartFutureBuilder(
+                          future: pkgs[idx].subfile("pkg.json").readAsString(),
                           smartbuilder: (context, data) => buildView(
                               ApplicationList.fromString(data),
-                              localdir: rd.subdir(v)))))
+                              localdir: pkgs[idx]))))
                   : []));
     });
   }

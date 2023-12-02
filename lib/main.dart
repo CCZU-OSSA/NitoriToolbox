@@ -5,6 +5,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:nitoritoolbox/page/init.dart';
 import 'package:nitoritoolbox/page/plugins/localbin.dart';
 import 'package:nitoritoolbox/page/plugins/recommend.dart';
 import 'package:nitoritoolbox/page/plugins/sysinfo.dart';
@@ -104,37 +105,40 @@ class StateApplicationMain extends State<ApplicationMain> {
     bus.appSetState = setState;
     bus.router = __router;
     applyWindowEffect(context);
+
     return FluentApp(
         key: rootKey,
         title: 'Nitori Toolbox',
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: getThemeMode(context),
-        home: NavigationPaneTheme(
-            data: NavigationPaneThemeData(
-              highlightColor: SystemTheme.accentColor.accent,
-              backgroundColor: getCurrentThemePriColor(context)
-                  .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
-            ),
-            child: Container(
-                decoration: BoxDecoration(image: getWallpaper(context)),
-                child: NavigationView(
-                  appBar: NavigationAppBar(
-                      leading: Image.asset(
-                        "resource/images/nitori_icon.png",
-                        height: 32,
-                        width: 32,
-                      ),
-                      title: const Text(
-                        "Nitori Toolbox",
-                        style: TextStyle(fontSize: 20),
-                      )),
-                  pane: NavigationPane(
-                      displayMode: PaneDisplayMode
-                          .values[bus.config.getOrWrite("panedisplay", 4)],
-                      selected: __router.select,
-                      items: __router.body.values.toList(),
-                      footerItems: __router.footer.values.toList()),
-                ))));
+        home: !bus.config.getOrWrite("know_to_use", false)
+            ? const InitPage()
+            : NavigationPaneTheme(
+                data: NavigationPaneThemeData(
+                  highlightColor: SystemTheme.accentColor.accent,
+                  backgroundColor: getCurrentThemePriColor(context)
+                      .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
+                ),
+                child: Container(
+                    decoration: BoxDecoration(image: getWallpaper(context)),
+                    child: NavigationView(
+                      appBar: NavigationAppBar(
+                          leading: Image.asset(
+                            "resource/images/nitori_icon.png",
+                            height: 32,
+                            width: 32,
+                          ),
+                          title: const Text(
+                            "Nitori Toolbox",
+                            style: TextStyle(fontSize: 20),
+                          )),
+                      pane: NavigationPane(
+                          displayMode: PaneDisplayMode
+                              .values[bus.config.getOrWrite("panedisplay", 4)],
+                          selected: __router.select,
+                          items: __router.body.values.toList(),
+                          footerItems: __router.footer.values.toList()),
+                    ))));
   }
 }

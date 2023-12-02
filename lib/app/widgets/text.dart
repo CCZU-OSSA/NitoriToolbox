@@ -44,7 +44,8 @@ class NitoriText extends StatelessWidget {
 
 class NitoriAsset extends StatelessWidget {
   final String asset;
-  const NitoriAsset(this.asset, {super.key});
+  final bool selectable;
+  const NitoriAsset(this.asset, {super.key, this.selectable = false});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +54,7 @@ class NitoriAsset extends StatelessWidget {
       smartbuilder: (context, data) {
         return MarkdownWidget(
           data: data,
+          selectable: selectable,
           shrinkWrap: true,
         );
       },
@@ -63,12 +65,15 @@ class NitoriAsset extends StatelessWidget {
 class NitoriTitle extends StatelessWidget {
   final String data;
   final int level;
-  const NitoriTitle(this.data, {super.key, this.level = 2});
+  final bool selectable;
+  const NitoriTitle(this.data,
+      {super.key, this.level = 2, this.selectable = false});
 
   @override
   Widget build(BuildContext context) {
     return MarkdownWidget(
       data: "${"#" * level} $data",
+      selectable: selectable,
       shrinkWrap: true,
     );
   }

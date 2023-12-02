@@ -32,14 +32,12 @@ class SquareCard extends StatelessWidget {
   final double size;
   final String title;
   final String subtitle;
-  final String button;
   final double? titleScale;
   final Widget icon;
   final Function() onPressed;
   const SquareCard({
     super.key,
     this.size = 256,
-    this.button = "OPEN",
     this.titleScale = 1,
     required this.title,
     required this.subtitle,
@@ -109,16 +107,8 @@ class SquareCard extends StatelessWidget {
           ],
         ),
       ),
-      SizedBox(
-        height: size / 2.5,
-        width: size,
-        child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          Button(onPressed: onPressed, child: NitoriText(button)),
-          SizedBox(
-            width: size / 12 * 1.8,
-          )
-        ]),
-      )
-    ]);
+    ]).makeButton(
+      onPressed: onPressed,
+    );
   }
 }

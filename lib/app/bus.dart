@@ -17,7 +17,7 @@ class ApplicationBus {
   late LocalDataManager dataManager;
   static final Map<String, dynamic> env = Platform.environment;
 
-  Function(void Function())? appSetState;
+  void Function(VoidCallback)? appSetState;
 
   ApplicationBus() {
     dataManager = LocalDataManager(config.getOrDefault("data_path", "locals"));
