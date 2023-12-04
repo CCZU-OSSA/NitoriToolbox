@@ -1,12 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/widgets/contributor.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
 import 'package:nitoritoolbox/core/lang.dart';
+import 'package:nitoritoolbox/page/init.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class AboutPage extends StatefulWidget {
@@ -98,9 +98,9 @@ class _StateAboutPage extends State<AboutPage> {
                     size: 80,
                   ),
                   onPressed: () {
-                    var bus = ApplicationBus.instance(context);
-                    bus.appSetState!(
-                        () => bus.config.writeKey("know_to_use", false));
+                    ApplicationBus.instance(context)
+                        .router!
+                        .pushWidget(context, const InitPage(dopop: true,));
                   }).tooltip("打开用前须知")
             ].joinElementF(width05),
           ),

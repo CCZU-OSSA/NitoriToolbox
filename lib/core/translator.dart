@@ -1,18 +1,18 @@
-class Translator<T> {
+class Translator<T, V> {
   late Map _index;
   final List<T> _e;
-  String? defaultValue;
+  V? defaultValue;
 
   Translator(this._e) {
     this._index = {for (var v in this._e) v: null};
   }
-  
-  Translator defaultName(String s) {
+
+  Translator defaultName(V s) {
     defaultValue = s;
     return this;
   }
 
-  Translator setTranslate(T e, String s) {
+  Translator setTranslate(T e, V s) {
     _index[e] = s;
     return this;
   }
@@ -20,12 +20,17 @@ class Translator<T> {
   int convertIndex(T e) {
     return _index.keys.toList().indexOf(e);
   }
-  String getTranslate(T e) {
-    return _index.containsKey(e) && _index[e] != null ? _index[e] : defaultValue;
+
+  V getTranslate(T e) {
+    return _index.containsKey(e) && _index[e] != null
+        ? _index[e]
+        : defaultValue;
   }
 
-  String getTranslateIndex(int i) {
+  V getTranslateIndex(int i) {
     Enum e = _index.keys.toList()[i];
-    return _index.containsKey(e) && _index[e] != null ? _index[e] : defaultValue;
+    return _index.containsKey(e) && _index[e] != null
+        ? _index[e]
+        : defaultValue;
   }
 }

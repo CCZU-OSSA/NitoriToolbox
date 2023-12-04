@@ -11,6 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var bus = ApplicationBus.instance(context);
+
     return ScaffoldPage.scrollable(children: [
       Card(
           borderColor:

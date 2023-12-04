@@ -10,7 +10,7 @@ import 'package:nitoritoolbox/core/ffi.dart';
 import 'package:provider/provider.dart';
 
 class ApplicationBus {
-  ApplicationConfig config = ApplicationConfig("app.config.json");
+  ApplicationConfig config;
   ApplicationLogger logger = ApplicationLogger();
   NitoriCore nitoriCore = NitoriCore();
   PaneRouter? router;
@@ -19,7 +19,7 @@ class ApplicationBus {
 
   void Function(VoidCallback)? appSetState;
 
-  ApplicationBus() {
+  ApplicationBus(this.config) {
     dataManager = LocalDataManager(config.getOrDefault("data_path", "locals"));
   }
 

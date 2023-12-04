@@ -5,9 +5,10 @@ import 'package:nitoritoolbox/app/abc/io.dart';
 
 class ApplicationConfig implements KVIO {
   String configPath;
-
+  bool firstuse = false;
   ApplicationConfig(this.configPath) {
     if (!File(configPath).existsSync()) {
+      firstuse = true;
       File(configPath).writeAsStringSync("{}");
     }
   }

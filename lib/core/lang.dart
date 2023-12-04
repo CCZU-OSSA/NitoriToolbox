@@ -1,6 +1,10 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nitoritoolbox/app/abc/io.dart';
+import 'package:nitoritoolbox/app/bus.dart';
+import 'package:nitoritoolbox/app/colors.dart';
+import 'package:system_theme/system_theme.dart';
 
 extension ListUtils<T> on List<T> {
   List<RT> joinElementF<RT>(RT sep) {
@@ -114,5 +118,20 @@ extension WidgetUtils on Widget {
       style: ButtonStyle(
           padding: ButtonState.resolveWith((states) => EdgeInsets.all(insets))),
     );
+  }
+
+  Widget renderTheme(BuildContext context) {
+    return NavigationPaneTheme(
+        data: NavigationPaneThemeData(
+          highlightColor: SystemTheme.accentColor.accent,
+          backgroundColor: getCurrentThemePriColor(context).withOpacity(
+              ApplicationBus.instance(context)
+                  .config
+                  .getOrWrite("opacity", 0.9)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(image: getWallpaper(context)),
+          child: this,
+        ));
   }
 }

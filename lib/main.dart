@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nitoritoolbox/app/config.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
 import 'package:nitoritoolbox/app/widgets/utils.dart';
+import 'package:nitoritoolbox/core/lang.dart';
 import 'package:nitoritoolbox/page/init.dart';
 import 'package:nitoritoolbox/page/plugins/localbin.dart';
 import 'package:nitoritoolbox/page/plugins/recommend.dart';
@@ -23,6 +25,7 @@ import 'package:system_theme/system_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  var config = ApplicationConfig("app.config.json");
   await SystemTheme.accentColor.load();
   await Window.initialize();
   doWhenWindowReady(() {
@@ -34,14 +37,13 @@ void main() async {
   });
   AppLifecycleListener(
     onExitRequested: () async {
-      var bus = ApplicationBus.instance(rootKey.currentContext!);
-      bus.config.writeKey("win_width", appWindow.size.width);
-      bus.config.writeKey("win_height", appWindow.size.height);
+      config.writeKey("win_width", appWindow.size.width);
+      config.writeKey("win_height", appWindow.size.height);
       return AppExitResponse.exit;
     },
   );
-  runApp(
-      Provider.value(value: ApplicationBus(), child: const ApplicationMain()));
+  runApp(Provider.value(
+      value: ApplicationBus(config), child: const ApplicationMain()));
 }
 
 class ApplicationMain extends StatefulWidget {
@@ -105,40 +107,31 @@ class StateApplicationMain extends State<ApplicationMain> {
     bus.appSetState = setState;
     bus.router = __router;
     applyWindowEffect(context);
-
+    var view = NavigationView(
+      appBar: NavigationAppBar(
+          leading: Image.asset(
+            "resource/images/nitori_icon.png",
+            height: 32,
+            width: 32,
+          ),
+          title: const Text(
+            "Nitori Toolbox",
+            style: TextStyle(fontSize: 20),
+          )),
+      pane: NavigationPane(
+          displayMode:
+              PaneDisplayMode.values[bus.config.getOrWrite("panedisplay", 4)],
+          selected: __router.select,
+          items: __router.body.values.toList(),
+          footerItems: __router.footer.values.toList()),
+    ).renderTheme(context);
     return FluentApp(
         key: rootKey,
         title: 'Nitori Toolbox',
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: getThemeMode(context),
-        home: !bus.config.getOrWrite("know_to_use", false)
-            ? const InitPage()
-            : NavigationPaneTheme(
-                data: NavigationPaneThemeData(
-                  highlightColor: SystemTheme.accentColor.accent,
-                  backgroundColor: getCurrentThemePriColor(context)
-                      .withOpacity(bus.config.getOrWrite("opacity", 0.9)),
-                ),
-                child: Container(
-                    decoration: BoxDecoration(image: getWallpaper(context)),
-                    child: NavigationView(
-                      appBar: NavigationAppBar(
-                          leading: Image.asset(
-                            "resource/images/nitori_icon.png",
-                            height: 32,
-                            width: 32,
-                          ),
-                          title: const Text(
-                            "Nitori Toolbox",
-                            style: TextStyle(fontSize: 20),
-                          )),
-                      pane: NavigationPane(
-                          displayMode: PaneDisplayMode
-                              .values[bus.config.getOrWrite("panedisplay", 4)],
-                          selected: __router.select,
-                          items: __router.body.values.toList(),
-                          footerItems: __router.footer.values.toList()),
-                    ))));
+        home:
+            bus.config.firstuse ? const InitPage().renderTheme(context) : view);
   }
 }

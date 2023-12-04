@@ -28,6 +28,20 @@ class PaneRouter {
     Navigator.pop(context);
   }
 
+  void push(BuildContext context,
+      {required Widget Function(BuildContext) builder}) {
+    Navigator.push(context, FluentPageRoute(builder: builder));
+  }
+
+  void replaceWidget(BuildContext context, Widget widget) {
+    Navigator.pushReplacement(
+        context, FluentPageRoute(builder: (context) => widget));
+  }
+
+  void pushWidget(BuildContext context, Widget widget) {
+    Navigator.push(context, FluentPageRoute(builder: (context) => widget));
+  }
+
   /// use to allocate the page id
   void __allocateID(Map<String, NavigationPaneItem> map) {
     for (var element in map.entries) {

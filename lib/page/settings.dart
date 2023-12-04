@@ -6,6 +6,7 @@ import 'package:nitoritoolbox/app/abc/io.dart';
 import 'package:nitoritoolbox/app/bus.dart';
 import 'package:nitoritoolbox/app/colors.dart';
 import 'package:nitoritoolbox/app/i18n.dart';
+import 'package:nitoritoolbox/app/log.dart';
 import 'package:nitoritoolbox/app/widgets/card.dart';
 import 'package:nitoritoolbox/app/resource.dart';
 import 'package:nitoritoolbox/app/widgets/text.dart';
@@ -73,12 +74,55 @@ class _SettingState extends State<SettingsPage> {
                           .subdir("cache")
                           .check()
                           .listSync(recursive: true)
-                          .forEach((element) => element.delete());
+                          .forEach(
+                              (element) => element.delete(recursive: true));
                     });
                   })
             ]),
           ),
-          const NitoriTitle("内核设置", level: 2),
+          const NitoriTitle("应用设置", level: 2),
+          CardListTile(
+              leading: const Icon(FluentIcons.bug),
+              title: const NitoriText("日志"),
+              subtitle: const NitoriText("Logs"),
+              trailing: IconButton(
+                icon: const Icon(
+                  FluentIcons.open_in_new_window,
+                  size: 32,
+                ),
+                onPressed: () => bus.router!.pushWidget(
+                    context,
+                    ScaffoldPage.scrollable(
+                      header: ListTile(
+                        leading: const Icon(
+                          FluentIcons.bug,
+                          size: 48,
+                        ),
+                        title: const NitoriText(
+                          "日志",
+                          size: 48,
+                        ),
+                        trailing: IconButton(
+                            icon: const Icon(
+                              FluentIcons.back_to_window,
+                              size: 48,
+                            ),
+                            onPressed: () => bus.router!.pop(context)),
+                      ),
+                      children:
+                          List.generate(bus.logger.getLogs().length, (index) {
+                        var log = bus.logger.getLogs()[index];
+                        return ListTile(
+                          title: NitoriText(
+                            log.level.toString(),
+                            color: levelColorTR.getTranslate(log.level),
+                          ),
+                          subtitle: NitoriText(log.time),
+                          trailing: NitoriText(log.message),
+                        );
+                      }),
+                    )),
+              )),
           CardListTile(
             title: const NitoriText("内核版本"),
             subtitle: const NitoriText("Core Version"),
