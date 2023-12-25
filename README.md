@@ -1,15 +1,16 @@
-<div align=center>
-  <img width=200 src="./resource/images/nitori_icon.png"  alt="icon"/>
-  <h1 align="center">Nitroi ToolBox</h1>
-</div>
+# nitoritoolbox
 
-<div align=center>
-  <img
-    src="https://img.shields.io/badge/fluent-design-blue?style=flat-square&color=gray&labelColor=0078D7"
-  >
-  <img src="https://img.shields.io/github/languages/code-size/CCZU-OSSA/NitoriToolbox?style=flat-square" alt="size">
-  <img src="https://img.shields.io/github/license/CCZU-OSSA/NitoriToolbox?style=flat-square" alt="license">
-</div>
+A new Flutter project.
 
+## Getting Started
 
-## 这是什么？
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
