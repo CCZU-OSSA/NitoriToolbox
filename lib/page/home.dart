@@ -10,8 +10,12 @@ class HomePage extends StatefulWidget {
 class _StateHomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Hello world"),
+    return ListView(
+      children: [
+        Card(
+          child: Text("Hello world"),
+        )
+      ],
     );
   }
 }
