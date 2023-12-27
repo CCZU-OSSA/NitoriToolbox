@@ -1,14 +1,19 @@
-import 'package:arche/widgets/material.dart';
+import 'package:arche/arche.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/data/keys.dart';
-import 'package:nitoritoolbox/page/home.dart';
-import 'package:nitoritoolbox/page/settings.dart';
+import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:nitoritoolbox/models/keys.dart';
+import 'package:nitoritoolbox/views/pages/home.dart';
+import 'package:nitoritoolbox/views/pages/settings.dart';
+import 'package:nitoritoolbox/models/configkeys.dart' as config_keys;
+import 'package:nitoritoolbox/views/widgets/appbar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MainApplication());
+  var data = AppData("AppData");
+  ArcheBus.bus.provide(data).provide(data.config());
+  runApp(const AppEntryPoint());
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(800, 600);
@@ -20,11 +25,31 @@ Future<void> main() async {
   });
 }
 
-class MainApplication extends StatelessWidget {
-  const MainApplication({super.key});
+class AppEntryPoint extends StatelessWidget {
+  const AppEntryPoint({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MainApplication(
+      key: rootKey,
+    );
+  }
+}
+
+class MainApplication extends StatefulWidget {
+  const MainApplication({super.key});
+  @override
+  State<StatefulWidget> createState() => StateMainApplication();
+}
+
+class StateMainApplication extends State<MainApplication> {
+  void refresh() {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var config = ArcheBus.config;
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         return MaterialApp(
@@ -33,40 +58,36 @@ class MainApplication extends StatelessWidget {
                 brightness: Brightness.light,
                 useMaterial3: true,
                 colorScheme: lightDynamic,
+                appBarTheme:
+                    const AppBarTheme(surfaceTintColor: Colors.transparent),
                 typography: Typography.material2021()),
             darkTheme: ThemeData(
                 fontFamily: "GlowSans",
                 brightness: Brightness.dark,
                 useMaterial3: true,
                 colorScheme: darkDynamic,
+                appBarTheme:
+                    const AppBarTheme(surfaceTintColor: Colors.transparent),
                 typography: Typography.material2021()),
-            themeMode: ThemeMode.system,
-            home: Scaffold(
-                appBar: PreferredSize(
-                    preferredSize: const Size.fromHeight(32),
-                    child: Row(children: [
-                      Expanded(child: MoveWindow()),
-                      Row(
-                        children: [
-                          MinimizeWindowButton(animate: true),
-                          MaximizeWindowButton(animate: true),
-                          CloseWindowButton(animate: true),
-                        ],
-                      ),
-                    ])),
-                body: NavigationView(
-                  key: rootKey,
-                  items: const [
-                    NavigationItem(
-                        icon: Icon(Icons.home),
-                        label: Text("Home"),
-                        page: HomePage()),
-                    NavigationItem(
-                        icon: Icon(Icons.settings),
-                        label: Text("Settings"),
-                        page: SettingsPage())
-                  ],
-                )));
+            themeMode: ThemeMode.values[config.getOr(config_keys.theme, 2)],
+            home: WindowWidget(
+                child: Scaffold(
+                    body: NavigationView(
+              key: viewkey,
+              items: const [
+                NavigationItem(
+                    icon: Icon(Icons.home),
+                    label: Text("Home"),
+                    page: HomePage()),
+                NavigationItem(
+                    icon: Icon(Icons.settings),
+                    label: Text("Settings"),
+                    page: SettingsPage())
+              ],
+              config: NavigationRailConfig(
+                  labelType: NavigationRailLabelType
+                      .values[config.getOr(config_keys.raillabelType, 0)]),
+            ))));
       },
     );
   }

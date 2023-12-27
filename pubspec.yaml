@@ -38,6 +38,8 @@ dependencies:
   bitsdojo_window: ^0.1.6
   arche:
     git: https://github.com/H2Sxxa/Arche.git
+  font_awesome_flutter: ^10.6.0
+  url_launcher: ^6.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
