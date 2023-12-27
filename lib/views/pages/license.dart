@@ -11,11 +11,12 @@ void showLicensePageWithBar({
 }) {
   Navigator.of(context, rootNavigator: useRootNavigator).push(
     MaterialPageRoute<void>(
-        builder: (BuildContext context) => LicensePage(
-              applicationName: applicationName,
-              applicationVersion: applicationVersion,
-              applicationIcon: applicationIcon,
-              applicationLegalese: applicationLegalese,
-            ).windowbar()),
+      builder: (BuildContext context) => LicensePage(
+        applicationName: applicationName,
+        applicationVersion: applicationVersion,
+        applicationIcon: applicationIcon,
+        applicationLegalese: applicationLegalese,
+      ).windowbar(),
+    ),
   );
 }

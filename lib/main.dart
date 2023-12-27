@@ -1,12 +1,14 @@
+
 import 'package:arche/arche.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
 import 'package:nitoritoolbox/models/keys.dart';
 import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
-import 'package:nitoritoolbox/models/configkeys.dart' as config_keys;
+import 'package:nitoritoolbox/models/configkeys.dart';
 import 'package:nitoritoolbox/views/widgets/appbar.dart';
 
 Future<void> main() async {
@@ -14,6 +16,7 @@ Future<void> main() async {
   var data = AppData("AppData");
   ArcheBus.bus.provide(data).provide(data.config());
   runApp(const AppEntryPoint());
+  AppController.initLifeCycleListener();
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(800, 600);
@@ -69,7 +72,7 @@ class StateMainApplication extends State<MainApplication> {
                 appBarTheme:
                     const AppBarTheme(surfaceTintColor: Colors.transparent),
                 typography: Typography.material2021()),
-            themeMode: ThemeMode.values[config.getOr(config_keys.theme, 2)],
+            themeMode: ThemeMode.values[config.getOr(ConfigKeys.theme, 2)],
             home: WindowWidget(
                 child: Scaffold(
                     body: NavigationView(
@@ -86,7 +89,7 @@ class StateMainApplication extends State<MainApplication> {
               ],
               config: NavigationRailConfig(
                   labelType: NavigationRailLabelType
-                      .values[config.getOr(config_keys.raillabelType, 0)]),
+                      .values[config.getOr(ConfigKeys.raillabelType, 0)]),
             ))));
       },
     );
