@@ -73,7 +73,6 @@ class StateMainApplication extends State<MainApplication> {
                 child: Scaffold(
                     body: NavigationView(
               key: viewkey,
-              pagePadding: const EdgeInsets.all(12),
               items: const [
                 NavigationItem(
                     icon: Icon(Icons.home),

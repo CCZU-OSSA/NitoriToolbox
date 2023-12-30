@@ -6,7 +6,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d980e2709024eeade8a6a754b72290afcb1d6aff
+      resolved-ref: e742d4a351383e6bab8fb6fc3eabda42e9f00ee6
       url: "https://github.com/H2Sxxa/Arche.git"
     source: git
     version: "0.0.3"
