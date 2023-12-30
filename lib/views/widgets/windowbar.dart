@@ -7,7 +7,7 @@ class WindowBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 32,
+        height: 30,
         decoration:
             BoxDecoration(color: Theme.of(context).colorScheme.background),
         child: Row(children: [

@@ -1,4 +1,3 @@
-
 import 'package:arche/arche.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -6,16 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
 import 'package:nitoritoolbox/models/keys.dart';
+import 'package:nitoritoolbox/utils/github.dart';
 import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
-import 'package:nitoritoolbox/models/configkeys.dart';
-import 'package:nitoritoolbox/views/widgets/appbar.dart';
+import 'package:nitoritoolbox/models/dataclass.dart';
+import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var data = AppData("AppData");
-  ArcheBus.bus.provide(data).provide(data.config());
-  runApp(const AppEntryPoint());
+  ArcheBus.bus
+      .provide(data)
+      .provide(data.config())
+      .provide(GithubRepository(ApplicationInfo.githubRepoName));
+  runApp(MainApplication());
   AppController.initLifeCycleListener();
   doWhenWindowReady(() {
     final win = appWindow;
@@ -23,24 +26,17 @@ Future<void> main() async {
     win.minSize = initialSize;
     win.size = initialSize;
     win.alignment = Alignment.center;
-    win.title = 'Nitori Toolbox';
+    win.title = ApplicationInfo.applicationName;
     win.show();
+    if (ArcheBus.config.getOr(ConfigKeys.checkUpdate, false)) {
+      //GithubRepository gr = ArcheBus.bus.of();
+      //gr.version();
+    }
   });
 }
 
-class AppEntryPoint extends StatelessWidget {
-  const AppEntryPoint({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MainApplication(
-      key: rootKey,
-    );
-  }
-}
-
 class MainApplication extends StatefulWidget {
-  const MainApplication({super.key});
+  MainApplication() : super(key: rootKey);
   @override
   State<StatefulWidget> createState() => StateMainApplication();
 }
@@ -73,10 +69,11 @@ class StateMainApplication extends State<MainApplication> {
                     const AppBarTheme(surfaceTintColor: Colors.transparent),
                 typography: Typography.material2021()),
             themeMode: ThemeMode.values[config.getOr(ConfigKeys.theme, 2)],
-            home: WindowWidget(
+            home: WindowContainer(
                 child: Scaffold(
                     body: NavigationView(
               key: viewkey,
+              pagePadding: const EdgeInsets.all(12),
               items: const [
                 NavigationItem(
                     icon: Icon(Icons.home),
@@ -89,7 +86,7 @@ class StateMainApplication extends State<MainApplication> {
               ],
               config: NavigationRailConfig(
                   labelType: NavigationRailLabelType
-                      .values[config.getOr(ConfigKeys.raillabelType, 0)]),
+                      .values[config.getOr(ConfigKeys.railLabelType, 0)]),
             ))));
       },
     );

@@ -11,6 +11,6 @@ class AppData {
   }
 
   ArcheConfig config() {
-    return ArcheConfig.path("${initialDirectory.path}/app.config.json");
+    return ArcheConfig.path(initialDirectory.subPath("app.config.json"));
   }
 }

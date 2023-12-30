@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/views/widgets/extension.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
+import 'package:nitoritoolbox/views/pages/software.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,22 +14,6 @@ class _StateHomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Card(
-            child: const Center(
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(
-              "NITORI",
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 42,
-                  fontStyle: FontStyle.italic),
-            ),
-            Text(
-              "TOOLBOX",
-              style: TextStyle(fontSize: 42, fontStyle: FontStyle.italic),
-            )
-          ]),
-        ).padding12()),
         Wrap(
             children: List.generate(
                 1,
@@ -36,7 +21,8 @@ class _StateHomePage extends State<HomePage> {
                     child: Card(
                         child: InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () {},
+                            onTap: () => AppController.pushMaterialPage(
+                                builder: (context) => const SoftWare()),
                             child: const SizedBox.square(
                               dimension: 128,
                               child: Center(
@@ -44,6 +30,6 @@ class _StateHomePage extends State<HomePage> {
                               ),
                             )))))),
       ],
-    ).padding12();
+    );
   }
 }

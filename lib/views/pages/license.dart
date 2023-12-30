@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/views/widgets/extension.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
 
 void showLicensePageWithBar({
   required BuildContext context,
@@ -9,14 +9,12 @@ void showLicensePageWithBar({
   String? applicationLegalese,
   bool useRootNavigator = false,
 }) {
-  Navigator.of(context, rootNavigator: useRootNavigator).push(
-    MaterialPageRoute<void>(
-      builder: (BuildContext context) => LicensePage(
-        applicationName: applicationName,
-        applicationVersion: applicationVersion,
-        applicationIcon: applicationIcon,
-        applicationLegalese: applicationLegalese,
-      ).windowbar(),
+  AppController.pushMaterialPage(
+    builder: (BuildContext context) => LicensePage(
+      applicationName: applicationName,
+      applicationVersion: applicationVersion,
+      applicationIcon: applicationIcon,
+      applicationLegalese: applicationLegalese,
     ),
   );
 }
