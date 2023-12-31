@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/models/dataclass.dart';
+import 'package:nitoritoolbox/models/enums.dart';
 import 'package:nitoritoolbox/utils/platform_windows.dart';
 import 'package:nitoritoolbox/views/widgets/windowbar.dart';
 
@@ -21,18 +24,57 @@ extension NitoriWidgetExtension on Widget {
   }
 
   Widget background() {
-    var wallpaper = getWallPaperPath();
+    var config = ArcheBus.config;
+
+    if (!config.getOr(ConfigKeys.backgroundImageEnable, false)) {
+      return this;
+    }
+
+    ImageProvider? image;
+
+    switch (BackgroundImageType
+        .values[config.getOr(ConfigKeys.backgroundImageType, 0)]) {
+      case BackgroundImageType.wallpaper:
+        var wallpaper = getWallPaperPath();
+        if (wallpaper == null) {
+          image = null;
+        } else {
+          var f = File(wallpaper);
+          image = !f.existsSync() ? null : FileImage(f);
+        }
+        break;
+      case BackgroundImageType.local:
+        var wallpaper = config.tryGet(ConfigKeys.backgroundImageLocal);
+        if (wallpaper == null) {
+          image = null;
+        } else {
+          var f = File(wallpaper);
+          image = !f.existsSync() ? null : FileImage(f);
+        }
+        break;
+      case BackgroundImageType.network:
+        var url = config.tryGet(ConfigKeys.backgroundImageNetwork);
+        if (url == null) {
+          image = null;
+        } else {
+          image = NetworkImage(url);
+        }
+
+        break;
+    }
+
     return Stack(children: [
       this,
       IgnorePointer(
-          child: wallpaper == null
+          child: image == null
               ? const SizedBox.shrink()
               : Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          opacity: 0.1,
-                          image: FileImage(File(wallpaper)))),
+                          opacity: config.getOr(
+                              ConfigKeys.backgroundImageOpacity, 0.4),
+                          image: image)),
                   child: const SizedBox.expand()))
     ]);
   }

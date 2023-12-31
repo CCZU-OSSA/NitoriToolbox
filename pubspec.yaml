@@ -42,6 +42,7 @@ dependencies:
   url_launcher: ^6.2.2
   dio: ^5.4.0
   win32_registry: ^1.1.2
+  file_picker: ^6.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

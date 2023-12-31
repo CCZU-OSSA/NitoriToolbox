@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:arche/modules/application.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
 import 'package:nitoritoolbox/models/translators.dart';
 import 'package:nitoritoolbox/views/pages/license.dart';
-import 'package:nitoritoolbox/views/widgets/buttons.dart';
+import 'package:nitoritoolbox/views/widgets/config.dart';
+import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -27,26 +32,18 @@ class _StateSettingsPage extends State<SettingsPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ListTile(
+              ConfigSwitchListTile(
                 leading: const Icon(Icons.info),
                 title: const Text("退出提示"),
-                trailing: Switch(
-                  value: config.getOr(ConfigKeys.exitConfirm, false),
-                  onChanged: (value) => setState(() {
-                    config.write(ConfigKeys.exitConfirm, value);
-                  }),
-                ),
+                config: config,
+                configKey: ConfigKeys.exitConfirm,
               ),
-              ListTile(
+              ConfigSwitchListTile(
                 leading: const Icon(Icons.update),
                 title: const Text("更新检查"),
-                trailing: Switch(
-                  value: config.getOr(ConfigKeys.checkUpdate, false),
-                  onChanged: (value) => setState(() {
-                    config.write(ConfigKeys.checkUpdate, value);
-                  }),
-                ),
-              )
+                config: config,
+                configKey: ConfigKeys.checkUpdate,
+              ),
             ],
           ),
         ),
@@ -60,8 +57,7 @@ class _StateSettingsPage extends State<SettingsPage> {
             ListTile(
                 leading: const Icon(Icons.color_lens),
                 title: const Text("主题模式"),
-                trailing: ETCPopupMenuButton(
-                  icon: const Icon(Icons.edit),
+                trailing: CETPopupMenuButton(
                   translator: trThemeMode,
                   config: config,
                   configKey: ConfigKeys.theme,
@@ -69,8 +65,7 @@ class _StateSettingsPage extends State<SettingsPage> {
             ListTile(
                 leading: const Icon(Icons.label),
                 title: const Text("导航栏标签"),
-                trailing: ETCPopupMenuButton(
-                  icon: const Icon(Icons.edit),
+                trailing: CETPopupMenuButton(
                   translator: trNavigationLabelType,
                   config: config,
                   configKey: ConfigKeys.railLabelType,
@@ -80,13 +75,79 @@ class _StateSettingsPage extends State<SettingsPage> {
               title: const Text("背景图片"),
               shape: Border.all(color: Colors.transparent),
               children: [
+                ConfigSwitchListTile(
+                  title: const Text("开启"),
+                  config: config,
+                  configKey: ConfigKeys.backgroundImageEnable,
+                ),
                 ListTile(
                   title: const Text("图片类型"),
-                  trailing: ETCPopupMenuButton(
+                  trailing: CETPopupMenuButton(
                     translator: trBackgroundImageType,
                     config: config,
                     configKey: ConfigKeys.backgroundImageType,
                   ),
+                ),
+                ListTile(
+                  title: const Text("透明度"),
+                  subtitle: Slider(
+                      value:
+                          config.getOr(ConfigKeys.backgroundImageOpacity, 0.3),
+                      max: 0.5,
+                      onChanged: (value) => setState(() =>
+                          AppController.refreshAppValueConfig(
+                              ConfigKeys.backgroundImageOpacity, value))),
+                ),
+                ListTile(
+                  title: const Text("本地图片"),
+                  trailing: Card(
+                    child: InkWell(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      onTap: () async {
+                        AppController.loading();
+                        await FilePicker.platform
+                            .pickFiles(
+                                type: FileType.image, dialogTitle: "选择图片")
+                            .then(
+                          (value) {
+                            if (value != null) {
+                              setState(
+                                () => AppController.refreshAppValueConfig(
+                                  ConfigKeys.backgroundImageLocal,
+                                  value.files.first.path,
+                                ),
+                              );
+                            }
+                            AppController.pop();
+                          },
+                        );
+                      },
+                      child: config.tryGet(ConfigKeys.backgroundImageLocal) ==
+                                  null ||
+                              !File(config.get(ConfigKeys.backgroundImageLocal))
+                                  .existsSync()
+                          ? const SizedBox.square(
+                              dimension: 120,
+                            )
+                          : Image.file(
+                              File(config.get(ConfigKeys.backgroundImageLocal)),
+                            ),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  title: const Text("网络图片"),
+                  trailing: IconButton(
+                      onPressed: () async {
+                        var value = await editdialog(context,
+                            initial: config.getOr(
+                                ConfigKeys.backgroundImageNetwork, "https://"));
+                        if (value != null) {
+                          AppController.refreshAppValueConfig(
+                              ConfigKeys.backgroundImageNetwork, value);
+                        }
+                      },
+                      icon: const Icon(Icons.edit)),
                 ),
               ],
             ),

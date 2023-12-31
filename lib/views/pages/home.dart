@@ -21,7 +21,7 @@ class _StateHomePage extends State<HomePage> {
                     child: Card(
                         child: InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () => AppController.pushMaterialPage(
+                            onTap: () => AppController.pushPage(
                                 builder: (context) => const SoftWare()),
                             child: const SizedBox.square(
                               dimension: 128,

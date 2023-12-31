@@ -6,7 +6,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: e742d4a351383e6bab8fb6fc3eabda42e9f00ee6
+      resolved-ref: "5044e24c1fb5a306aa9af81e4337e817eca0a38d"
       url: "https://github.com/H2Sxxa/Arche.git"
     source: git
     version: "0.0.3"
@@ -130,6 +130,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: "4e42aacde3b993c5947467ab640882c56947d9d27342a5b6f2895b23956954a6"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "6.1.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -143,6 +151,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.3"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: b068ffc46f82a55844acfa4fdbb61fad72fa2aef0905548419d97f0f95c456da
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.17"
   flutter_test:
     dependency: "direct dev"
     description: flutter

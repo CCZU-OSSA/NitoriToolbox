@@ -3,3 +3,8 @@ enum BackgroundImageType {
   network,
   local,
 }
+
+enum HeroTag {
+  navigator,
+  temp,
+}

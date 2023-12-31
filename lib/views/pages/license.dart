@@ -9,7 +9,7 @@ void showLicensePageWithBar({
   String? applicationLegalese,
   bool useRootNavigator = false,
 }) {
-  AppController.pushMaterialPage(
+  AppController.pushPage(
     builder: (BuildContext context) => LicensePage(
       applicationName: applicationName,
       applicationVersion: applicationVersion,

@@ -6,6 +6,7 @@ import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
 import 'package:nitoritoolbox/models/keys.dart';
 import 'package:nitoritoolbox/utils/github.dart';
+import 'package:nitoritoolbox/views/pages/gallery.dart';
 import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
@@ -78,6 +79,10 @@ class StateMainApplication extends State<MainApplication> {
                     icon: Icon(Icons.home),
                     label: Text("Home"),
                     page: HomePage()),
+                NavigationItem(
+                    icon: Icon(Icons.apps),
+                    label: Text("Gallery"),
+                    page: GalleryPage()),
                 NavigationItem(
                     icon: Icon(Icons.settings),
                     label: Text("Settings"),

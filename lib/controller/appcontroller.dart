@@ -3,16 +3,37 @@ import 'dart:ui';
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
+import 'package:nitoritoolbox/models/enums.dart';
 import 'package:nitoritoolbox/models/keys.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 class AppController {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
+  static void pushPage({required WidgetBuilder builder}) {
+    navigator.push(PageRouteBuilder(
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            WindowContainer(child: builder(context))));
+  }
+
   static void pushMaterialPage({required WidgetBuilder builder}) {
     navigator.push(MaterialPageRoute(
         builder: (BuildContext context) =>
             WindowContainer(child: builder(context))));
+  }
+
+  static void pushHeroPage({required RoutePageBuilder builder, Object? tag}) {
+    navigator.push(PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => Hero(
+            tag: tag ?? HeroTag.navigator,
+            child: WindowContainer(
+              child: builder(context, animation, secondaryAnimation),
+            ))));
   }
 
   static T viewContextBuilder<T>(
@@ -25,13 +46,26 @@ class AppController {
   static void initLifeCycleListener() {
     AppLifecycleListener(onExitRequested: () async {
       return ArcheBus.config.getOr(ConfigKeys.exitConfirm, false)
-          ? (await exitdialog() ?? AppExitResponse.cancel)
+          ? (await exitdialog(viewkey.currentContext!) ??
+              AppExitResponse.cancel)
           : AppExitResponse.exit;
     });
   }
 
   static void refreshAppEnumConfig(String key, Enum target) {
-    ArcheBus.config.write(key, target.index);
+    refreshAppValueConfig(key, target.index);
+  }
+
+  static void refreshAppValueConfig<V>(String key, V value) {
+    ArcheBus.config.write(key, value);
     refreshApp();
+  }
+
+  static void loading() {
+    loadingdialog(viewkey.currentContext!);
+  }
+
+  static void pop() {
+    navigator.pop();
   }
 }
