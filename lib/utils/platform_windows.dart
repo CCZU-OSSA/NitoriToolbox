@@ -7,3 +7,4 @@ String? getWallPaperPath() {
   key.close();
   return res;
 }
+

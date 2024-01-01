@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:arche/modules/application.dart';
+import 'package:arche/modules/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -90,13 +91,18 @@ class _StateSettingsPage extends State<SettingsPage> {
                 ),
                 ListTile(
                   title: const Text("透明度"),
-                  subtitle: Slider(
-                      value:
-                          config.getOr(ConfigKeys.backgroundImageOpacity, 0.3),
+                  subtitle: ValueStateBuilder(
+                    initial: ArcheBus.config
+                        .getOr(ConfigKeys.backgroundImageOpacity, 0.3),
+                    builder: (context, value, update) => Slider(
+                      value: value,
                       max: 0.5,
-                      onChanged: (value) => setState(() =>
+                      onChanged: (value) => update(value),
+                      onChangeEnd: (value) =>
                           AppController.refreshAppValueConfig(
-                              ConfigKeys.backgroundImageOpacity, value))),
+                              ConfigKeys.backgroundImageOpacity, value),
+                    ),
+                  ),
                 ),
                 ListTile(
                   title: const Text("本地图片"),

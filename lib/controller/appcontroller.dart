@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
-import 'package:nitoritoolbox/models/enums.dart';
 import 'package:nitoritoolbox/models/keys.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
@@ -30,7 +29,7 @@ class AppController {
   static void pushHeroPage({required RoutePageBuilder builder, Object? tag}) {
     navigator.push(PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => Hero(
-            tag: tag ?? HeroTag.navigator,
+            tag: tag ?? "",
             child: WindowContainer(
               child: builder(context, animation, secondaryAnimation),
             ))));
