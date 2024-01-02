@@ -9,6 +9,7 @@ import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 class AppController {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
+  static StateNavigationView get viewstate => viewkey.currentState!;
   static void pushPage({required WidgetBuilder builder}) {
     navigator.push(PageRouteBuilder(
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -45,7 +46,7 @@ class AppController {
   static void initLifeCycleListener() {
     AppLifecycleListener(onExitRequested: () async {
       return ArcheBus.config.getOr(ConfigKeys.exitConfirm, false)
-          ? (await exitdialog(viewkey.currentContext!) ??
+          ? (await exitDialog(viewkey.currentContext!) ??
               AppExitResponse.cancel)
           : AppExitResponse.exit;
     });
@@ -61,7 +62,7 @@ class AppController {
   }
 
   static void loading() {
-    loadingdialog(viewkey.currentContext!);
+    loadingDialog(viewkey.currentContext!);
   }
 
   static void pop() {

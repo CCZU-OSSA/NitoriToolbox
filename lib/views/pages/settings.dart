@@ -45,6 +45,21 @@ class _StateSettingsPage extends State<SettingsPage> {
                 config: config,
                 configKey: ConfigKeys.checkUpdate,
               ),
+              ConfigSwitchListTile(
+                leading: const Icon(Icons.developer_mode),
+                title: const Text("开发者模式"),
+                config: config,
+                configKey: ConfigKeys.dev,
+                confirm: () async {
+                  return (await basicFullScreenDialog<bool>(
+                    title: const Text("警告"),
+                    content: const Text("此功能可能会对此计算机造成损害，开启后所有责任与损失均由使用者承担"),
+                    context: context,
+                    confirmData: true,
+                    cancelData: false,
+                  ))!;
+                },
+              )
             ],
           ),
         ),
@@ -145,7 +160,7 @@ class _StateSettingsPage extends State<SettingsPage> {
                   title: const Text("网络图片"),
                   trailing: IconButton(
                       onPressed: () async {
-                        var value = await editdialog(context,
+                        var value = await editDialog(context,
                             initial: config.getOr(
                                 ConfigKeys.backgroundImageNetwork, "https://"));
                         if (value != null) {

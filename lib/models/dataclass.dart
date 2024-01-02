@@ -8,6 +8,7 @@ class ConfigKeys {
   static const String backgroundImageNetwork = "backgroundImageNetwork";
   static const String exitConfirm = "exitConfirm";
   static const String checkUpdate = "checkUpdate";
+  static const String dev = "dev";
 }
 
 class ApplicationInfo {

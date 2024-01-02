@@ -10,6 +10,7 @@ import 'package:nitoritoolbox/views/pages/gallery.dart';
 import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
+import 'package:nitoritoolbox/views/pages/terminal.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 Future<void> main() async {
@@ -80,13 +81,21 @@ class StateMainApplication extends State<MainApplication> {
                     label: Text("Home"),
                     page: HomePage()),
                 NavigationItem(
-                    icon: Icon(Icons.apps),
-                    label: Text("Gallery"),
-                    page: GalleryPage()),
+                  icon: Icon(Icons.apps),
+                  label: Text("Gallery"),
+                  page: GalleryPage(),
+                ),
                 NavigationItem(
-                    icon: Icon(Icons.settings),
-                    label: Text("Settings"),
-                    page: SettingsPage())
+                  icon: Icon(Icons.terminal),
+                  label: Text("Terminal"),
+                  page: TerminalPage(),
+                ),
+                NavigationItem(
+                  name: "Settings",
+                  icon: Icon(Icons.settings),
+                  label: Text("Settings"),
+                  page: SettingsPage(),
+                )
               ],
               config: NavigationRailConfig(
                   labelType: NavigationRailLabelType

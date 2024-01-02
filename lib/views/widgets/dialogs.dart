@@ -3,26 +3,43 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
-exitdialog(BuildContext context) => showDialog<AppExitResponse>(
+Future<T?> basicFullScreenDialog<T>({
+  required BuildContext context,
+  Widget? title,
+  Widget? content,
+  String confirmLabel = "确认",
+  required T confirmData,
+  String cancelLabel = "取消",
+  required T cancelData,
+}) =>
+    showDialog<T>(
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("退出提示"),
-        content: const Text("可以前往设置关闭退出提示"),
+        title: title,
+        content: content,
         actions: [
           FilledButton.icon(
-              onPressed: () => Navigator.pop(context, AppExitResponse.exit),
+              onPressed: () => Navigator.pop(context, confirmData),
               icon: const Icon(Icons.check),
-              label: const Text("退出")),
+              label: Text(confirmLabel)),
           ElevatedButton.icon(
-              onPressed: () => Navigator.pop(context, AppExitResponse.cancel),
+              onPressed: () => Navigator.pop(context, cancelData),
               icon: const Icon(Icons.close),
-              label: const Text("取消"))
+              label: Text(cancelLabel))
         ],
       ),
     );
 
-void loadingdialog(BuildContext context) => showDialog<void>(
+exitDialog(BuildContext context) => basicFullScreenDialog<AppExitResponse>(
+      context: context,
+      title: const Text("退出提示"),
+      content: const Text("可以前往设置关闭退出提示"),
+      confirmData: AppExitResponse.exit,
+      cancelData: AppExitResponse.cancel,
+    );
+
+void loadingDialog(BuildContext context) => showDialog<void>(
       barrierDismissible: false,
       context: context,
       builder: (context) => const Dialog.fullscreen(
@@ -32,12 +49,10 @@ void loadingdialog(BuildContext context) => showDialog<void>(
       ).windowbar(),
     );
 
-Future<String?> editdialog(BuildContext context, {String initial = ""}) async {
+Future<String?> editDialog(BuildContext context, {String initial = ""}) async {
   var controller = TextEditingController(text: initial);
-  return await showDialog<String?>(
-    barrierDismissible: false,
-    context: context,
-    builder: (context) => AlertDialog(
+  return await basicFullScreenDialog<String?>(
+      context: context,
       title: const Text("编辑"),
       content: Padding(
         padding: const EdgeInsets.all(8),
@@ -45,17 +60,10 @@ Future<String?> editdialog(BuildContext context, {String initial = ""}) async {
           controller: controller,
         ),
       ),
-      actions: [
-        FilledButton.icon(
-            onPressed: () => Navigator.pop(context, controller.text),
-            icon: const Icon(Icons.check),
-            label: const Text("完成")),
-        ElevatedButton.icon(
-          onPressed: () => Navigator.pop(context, null),
-          icon: const Icon(Icons.close),
-          label: const Text("取消"),
-        )
-      ],
-    ),
-  );
+      confirmData: () {
+        var text = controller.text;
+        controller.dispose();
+        return text;
+      }(),
+      cancelData: null);
 }

@@ -53,14 +53,19 @@ class ConfigSwitchListTile extends StatefulWidget {
   final Widget? title;
   final Widget? leading;
   final Widget? subtitle;
-  const ConfigSwitchListTile(
-      {super.key,
-      required this.config,
-      required this.configKey,
-      this.title,
-      this.leading,
-      this.subtitle,
-      this.initial = false});
+  final VoidCallback? callback;
+  final Future<bool> Function()? confirm;
+  const ConfigSwitchListTile({
+    super.key,
+    required this.config,
+    required this.configKey,
+    this.title,
+    this.leading,
+    this.subtitle,
+    this.initial = false,
+    this.callback,
+    this.confirm,
+  });
 
   @override
   State<StatefulWidget> createState() => _StateConfigSwitch();
@@ -75,8 +80,21 @@ class _StateConfigSwitch extends State<ConfigSwitchListTile> {
       leading: widget.leading,
       trailing: Switch(
           value: widget.config.getOr(widget.configKey, widget.initial),
-          onChanged: (value) => setState(() =>
-              AppController.refreshAppValueConfig(widget.configKey, value))),
+          onChanged: (value) {
+            var confirm = widget.confirm;
+            if (value != widget.initial && confirm != null) {
+              confirm().then((value) {
+                if (value) {
+                  setState(() => AppController.refreshAppValueConfig(
+                      widget.configKey, value));
+                }
+              });
+
+              return;
+            }
+            setState(() =>
+                AppController.refreshAppValueConfig(widget.configKey, value));
+          }),
     );
   }
 }
