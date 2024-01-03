@@ -3,3 +3,9 @@ enum BackgroundImageType {
   network,
   local,
 }
+
+enum TaskStatus {
+  block,
+  done,
+  cancel,
+}
