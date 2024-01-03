@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:arche/arche.dart';
-import 'package:fast_gbk/fast_gbk.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/block.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
+import 'package:nitoritoolbox/models/enums.dart';
 import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 class TerminalPage extends StatefulWidget {
@@ -26,25 +25,27 @@ class _StateTerminalPage extends State<TerminalPage> {
               children: [
                 SelectableText("User : ${e.title}"),
                 Card(
-                    child: SelectableText.rich(TextSpan(
-                            children: e.contents.indexed
-                                .map((v) {
-                                  var (i, j) = v.$2;
-                                  if (v.$1 != e.contents.length - 1) {
-                                    j += "\n";
-                                  }
-                                  return (i, j);
-                                })
-                                .map(
-                                  (e) => TextSpan(
-                                    text: e.$2,
-                                    style: TextStyle(
-                                      color: e.$1 ? null : Colors.red,
-                                    ),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                      SelectableText.rich(TextSpan(
+                          children: e.contents
+                              .map(
+                                (e) => TextSpan(
+                                  text: "${e.$2}\n",
+                                  style: TextStyle(
+                                    color: e.$1 ? null : Colors.red,
                                   ),
-                                )
-                                .toList()))
-                        .padding12())
+                                ),
+                              )
+                              .toList())),
+                      e.status == TaskStatus.block
+                          ? const CircularProgressIndicator()
+                          : e.status == TaskStatus.done
+                              ? const Icon(Icons.done)
+                              : const Icon(Icons.cancel),
+                    ]).padding12())
               ]))
       .toList();
 
@@ -63,29 +64,36 @@ class _StateTerminalPage extends State<TerminalPage> {
       return;
     }
     int index = output.length;
+    if (output.isNotEmpty && output.last.status != TaskStatus.done) {
+      output.last.status = TaskStatus.cancel;
+    }
+
     var block = Block(title: textController.text, contents: []);
     setState(() {
       output.add(block);
     });
-    shell.start(textController.text, []).then((value) {
-      subscribe(Stream<List<int>> stream, bool ok) => stream.listen((event) {
-            String text;
-            try {
-              text = utf8.decode(event);
-            } catch (e) {
-              text = gbk.decode(event);
-            }
-            setState(() {
-              if (text.trim().isNotEmpty) {
-                output[index].add(ok, text.trim());
-              }
-            });
 
-            scrollController.animateTo(
-                scrollController.position.maxScrollExtent,
-                duration: Durations.medium4,
-                curve: Curves.linear);
-          });
+    shell.start(textController.text, []).then((value) {
+      subscribe(Stream<List<int>> stream, bool ok) => stream.listen(
+            (event) {
+              var text = UnionDecoder.instance.convert(event).trim();
+
+              if (text.isNotEmpty) {
+                setState(() {
+                  output[index].add(ok, text);
+                });
+              }
+
+              scrollController.animateTo(
+                  scrollController.position.maxScrollExtent,
+                  duration: Durations.medium4,
+                  curve: Curves.linear);
+            },
+            onDone: () => setState(
+              () => block.status = TaskStatus.done,
+            ),
+          );
+
       subscribe(value.stdout, true);
       subscribe(value.stderr, false);
     });
@@ -107,6 +115,45 @@ class _StateTerminalPage extends State<TerminalPage> {
     var config = ArcheBus.config;
     return config.getOr(ConfigKeys.dev, false)
         ? Scaffold(
+            appBar: AppBar(
+              title: PopupMenuButton(
+                icon: const Icon(Icons.settings),
+                initialValue: config.getOr(ConfigKeys.customShell, false),
+                onSelected: (value) {
+                  if (value == true) {
+                    editDialog(
+                      context,
+                      title: "输入需要使用的Shell文件地址",
+                      initial: config.tryGet(ConfigKeys.shellPath),
+                    ).then((value) {
+                      if (value != null) {
+                        setState(() {
+                          config.write(ConfigKeys.customShell, true);
+                          config.write(ConfigKeys.shellPath, value);
+                          shell.perferShell = value;
+                        });
+                      }
+                    });
+                    return;
+                  }
+                  setState(() {
+                    config.write(ConfigKeys.customShell, false);
+                  });
+                  shell.perferShell = null;
+                },
+                tooltip: "Shell设置",
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: false,
+                    child: Text("使用系统默认Shell"),
+                  ),
+                  const PopupMenuItem(
+                    value: true,
+                    child: Text("使用自定义Shell"),
+                  )
+                ],
+              ),
+            ),
             body: ListView(
               controller: scrollController,
               children: viewContent,

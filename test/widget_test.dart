@@ -4,18 +4,21 @@
 // utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nitoritoolbox/utils/shell_abc.dart';
-import 'package:nitoritoolbox/utils/shell_windows.dart';
 
 void main() {
-  test("Chore test", () async {
-    var shell = Shell(environment: {
-      "path": "D:\\WorkSpace\\python\\Remilia\\.venv\\Scripts;"
-    });
-    var p = await shell.start("where.exe", ["python"]);
-    p.stdout.asStringStream().listen(print);
-    await Future.delayed(const Duration(seconds: 2));
+  test("Stdin test", () async {
+    var p = await Process.start("python", []);
+    // write to stdin
+    p.stdin.writeln("print('hello world')");
+    // Must be closed
+    await p.stdin.close();
+    await stdout.addStream(p.stdout);
+    await stderr.addStream(p.stderr);
+
+    // Real Application LifyCycle Emulator
+    await Future.delayed(const Duration(seconds: 5));
   });
 }

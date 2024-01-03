@@ -55,8 +55,8 @@ class _StateSettingsPage extends State<SettingsPage> {
                     title: const Text("警告"),
                     content: const Text("此功能可能会对此计算机造成损害，开启后所有责任与损失均由使用者承担"),
                     context: context,
-                    confirmData: true,
-                    cancelData: false,
+                    confirmData: () => true,
+                    cancelData: () => false,
                   ))!;
                 },
               )

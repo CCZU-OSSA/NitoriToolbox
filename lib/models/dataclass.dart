@@ -6,6 +6,8 @@ class ConfigKeys {
   static const String backgroundImageType = "backgroundImageType";
   static const String backgroundImageLocal = "backgroundImageLocal";
   static const String backgroundImageNetwork = "backgroundImageNetwork";
+  static const String customShell = "customShell";
+  static const String shellPath = "shellPath";
   static const String exitConfirm = "exitConfirm";
   static const String checkUpdate = "checkUpdate";
   static const String dev = "dev";
