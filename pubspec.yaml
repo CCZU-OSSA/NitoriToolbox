@@ -44,6 +44,7 @@ dependencies:
   win32_registry: ^1.1.2
   file_picker: ^6.1.1
   fast_gbk: ^1.0.0
+  flutter_pty: ^0.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -100,6 +101,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+plugin:
+  platforms:
+    windows:
+      ffiPlugin: true
 
 msix_config:
   display_name: Nitori Toolbox

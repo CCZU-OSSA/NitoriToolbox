@@ -1,8 +1,8 @@
+import 'dart:convert';
+
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/models/block.dart';
 import 'package:nitoritoolbox/models/dataclass.dart';
-import 'package:nitoritoolbox/models/enums.dart';
 import 'package:nitoritoolbox/utils/shell.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
@@ -17,96 +17,58 @@ class TerminalPage extends StatefulWidget {
 class _StateTerminalPage extends State<TerminalPage> {
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
-  Shell shell = Shell();
-  List<Widget> get viewContent => output
-      .map<Widget>((e) => Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SelectableText("User : ${e.title}"),
-                Card(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                      SelectableText.rich(TextSpan(
-                          children: e.contents
-                              .map(
-                                (e) => TextSpan(
-                                  text: "${e.$2}\n",
-                                  style: TextStyle(
-                                    color: e.$1 ? null : Colors.red,
-                                  ),
-                                ),
-                              )
-                              .toList())),
-                      e.status == TaskStatus.block
-                          ? const CircularProgressIndicator()
-                          : e.status == TaskStatus.done
-                              ? const Icon(Icons.done)
-                              : const Icon(Icons.cancel),
-                    ]).padding12())
-              ]))
-      .toList();
+  EnvPty shell = EnvPty();
 
-  static List<Block> output = [];
+  static List<String> output = [];
 
   @override
   void dispose() {
     super.dispose();
     textController.dispose();
     scrollController.dispose();
-    shell.process?.kill();
+    shell.deactivate();
   }
 
-  void sendProcess() {
+  void sendProcess(BuildContext context) {
     if (textController.text.isEmpty) {
       return;
     }
-    int index = output.length;
-    if (output.isNotEmpty && output.last.status != TaskStatus.done) {
-      output.last.status = TaskStatus.cancel;
+    if (!shell.connect) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("请先激活Shell环境")));
+      return;
     }
 
-    var block = Block(title: textController.text, contents: []);
-    setState(() {
-      output.add(block);
-    });
+    shell.write(textController.text);
 
-    shell.start(textController.text, []).then((value) {
-      subscribe(Stream<List<int>> stream, bool ok) => stream.listen(
-            (event) {
-              var text = UnionDecoder.instance.convert(event).trim();
-
-              if (text.isNotEmpty) {
-                setState(() {
-                  output[index].add(ok, text);
-                });
-              }
-
-              scrollController.animateTo(
-                  scrollController.position.maxScrollExtent,
-                  duration: Durations.medium4,
-                  curve: Curves.linear);
-            },
-            onDone: () => setState(
-              () => block.status = TaskStatus.done,
-            ),
-          );
-
-      subscribe(value.stdout, true);
-      subscribe(value.stderr, false);
-    });
     textController.clear();
   }
 
   @override
   void initState() {
     super.initState();
+    var config = ArcheBus.config;
+    if (config.getOr(ConfigKeys.customShell, false)) {
+      shell.perferShell = ArcheBus.config.tryGet(ConfigKeys.shellPath);
+    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       scrollController.jumpTo(
         scrollController.position.maxScrollExtent,
       );
+    });
+    shell.bind((event) {
+      var text = utf8.decode(event).trim();
+      if (text.isNotEmpty) {
+        setState(() {
+          output.add(text
+              .splitlines()
+              .where((element) => element.isNotEmpty)
+              .join("\n"));
+          scrollController.jumpTo(
+            scrollController.position.maxScrollExtent,
+          );
+        });
+      }
     });
   }
 
@@ -116,7 +78,8 @@ class _StateTerminalPage extends State<TerminalPage> {
     return config.getOr(ConfigKeys.dev, false)
         ? Scaffold(
             appBar: AppBar(
-              title: PopupMenuButton(
+                title: Row(children: [
+              PopupMenuButton(
                 icon: const Icon(Icons.settings),
                 initialValue: config.getOr(ConfigKeys.customShell, false),
                 onSelected: (value) {
@@ -131,6 +94,7 @@ class _StateTerminalPage extends State<TerminalPage> {
                           config.write(ConfigKeys.customShell, true);
                           config.write(ConfigKeys.shellPath, value);
                           shell.perferShell = value;
+                          shell.reload();
                         });
                       }
                     });
@@ -138,6 +102,7 @@ class _StateTerminalPage extends State<TerminalPage> {
                   }
                   setState(() {
                     config.write(ConfigKeys.customShell, false);
+                    shell.reload();
                   });
                   shell.perferShell = null;
                 },
@@ -153,20 +118,34 @@ class _StateTerminalPage extends State<TerminalPage> {
                   )
                 ],
               ),
-            ),
+              IconButton(
+                  onPressed: () async {
+                    shell.activate();
+                  },
+                  icon: const Icon(Icons.play_arrow)),
+              IconButton(
+                  onPressed: () => shell.deactivate(),
+                  icon: const Icon(Icons.stop)),
+              IconButton(
+                  onPressed: () => setState(() {
+                        output.clear();
+                      }),
+                  icon: const Icon(Icons.cleaning_services))
+            ])),
             body: ListView(
               controller: scrollController,
-              children: viewContent,
+              children: output.map((e) => Text(e)).toList(),
             ).padding12(),
             bottomNavigationBar: ListTile(
               title: TextField(
                   controller: textController,
-                  onSubmitted: (_) => sendProcess(),
+                  onSubmitted: (_) => sendProcess(context),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   )),
               trailing: IconButton(
-                  onPressed: () => sendProcess(), icon: const Icon(Icons.send)),
+                  onPressed: () => sendProcess(context),
+                  icon: const Icon(Icons.send)),
             ),
           )
         : const Center(
