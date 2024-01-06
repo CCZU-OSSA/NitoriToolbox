@@ -7,7 +7,7 @@ import 'package:flutter_pty/flutter_pty.dart';
 typedef MessageHandler = void Function(List<int> data);
 
 abstract class Environment<T> {
-  late T container;
+  T? container;
   bool connect = false;
   Map<String, String>? perferEnvironment;
   String? perferShell;
@@ -63,8 +63,8 @@ class EnvProcess extends Environment<Process> {
 
   @override
   void write(String data) {
-    container.stdin.write(data);
-    container.stdin.flush();
+    container!.stdin.write(data);
+    container!.stdin.flush();
   }
 
   @override
@@ -78,7 +78,7 @@ class EnvProcess extends Environment<Process> {
       arg.insert(0, executable);
       container = await Process.start(perferShell!, arg);
     }
-    container.stdout.listen(
+    container!.stdout.listen(
       (event) {
         for (var h in _stdouthandler) {
           h(event);
@@ -86,7 +86,7 @@ class EnvProcess extends Environment<Process> {
       },
       onDone: () => deactivate(),
     );
-    container.stderr.listen(
+    container!.stderr.listen(
       (event) {
         for (var h in _stderrhandler) {
           h(event);
@@ -95,13 +95,13 @@ class EnvProcess extends Environment<Process> {
       onDone: () => deactivate(),
     );
 
-    return container;
+    return container!;
   }
 
   @override
   void deactivate() async {
     super.deactivate();
-    container.stdin.close().then((value) => container.kill());
+    container?.stdin.close().then((value) => container?.kill());
   }
 
   @override
@@ -126,17 +126,21 @@ class EnvPty extends Environment<Pty> {
 
   @override
   Future<Pty> activate() async {
+    if (connect) {
+      deactivate();
+    }
     super.activate();
-    container = Pty.start(perferShell ?? shell, environment: enviroment);
-    container.resize(30, 80);
 
-    container.output.listen((event) {
+    container = Pty.start(perferShell ?? shell, environment: enviroment);
+    container!.resize(30, 80);
+
+    container!.output.listen((event) {
       for (var f in _subscription) {
         f(event);
       }
     });
 
-    return container;
+    return container!;
   }
 
   @override
@@ -147,12 +151,12 @@ class EnvPty extends Environment<Pty> {
   @override
   void deactivate() {
     super.deactivate();
-    container.kill();
+    container?.kill();
   }
 
   @override
   void write(String data) {
-    container.write(utf8.encode(data.platformline()));
+    container!.write(utf8.encode(data.platformline()));
   }
 }
 

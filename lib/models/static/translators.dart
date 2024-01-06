@@ -1,6 +1,6 @@
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/models/enums.dart';
+import 'package:nitoritoolbox/models/static/enums.dart';
 
 final trBackgroundImageType = StringTranslator(BackgroundImageType.values)
     .translate(BackgroundImageType.local, "本地")

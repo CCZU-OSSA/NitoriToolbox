@@ -45,6 +45,7 @@ dependencies:
   file_picker: ^6.1.1
   fast_gbk: ^1.0.0
   flutter_pty: ^0.4.0
+  yaml: ^3.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

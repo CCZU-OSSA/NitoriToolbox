@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/models/dataclass.dart';
+import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/utils/shell.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
@@ -40,7 +40,6 @@ class _StateTerminalPage extends State<TerminalPage> {
     }
 
     shell.write(textController.text);
-
     textController.clear();
   }
 
@@ -119,17 +118,13 @@ class _StateTerminalPage extends State<TerminalPage> {
                 ],
               ),
               IconButton(
-                  onPressed: () async {
-                    shell.activate();
-                  },
+                  onPressed: () => shell.activate(),
                   icon: const Icon(Icons.play_arrow)),
               IconButton(
                   onPressed: () => shell.deactivate(),
                   icon: const Icon(Icons.stop)),
               IconButton(
-                  onPressed: () => setState(() {
-                        output.clear();
-                      }),
+                  onPressed: () => setState(() => output.clear()),
                   icon: const Icon(Icons.cleaning_services))
             ])),
             body: ListView(

@@ -8,7 +8,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test("Stdin test", () {
-
+  test("Yaml test", () {
+      print()
   });
 }
