@@ -17,7 +17,7 @@ class TerminalPage extends StatefulWidget {
 class _StateTerminalPage extends State<TerminalPage> {
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
-  EnvPty shell = EnvPty();
+  AbstractShell shell = PtyShell();
 
   static List<String> output = [];
 

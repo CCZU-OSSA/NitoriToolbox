@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:arche/arche.dart';
+import 'package:arche/extensions/io.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +18,10 @@ import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var data = AppData("AppData");
+  var data = AppData(Directory("AppData").check());
   ArcheBus.bus
       .provide(data)
-      .provide(data.config())
+      .provide(data.config)
       .provide(GithubRepository(ApplicationInfo.githubRepoName));
   runApp(MainApplication());
   AppController.initLifeCycleListener();

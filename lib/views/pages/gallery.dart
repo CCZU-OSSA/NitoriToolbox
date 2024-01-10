@@ -1,6 +1,6 @@
+import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/views/pages/software.dart';
+import 'package:nitoritoolbox/controller/appdata.dart';
 
 class GalleryPage extends StatefulWidget {
   const GalleryPage({super.key});
@@ -10,44 +10,54 @@ class GalleryPage extends StatefulWidget {
 }
 
 class _StateGalleryPage extends State<GalleryPage> {
+  late GalleryManager manager;
+  int selected = 0;
+  @override
+  void initState() {
+    super.initState();
+    manager = ArcheBus.bus.of<AppData>().galleryManager;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Wrap(children: [
-      Material(
-        child: Hero(
-          tag: 0,
-          child: Card(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8),
-              child: const SizedBox.square(
-                dimension: 128,
-              ),
-              onTap: () => AppController.pushHeroPage(
-                  builder: (context, animation, secondaryAnimation) =>
-                      const SoftWare(),
-                  tag: 0),
-            ),
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(100),
+          child: Padding(
+              padding: const EdgeInsets.only(left: 120, right: 120),
+              child: NavigationBar(
+                indicatorColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.onlyShowSelected,
+                onDestinationSelected: (value) => setState(() {
+                  selected = value;
+                }),
+                selectedIndex: selected,
+                destinations: const [
+                  NavigationDestination(
+                      label: "Application", icon: Icon(Icons.apps)),
+                  NavigationDestination(
+                      label: "Environment", icon: Icon(Icons.code)),
+                  NavigationDestination(
+                      label: "Document", icon: Icon(Icons.book)),
+                ],
+              ))),
+      body: ListView(children: [
+        Center(
+          child: Wrap(
+            children: List.generate(
+                100,
+                (index) => const Card(
+                      child: SizedBox.square(
+                        dimension: 100,
+                      ),
+                    )),
           ),
-        ),
-      ),
-      Material(
-        child: Hero(
-          tag: 1,
-          child: Card(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8),
-              child: const SizedBox.square(
-                dimension: 128,
-              ),
-              onTap: () => AppController.pushHeroPage(
-                builder: (context, animation, secondaryAnimation) =>
-                    const SoftWare(),
-                tag: 1,
-              ),
-            ),
-          ),
-        ),
-      ),
-    ]);
+        )
+      ]),
+    );
   }
 }

@@ -49,22 +49,26 @@ void loadingDialog(BuildContext context) => showDialog<void>(
       ).windowbar(),
     );
 
-Future<String?> editDialog(BuildContext context,
-    {String initial = "", String title = "编辑"}) async {
+Future<String?> editDialog(
+  BuildContext context, {
+  String initial = "",
+  String title = "编辑",
+}) async {
   var controller = TextEditingController(text: initial);
   return await basicFullScreenDialog<String?>(
-      context: context,
-      title: Text(title),
-      content: Padding(
-        padding: const EdgeInsets.all(8),
-        child: TextField(
-          controller: controller,
-        ),
+    context: context,
+    title: Text(title),
+    content: Padding(
+      padding: const EdgeInsets.all(8),
+      child: TextField(
+        controller: controller,
       ),
-      confirmData: () {
-        var text = controller.text;
-        controller.dispose();
-        return text;
-      },
-      cancelData: () => null);
+    ),
+    confirmData: () {
+      var text = controller.text;
+      controller.dispose();
+      return text;
+    },
+    cancelData: () => null,
+  );
 }

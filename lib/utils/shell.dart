@@ -6,12 +6,12 @@ import 'package:flutter_pty/flutter_pty.dart';
 
 typedef MessageHandler = void Function(List<int> data);
 
-abstract class Environment<T> {
+abstract class AbstractShell<T> {
   T? container;
   bool connect = false;
   Map<String, String>? perferEnvironment;
   String? perferShell;
-  Environment({
+  AbstractShell({
     this.perferEnvironment,
     this.perferShell,
   });
@@ -52,11 +52,11 @@ abstract class Environment<T> {
   }
 }
 
-class EnvProcess extends Environment<Process> {
+class ProcessShell extends AbstractShell<Process> {
   final List<MessageHandler> _stdouthandler = [];
   final List<MessageHandler> _stderrhandler = [];
 
-  EnvProcess({
+  ProcessShell({
     super.perferEnvironment,
     super.perferShell,
   });
@@ -75,6 +75,7 @@ class EnvProcess extends Environment<Process> {
       container = await Process.start(executable, arguments ?? []);
     } else {
       List<String> arg = arguments ?? [];
+
       arg.insert(0, executable);
       container = await Process.start(perferShell!, arg);
     }
@@ -117,9 +118,9 @@ class EnvProcess extends Environment<Process> {
   }
 }
 
-class EnvPty extends Environment<Pty> {
+class PtyShell extends AbstractShell<Pty> {
   final List<MessageHandler> _subscription = [];
-  EnvPty({
+  PtyShell({
     super.perferEnvironment,
     super.perferShell,
   });
@@ -132,7 +133,6 @@ class EnvPty extends Environment<Pty> {
     super.activate();
 
     container = Pty.start(perferShell ?? shell, environment: enviroment);
-    container!.resize(30, 80);
 
     container!.output.listen((event) {
       for (var f in _subscription) {
