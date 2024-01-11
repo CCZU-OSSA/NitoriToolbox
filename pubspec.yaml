@@ -36,8 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   dynamic_color: ^1.6.9
   bitsdojo_window: ^0.1.6
-  arche:
-    git: https://github.com/H2Sxxa/Arche.git
+  arche: ^0.0.3
   font_awesome_flutter: ^10.6.0
   url_launcher: ^6.2.2
   dio: ^5.4.0

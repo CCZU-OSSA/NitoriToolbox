@@ -4,11 +4,10 @@ packages:
   arche:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: d3c30d9f0b076c19c9179a40862b1b8e38aca158
-      url: "https://github.com/H2Sxxa/Arche.git"
-    source: git
+      name: arche
+      sha256: cb10a725e797bbd5dd028f5b42e483f28af5b46800cbe7f2d4b69a4de7db4e2e
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "0.0.3"
   archive:
     dependency: transitive

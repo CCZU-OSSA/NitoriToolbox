@@ -80,29 +80,29 @@ class StateMainApplication extends State<MainApplication> {
               key: viewkey,
               items: const [
                 NavigationItem(
-                    icon: Icon(Icons.home),
-                    label: Text("Home"),
-                    page: HomePage()),
+                  icon: Icon(Icons.home),
+                  label: "Home",
+                  page: HomePage(),
+                ),
                 NavigationItem(
                   icon: Icon(Icons.apps),
-                  label: Text("Gallery"),
+                  label: "Gallery",
                   page: GalleryPage(),
                 ),
                 NavigationItem(
                   icon: Icon(Icons.terminal),
-                  label: Text("Terminal"),
+                  label: "Terminal",
                   page: TerminalPage(),
                 ),
                 NavigationItem(
                   name: "Settings",
                   icon: Icon(Icons.settings),
-                  label: Text("Settings"),
+                  label: "Settings",
                   page: SettingsPage(),
                 )
               ],
-              config: NavigationRailConfig(
-                  labelType: NavigationRailLabelType
-                      .values[config.getOr(ConfigKeys.railLabelType, 0)]),
+              labelType: NavigationLabelType
+                  .values[config.getOr(ConfigKeys.labelType, 0)],
             ))));
       },
     );

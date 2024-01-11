@@ -20,44 +20,25 @@ class _StateGalleryPage extends State<GalleryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
-          child: Padding(
-              padding: const EdgeInsets.only(left: 120, right: 120),
-              child: NavigationBar(
-                indicatorColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                labelBehavior:
-                    NavigationDestinationLabelBehavior.onlyShowSelected,
-                onDestinationSelected: (value) => setState(() {
-                  selected = value;
-                }),
-                selectedIndex: selected,
-                destinations: const [
-                  NavigationDestination(
-                      label: "Application", icon: Icon(Icons.apps)),
-                  NavigationDestination(
-                      label: "Environment", icon: Icon(Icons.code)),
-                  NavigationDestination(
-                      label: "Document", icon: Icon(Icons.book)),
-                ],
-              ))),
-      body: ListView(children: [
-        Center(
-          child: Wrap(
-            children: List.generate(
-                100,
-                (index) => const Card(
-                      child: SizedBox.square(
-                        dimension: 100,
-                      ),
-                    )),
-          ),
-        )
-      ]),
+    return const NavigationView(
+      items: [
+        NavigationItem(
+            icon: Icon(Icons.apps),
+            page: Text("Hello 1"),
+            label: "Application"),
+        NavigationItem(
+            icon: Icon(Icons.code),
+            page: Text("Hello 2"),
+            label: "Environment"),
+        NavigationItem(
+          icon: Icon(Icons.book),
+          page: Card(child: SizedBox.expand()),
+          label: "Document",
+        ),
+      ],
+      direction: Axis.vertical,
+      reversed: true,
+      vertical: NavigationVerticalConfig(surfaceTintColor: Colors.transparent),
     );
   }
 }

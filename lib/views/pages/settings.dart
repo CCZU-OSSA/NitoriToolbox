@@ -84,7 +84,7 @@ class _StateSettingsPage extends State<SettingsPage> {
                 trailing: CETPopupMenuButton(
                   translator: trNavigationLabelType,
                   config: config,
-                  configKey: ConfigKeys.railLabelType,
+                  configKey: ConfigKeys.labelType,
                 )),
             ExpansionTile(
               leading: const Icon(Icons.image),

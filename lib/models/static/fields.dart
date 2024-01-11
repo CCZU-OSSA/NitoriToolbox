@@ -1,5 +1,5 @@
 class ConfigKeys {
-  static const String railLabelType = "railLabelType";
+  static const String labelType = "labelType";
   static const String theme = "theme";
   static const String backgroundImageEnable = "backgroundImageEnable";
   static const String backgroundImageOpacity = "backgroundImageOpacity";
