@@ -4,11 +4,12 @@ packages:
   arche:
     dependency: "direct main"
     description:
-      name: arche
-      sha256: cb10a725e797bbd5dd028f5b42e483f28af5b46800cbe7f2d4b69a4de7db4e2e
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.3"
+      path: "."
+      ref: HEAD
+      resolved-ref: "330bd29fba0e5e11f696bbbe40500e996ceb06e0"
+      url: "https://github.com/H2Sxxa/Arche.git"
+    source: git
+    version: "0.0.4"
   archive:
     dependency: transitive
     description:
@@ -206,6 +207,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.3"
+  flutter_markdown:
+    dependency: "direct main"
+    description:
+      name: flutter_markdown
+      sha256: "30088ce826b5b9cfbf9e8bece34c716c8a59fa54461dcae1e4ac01a94639e762"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.6.18+3"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -280,6 +289,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  markdown:
+    dependency: transitive
+    description:
+      name: markdown
+      sha256: acf35edccc0463a9d7384e437c015a3535772e09714cf60e07eeef3a15870dcd
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "7.1.1"
   matcher:
     dependency: transitive
     description:

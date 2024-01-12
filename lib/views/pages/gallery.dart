@@ -1,6 +1,10 @@
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:nitoritoolbox/models/yaml.dart';
+import 'package:nitoritoolbox/views/pages/application.dart';
+import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 class GalleryPage extends StatefulWidget {
   const GalleryPage({super.key});
@@ -9,9 +13,12 @@ class GalleryPage extends StatefulWidget {
   State<StatefulWidget> createState() => _StateGalleryPage();
 }
 
-class _StateGalleryPage extends State<GalleryPage> {
+class _StateGalleryPage extends State<GalleryPage>
+    with TickerProviderStateMixin {
   late GalleryManager manager;
   int selected = 0;
+
+  get size => null;
   @override
   void initState() {
     super.initState();
@@ -20,17 +27,53 @@ class _StateGalleryPage extends State<GalleryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const NavigationView(
+    GalleryManager galleryManager = ArcheBus.bus.of<AppData>().galleryManager;
+    return NavigationView(
       items: [
         NavigationItem(
-            icon: Icon(Icons.apps),
-            page: Text("Hello 1"),
-            label: "Application"),
-        NavigationItem(
-            icon: Icon(Icons.code),
-            page: Text("Hello 2"),
-            label: "Environment"),
-        NavigationItem(
+          icon: const Icon(Icons.apps),
+          page: GalleryContent<ApplicationPackage>(
+            dataBuilder: () => galleryManager.collect(
+              galleryManager.applications,
+              ApplicationPackage().loads,
+            ),
+            widgetBuilder: (data) => CardButton(
+              size: const Size.square(120),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => SizedBox.expand(
+                      child: SingleChildScrollView(
+                          child: Column(children: [
+                    const Text(
+                      "应用列表",
+                      style: TextStyle(fontSize: 24),
+                    ).padding12(),
+                    Wrap(
+                      children: data.manifest
+                          .map((app) => CardButton(
+                              size: const Size.square(100),
+                              onTap: () => AppController.pushPage(
+                                    builder: (context) =>
+                                        ApplicationPage(application: app),
+                                  ),
+                              child: Text(app.name)))
+                          .toList(),
+                    ),
+                  ])).padding12()),
+                );
+              },
+              child: Text(data.name),
+            ),
+          ),
+          label: "Application",
+        ),
+        const NavigationItem(
+          icon: Icon(Icons.code),
+          page: Text("Hello 2"),
+          label: "Environment",
+        ),
+        const NavigationItem(
           icon: Icon(Icons.book),
           page: Card(child: SizedBox.expand()),
           label: "Document",
@@ -38,7 +81,30 @@ class _StateGalleryPage extends State<GalleryPage> {
       ],
       direction: Axis.vertical,
       reversed: true,
-      vertical: NavigationVerticalConfig(surfaceTintColor: Colors.transparent),
+      vertical:
+          const NavigationVerticalConfig(surfaceTintColor: Colors.transparent),
+    );
+  }
+}
+
+class GalleryContent<T> extends StatefulWidget {
+  final List<T> Function() dataBuilder;
+  final Widget Function(T data) widgetBuilder;
+  const GalleryContent({
+    super.key,
+    required this.dataBuilder,
+    required this.widgetBuilder,
+  });
+
+  @override
+  State<StatefulWidget> createState() => GalleryContentState<T>();
+}
+
+class GalleryContentState<T> extends State<GalleryContent<T>> {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: widget.dataBuilder().map(widget.widgetBuilder).toList(),
     );
   }
 }

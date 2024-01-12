@@ -36,7 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   dynamic_color: ^1.6.9
   bitsdojo_window: ^0.1.6
-  arche: ^0.0.3
+  arche: 
+    git: https://github.com/H2Sxxa/Arche.git
   font_awesome_flutter: ^10.6.0
   url_launcher: ^6.2.2
   dio: ^5.4.0
@@ -45,6 +46,7 @@ dependencies:
   fast_gbk: ^1.0.0
   flutter_pty: ^0.4.0
   yaml: ^3.1.2
+  flutter_markdown: ^0.6.18+3
 dev_dependencies:
   flutter_test:
     sdk: flutter

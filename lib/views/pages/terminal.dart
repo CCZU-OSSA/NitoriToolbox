@@ -59,10 +59,15 @@ class _StateTerminalPage extends State<TerminalPage> {
       var text = utf8.decode(event).trim();
       if (text.isNotEmpty) {
         setState(() {
-          output.add(text
-              .splitlines()
-              .where((element) => element.isNotEmpty)
-              .join("\n"));
+          var plain = text
+              .replaceAllMapped(
+                  RegExp(r"\x1b\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"),
+                  (match) => "")
+              .replaceAllMapped(RegExp(r"\x1b[PX^_].*?\x1b\\"), (match) => "")
+              .replaceAllMapped(
+                  RegExp(r"\x1b\][^\a]*(?:\a|\x1b\\)"), (match) => "")
+              .replaceAllMapped(RegExp(r"\x1b[\[\]A-Z\\^_@]"), (match) => "");
+          output.add(plain);
           scrollController.jumpTo(
             scrollController.position.maxScrollExtent,
           );

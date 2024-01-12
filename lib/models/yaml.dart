@@ -6,64 +6,64 @@ extension _YamlSerializer on String {
   }
 }
 
-abstract class MapLoader<T> {
-  T loadm(Map data);
+abstract class MetaEntity<T extends MetaEntity<T>> {
+  late final String path;
+  T loadm(Map data, [String? path]) {
+    return (this..path = data["path"] ?? path ?? "") as T;
+  }
 
-}
-
-mixin YamlMapLoader<T> on MapLoader<T> {
-  T loads(String data) {
-    return loadm(data.yaml());
+  T loads(String data, [String? path]) {
+    return loadm(data.yaml(), path);
   }
 }
 
-class Application extends MapLoader<Application> with YamlMapLoader {
+class Application extends MetaEntity<Application> {
   late final String name;
   late final String version;
-  late final String launchPath;
+  late final String details;
 
   @override
-  Application loadm(Map data) {
-    return this
+  Application loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
       ..name = data["name"] ?? "Unknown App"
-      ..version = data["version"] ?? "Unknown Version"
-      ..launchPath = data["launchPath"]!;
+      ..details = data["details"] ?? "Empty"
+      ..version = data["version"] ?? "Unknown Version";
   }
 }
 
-class ApplicationPackage extends MapLoader<ApplicationPackage>
-    with YamlMapLoader {
+class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   late final String name;
   late final String version;
   late final List<Application> manifest;
 
   @override
-  ApplicationPackage loadm(Map data) {
-    return this
+  ApplicationPackage loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
       ..name = data["name"] ?? "Unknown Apps"
       ..version = data["version"] ?? "v1.0.0"
-      ..manifest = (data["manifest"] as Iterable)
+      ..manifest = (data["manifest"] as YamlList? ?? [])
           .map((m) => Application().loadm(m))
           .toList();
   }
 }
 
-class Document extends MapLoader<Document> with YamlMapLoader {
+class Environment {}
+
+class Document extends MetaEntity<Document> {
   late String name;
   late String content;
 
   @override
-  Document loadm(Map data) {
-    // TODO: implement loadm
+  Document loadm(Map data, [String? path]) {
     throw UnimplementedError();
   }
 }
 
-class DocumentPackage extends MapLoader<DocumentPackage> with YamlMapLoader {
+class DocumentPackage extends MetaEntity<DocumentPackage> {
   late final List<Document> documents;
 
   @override
-  DocumentPackage loadm(Map data) {
+  DocumentPackage loadm(Map data, [String? path]) {
     return DocumentPackage();
   }
 }

@@ -25,14 +25,17 @@ class GalleryManager {
       initialDirectory.subDirectory("environments").check();
   Directory get documents => initialDirectory.subDirectory("documents").check();
 
-  List<T> collect<T extends YamlMapLoader>(
-      Directory directory, T Function(String data) converter) {
+  List<T> collect<T extends MetaEntity<T>>(
+      Directory directory, T Function(String data, String path) converter) {
     return directory
         .listSync()
         .where((fs) =>
             fs.statSync().type == FileSystemEntityType.directory &&
-            fs.subFile("meta.yaml").existsSync())
-        .map((e) => converter(e.subFile("meta.yaml").readAsStringSync()))
+            fs.subFile("meta.yml").existsSync())
+        .map((e) => converter(
+              e.subFile("meta.yml").readAsStringSync(),
+              e.absolute.path,
+            ))
         .toList();
   }
 }
