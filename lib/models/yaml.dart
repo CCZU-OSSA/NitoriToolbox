@@ -1,11 +1,5 @@
 import 'package:yaml/yaml.dart';
 
-extension _YamlSerializer on String {
-  YamlMap yaml() {
-    return loadYaml(this);
-  }
-}
-
 abstract class MetaEntity<T extends MetaEntity<T>> {
   late final String path;
   T loadm(Map data, [String? path]) {
@@ -13,7 +7,7 @@ abstract class MetaEntity<T extends MetaEntity<T>> {
   }
 
   T loads(String data, [String? path]) {
-    return loadm(data.yaml(), path);
+    return loadm(loadYaml(data), path);
   }
 }
 
