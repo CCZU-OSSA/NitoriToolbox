@@ -1,3 +1,4 @@
+import 'package:nitoritoolbox/utils/shell.dart';
 import 'package:yaml/yaml.dart';
 
 abstract class MetaEntity<T extends MetaEntity<T>> {
@@ -11,10 +12,23 @@ abstract class MetaEntity<T extends MetaEntity<T>> {
   }
 }
 
+class ApplicationFeature extends MetaEntity<ApplicationFeature> {
+  late final String name;
+  late final List<String> run;
+
+  @override
+  ApplicationFeature loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
+      ..name = data["name"]!
+      ..run = (data["run"] as String).lines();
+  }
+}
+
 class Application extends MetaEntity<Application> {
   late final String name;
   late final String version;
   late final String details;
+  late final List<ApplicationFeature> features;
 
   @override
   Application loadm(Map data, [String? path]) {

@@ -22,12 +22,12 @@ class _StateGalleryPage extends State<GalleryPage>
   @override
   void initState() {
     super.initState();
-    manager = ArcheBus.bus.of<AppData>().galleryManager;
+    manager = ArcheBus.bus.of();
   }
 
   @override
   Widget build(BuildContext context) {
-    GalleryManager galleryManager = ArcheBus.bus.of<AppData>().galleryManager;
+    GalleryManager galleryManager = ArcheBus.bus.of();
     return NavigationView(
       items: [
         NavigationItem(
@@ -39,30 +39,28 @@ class _StateGalleryPage extends State<GalleryPage>
             ),
             widgetBuilder: (data) => CardButton(
               size: const Size.square(120),
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => SizedBox.expand(
-                      child: SingleChildScrollView(
-                          child: Column(children: [
-                    const Text(
-                      "应用列表",
-                      style: TextStyle(fontSize: 24),
-                    ).padding12(),
-                    Wrap(
-                      children: data.manifest
-                          .map((app) => CardButton(
-                              size: const Size.square(100),
-                              onTap: () => AppController.pushPage(
-                                    builder: (context) =>
-                                        ApplicationPage(application: app),
-                                  ),
-                              child: Text(app.name)))
-                          .toList(),
-                    ),
-                  ])).padding12()),
-                );
-              },
+              onTap: () => showModalBottomSheet(
+                context: context,
+                builder: (context) => SizedBox.expand(
+                    child: SingleChildScrollView(
+                        child: Column(children: [
+                  const Text(
+                    "应用列表",
+                    style: TextStyle(fontSize: 24),
+                  ).padding12(),
+                  Wrap(
+                    children: data.manifest
+                        .map((app) => CardButton(
+                            size: const Size.square(100),
+                            onTap: () => AppController.pushPage(
+                                  builder: (context) =>
+                                      ApplicationPage(application: app),
+                                ),
+                            child: Text(app.name)))
+                        .toList(),
+                  ),
+                ])).padding12()),
+              ),
               child: Text(data.name),
             ),
           ),

@@ -182,12 +182,16 @@ final class UnionDecoder extends Converter<List<int>, String> {
 }
 
 extension StringSplit on String {
-  List<String> splitlines() {
+  List<String> platformlines() {
     if (Platform.isWindows) {
       return split("\r\n");
     } else {
       return split("\n");
     }
+  }
+
+  List<String> lines() {
+    return split("\n");
   }
 
   String platformline() {

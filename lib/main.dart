@@ -22,6 +22,7 @@ Future<void> main() async {
   ArcheBus.bus
       .provide(data)
       .provide(data.config)
+      .provide(data.galleryManager)
       .provide(GithubRepository(ApplicationInfo.githubRepoName));
   runApp(MainApplication());
   AppController.initLifeCycleListener();
