@@ -11,14 +11,19 @@ class AppController {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
   static StateNavigationView get viewstate => viewkey.currentState!;
   static void pushPage({required WidgetBuilder builder}) {
-    navigator.push(PageRouteBuilder(
+    navigator.push(
+      PageRouteBuilder(
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
+          opacity: animation,
+          child: child,
+        ),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            WindowContainer(child: builder(context))));
+            WindowContainer(
+          child: builder(context),
+        ),
+      ),
+    );
   }
 
   static void pushMaterialPage({required WidgetBuilder builder}) {
@@ -28,12 +33,17 @@ class AppController {
   }
 
   static void pushHeroPage({required RoutePageBuilder builder, Object? tag}) {
-    navigator.push(PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => Hero(
+    navigator.push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            WindowContainer(
+          child: Hero(
             tag: tag ?? "",
-            child: WindowContainer(
-              child: builder(context, animation, secondaryAnimation),
-            ))));
+            child: builder(context, animation, secondaryAnimation),
+          ),
+        ),
+      ),
+    );
   }
 
   static T viewContextBuilder<T>(

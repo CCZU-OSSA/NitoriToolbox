@@ -30,7 +30,10 @@ class WindowWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [const WindowBar(), Expanded(child: child)],
+      children: [
+        const WindowBar(),
+        Expanded(child: child),
+      ],
     );
   }
 }

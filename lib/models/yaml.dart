@@ -35,7 +35,10 @@ class Application extends MetaEntity<Application> {
     return super.loadm(data, path)
       ..name = data["name"] ?? "Unknown App"
       ..details = data["details"] ?? "Empty"
-      ..version = data["version"] ?? "Unknown Version";
+      ..version = data["version"] ?? "Unknown Version"
+      ..features = (data["features"] as YamlList? ?? [])
+          .map((e) => ApplicationFeature().loadm(e, path))
+          .toList();
   }
 }
 
@@ -50,7 +53,7 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
       ..name = data["name"] ?? "Unknown Apps"
       ..version = data["version"] ?? "v1.0.0"
       ..manifest = (data["manifest"] as YamlList? ?? [])
-          .map((m) => Application().loadm(m))
+          .map((m) => Application().loadm(m, path))
           .toList();
   }
 }

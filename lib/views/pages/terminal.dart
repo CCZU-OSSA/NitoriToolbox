@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
@@ -17,7 +15,7 @@ class TerminalPage extends StatefulWidget {
 class _StateTerminalPage extends State<TerminalPage> {
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
-  AbstractShell shell = PtyShell();
+  Shell shell = ISolateShell();
 
   static List<String> output = [];
 
@@ -56,18 +54,9 @@ class _StateTerminalPage extends State<TerminalPage> {
       );
     });
     shell.bind((event) {
-      var text = utf8.decode(event).trim();
-      if (text.isNotEmpty) {
+      if (event.trim().isNotEmpty) {
         setState(() {
-          var plain = text
-              .replaceAllMapped(
-                  RegExp(r"\x1b\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"),
-                  (match) => "")
-              .replaceAllMapped(RegExp(r"\x1b[PX^_].*?\x1b\\"), (match) => "")
-              .replaceAllMapped(
-                  RegExp(r"\x1b\][^\a]*(?:\a|\x1b\\)"), (match) => "")
-              .replaceAllMapped(RegExp(r"\x1b[\[\]A-Z\\^_@]"), (match) => "");
-          output.add(plain);
+          output.add(event);
           scrollController.jumpTo(
             scrollController.position.maxScrollExtent,
           );

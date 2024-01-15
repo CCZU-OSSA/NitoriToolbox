@@ -1,19 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
-import 'package:fast_gbk/fast_gbk.dart';
 import 'package:flutter_pty/flutter_pty.dart';
+import 'package:nitoritoolbox/utils/extension.dart';
 
-typedef MessageHandler = void Function(List<int> data);
+typedef MessageHandler<T> = void Function(T data);
 
-abstract class AbstractShell<T> {
-  T? container;
+abstract class Shell<T> {
   bool connect = false;
   Map<String, String>? perferEnvironment;
   String? perferShell;
-  AbstractShell({
+  String? workingDirectory;
+  final List<MessageHandler<String>> _subscription = [];
+  T? container;
+
+  Shell({
     this.perferEnvironment,
     this.perferShell,
+    this.workingDirectory,
   });
 
   String get shell {
@@ -34,118 +39,56 @@ abstract class AbstractShell<T> {
     return env;
   }
 
-  void write(String data);
+  void bind(MessageHandler<String> handler) {
+    _subscription.add(handler);
+  }
 
-  void bind(MessageHandler handler);
+  void activate() {
+    if (connect) {
+      deactivate();
+    }
+    connect = true;
+  }
 
   void deactivate() {
     connect = false;
-  }
-
-  void activate() async {
-    connect = true;
   }
 
   void reload() async {
     deactivate();
     activate();
   }
+
+  void write(String data);
+
+  Map get config => {
+        "perferEnvironment": perferEnvironment,
+        "perferShell": perferShell,
+        "workingDirectory": workingDirectory,
+      };
 }
 
-class ProcessShell extends AbstractShell<Process> {
-  final List<MessageHandler> _stdouthandler = [];
-  final List<MessageHandler> _stderrhandler = [];
-
-  ProcessShell({
-    super.perferEnvironment,
-    super.perferShell,
-  });
-
-  @override
-  void write(String data) {
-    container!.stdin.write(data);
-    container!.stdin.flush();
-  }
-
-  @override
-  Future<Process> activate(
-      {String executable = "", List<String>? arguments}) async {
-    super.activate();
-    if (perferShell == null) {
-      container = await Process.start(executable, arguments ?? []);
-    } else {
-      List<String> arg = arguments ?? [];
-
-      arg.insert(0, executable);
-      container = await Process.start(perferShell!, arg);
-    }
-    container!.stdout.listen(
-      (event) {
-        for (var h in _stdouthandler) {
-          h(event);
-        }
-      },
-      onDone: () => deactivate(),
-    );
-    container!.stderr.listen(
-      (event) {
-        for (var h in _stderrhandler) {
-          h(event);
-        }
-      },
-      onDone: () => deactivate(),
-    );
-
-    return container!;
-  }
-
-  @override
-  void deactivate() async {
-    super.deactivate();
-    container?.stdin.close().then((value) => container?.kill());
-  }
-
-  @override
-  void bind(MessageHandler handler,
-      {bool handleStdin = true, bool handleStderr = true}) {
-    if (handleStdin) {
-      _stdouthandler.add(handler);
-    }
-
-    if (handleStderr) {
-      _stderrhandler.add(handler);
-    }
-  }
-}
-
-class PtyShell extends AbstractShell<Pty> {
-  final List<MessageHandler> _subscription = [];
+class PtyShell extends Shell<Pty> {
   PtyShell({
     super.perferEnvironment,
     super.perferShell,
+    super.workingDirectory,
   });
 
   @override
-  Future<Pty> activate() async {
-    if (connect) {
-      deactivate();
-    }
+  void activate() async {
     super.activate();
-
-    container = Pty.start(perferShell ?? shell, environment: enviroment);
+    container = Pty.start(
+      perferShell ?? shell,
+      environment: enviroment,
+      workingDirectory: workingDirectory,
+    );
 
     container!.output.listen((event) {
-      for (var f in _subscription) {
-        f(event);
+      for (var subf in _subscription) {
+        subf(utf8.decode(event).displayFilter());
       }
     });
-
-    return container!;
-  }
-
-  @override
-  void bind(MessageHandler handler) {
-    _subscription.add(handler);
   }
 
   @override
@@ -160,24 +103,77 @@ class PtyShell extends AbstractShell<Pty> {
   }
 }
 
-final class UnionDecoder extends Converter<List<int>, String> {
-  static const UnionDecoder instance = UnionDecoder();
+class ISolateShell extends Shell<Isolate> {
+  ReceivePort? _rev;
+  SendPort? _sed;
+  final List<String> _queue = [];
+  ISolateShell({
+    super.perferEnvironment,
+    super.perferShell,
+    super.workingDirectory,
+  });
 
-  static const List<Converter<List<int>, String>> _conventers = [
-    Utf8Decoder(),
-    GbkDecoder()
-  ];
+  static _internalShell(SendPort port) {
+    ReceivePort rev = ReceivePort();
+    late PtyShell shell;
+    port.send(rev.sendPort);
+    rev.listen((message) {
+      if (message is Map) {
+        shell = PtyShell(
+          perferEnvironment: message["perferEnvironment"],
+          perferShell: message["perferShell"],
+          workingDirectory: message["workingDirectory"],
+        );
+        shell.bind((data) => port.send(data));
+        shell.activate();
+      }
 
-  const UnionDecoder();
+      if (message is String) {
+        shell.write(message);
+      }
+    });
+  }
 
   @override
-  String convert(List<int> input) {
-    for (var decoder in _conventers) {
-      try {
-        return decoder.convert(input);
-      } catch (_) {}
+  Future<void> activate() async {
+    super.activate();
+
+    _rev = ReceivePort();
+    _rev!.listen((message) {
+      if (message is SendPort) {
+        message.send(config);
+        _sed = message;
+        if (_queue.isNotEmpty) {
+          for (var cmd in _queue) {
+            message.send(cmd);
+          }
+          _queue.clear();
+        }
+      }
+
+      if (message is String) {
+        for (var subf in _subscription) {
+          subf(message);
+        }
+      }
+    });
+    container = await Isolate.spawn(_internalShell, _rev!.sendPort);
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    _rev?.close();
+    container?.kill();
+  }
+
+  @override
+  void write(String data) {
+    if (_sed != null) {
+      _sed!.send(data);
+    } else {
+      _queue.add(data);
     }
-    return "Decode Error";
   }
 }
 

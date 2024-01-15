@@ -1,6 +1,8 @@
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
+import 'package:nitoritoolbox/views/pages/command.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
 
@@ -29,15 +31,26 @@ class ApplicationPage extends StatelessWidget {
           ),
           Center(
               child: Wrap(
-            children: List.generate(
-              20,
-              (index) => CardButton(
-                onTap: () {},
-                size: const Size.square(120),
-                child: const Text("启动"),
-              ),
-            ),
-          ))
+                  children: application.features
+                      .map(
+                        (feature) => Hero(
+                          tag: feature,
+                          child: CardButton(
+                            onTap: () => AppController.pushHeroPage(
+                              builder:
+                                  (context, animation, secondaryAnimation) =>
+                                      ExecCommandsPage(
+                                feature,
+                                workingDirectory: application.path,
+                              ),
+                              tag: feature,
+                            ),
+                            size: const Size.square(80),
+                            child: Text(feature.name),
+                          ),
+                        ),
+                      )
+                      .toList()))
         ],
       ).padding12(),
     );

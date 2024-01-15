@@ -7,12 +7,12 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/utils/github.dart';
 import 'package:nitoritoolbox/views/pages/gallery.dart';
 import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
-import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/views/pages/terminal.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
