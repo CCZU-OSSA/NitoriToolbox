@@ -56,24 +56,24 @@ class _StateGalleryPage extends State<GalleryPage>
                                   builder: (context) =>
                                       ApplicationPage(application: app),
                                 ),
-                            child: Text(app.name)))
+                            child: app.cover.build(size: 70)))
                         .toList(),
                   ),
                 ])).padding12()),
               ),
-              child: Text(data.name),
+              child: data.cover.build(size: 84),
             ),
           ),
           label: "Application",
         ),
         const NavigationItem(
           icon: Icon(Icons.code),
-          page: Text("Hello 2"),
+          page: Text("开发中"),
           label: "Environment",
         ),
         const NavigationItem(
           icon: Icon(Icons.book),
-          page: Card(child: SizedBox.expand()),
+          page: Text("开发中"),
           label: "Document",
         ),
       ],

@@ -24,6 +24,7 @@ class StateExecCommandsPage extends State<ExecCommandsPage> {
   void initState() {
     super.initState();
     shell = ISolateShell(workingDirectory: widget.workingDirectory);
+    shell.bind((data) => setState(() => contents.add(data.trim())));
   }
 
   @override
@@ -44,16 +45,27 @@ class StateExecCommandsPage extends State<ExecCommandsPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ElevatedButton.icon(
-                  label: const Text("执行"),
-                  onPressed: () {
-                    shell.bind((data) => setState(() => contents.add(data)));
-                    shell.activate();
-                    for (var element in widget.feature.run) {
-                      shell.write(element);
-                    }
-                  },
-                  icon: const Icon(Icons.play_arrow)),
+              Row(children: [
+                ElevatedButton.icon(
+                    label: const Text("执行"),
+                    onPressed: () {
+                      if (!shell.connect) {
+                        shell.activate();
+                      }
+                      for (var element in widget.feature.run) {
+                        shell.write(element);
+                      }
+                    },
+                    icon: const Icon(Icons.play_arrow)),
+                ElevatedButton.icon(
+                    onPressed: () => setState(() => shell.deactivate()),
+                    icon: const Icon(Icons.stop),
+                    label: const Text("停止")),
+                ElevatedButton.icon(
+                    onPressed: () => setState(() => contents.clear()),
+                    icon: const Icon(Icons.cleaning_services),
+                    label: const Text("清空"))
+              ]),
               Card(
                 child: SizedBox(
                     width: double.infinity,

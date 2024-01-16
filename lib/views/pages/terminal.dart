@@ -54,9 +54,10 @@ class _StateTerminalPage extends State<TerminalPage> {
       );
     });
     shell.bind((event) {
-      if (event.trim().isNotEmpty) {
+      var text = event.trim();
+      if (text.isNotEmpty) {
         setState(() {
-          output.add(event);
+          output.add(text);
           scrollController.jumpTo(
             scrollController.position.maxScrollExtent,
           );

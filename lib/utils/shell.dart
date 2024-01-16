@@ -136,18 +136,18 @@ class ISolateShell extends Shell<Isolate> {
 
   @override
   Future<void> activate() async {
-    super.activate();
+    if (connect) {
+      deactivate();
+    }
 
     _rev = ReceivePort();
     _rev!.listen((message) {
       if (message is SendPort) {
         message.send(config);
+        connect = true;
         _sed = message;
-        if (_queue.isNotEmpty) {
-          for (var cmd in _queue) {
-            message.send(cmd);
-          }
-          _queue.clear();
+        while (_queue.isNotEmpty) {
+          message.send(_queue.removeAt(0));
         }
       }
 
@@ -169,7 +169,7 @@ class ISolateShell extends Shell<Isolate> {
 
   @override
   void write(String data) {
-    if (_sed != null) {
+    if (connect && _sed != null) {
       _sed!.send(data);
     } else {
       _queue.add(data);

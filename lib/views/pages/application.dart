@@ -46,7 +46,7 @@ class ApplicationPage extends StatelessWidget {
                               tag: feature,
                             ),
                             size: const Size.square(80),
-                            child: Text(feature.name),
+                            child: feature.cover.build(size: 56),
                           ),
                         ),
                       )
