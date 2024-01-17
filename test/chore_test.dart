@@ -4,14 +4,12 @@
 // utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 
+import 'package:arche/arche.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-enum ISolateShellSignals {
-  activate,
-  deactivate,
-  reload,
-}
+import 'package:nitoritoolbox/models/version.dart';
 
 void main() {
-  test("ISolate test", () {});
+  test("Chore test", () {
+    debugWrite((2, 0, 0) == (2, 0, 0));
+  });
 }

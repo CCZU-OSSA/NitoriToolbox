@@ -25,6 +25,7 @@ class GalleryManager {
       initialDirectory.subDirectory("environments").check();
   Directory get documents => initialDirectory.subDirectory("documents").check();
 
+
   List<T> collect<T extends MetaEntity<T>>(
       Directory directory, T Function(String data, String path) converter) {
     return directory
@@ -38,4 +39,7 @@ class GalleryManager {
             ))
         .toList();
   }
+
+
+
 }

@@ -83,7 +83,7 @@ class CoverIcon extends MetaEntity<CoverIcon>
       return null;
     }
 
-    return CoverIcon().loadm(data);
+    return CoverIcon().loadm(data, path);
   }
 }
 
@@ -139,6 +139,7 @@ class Application extends MetaEntity<Application> {
   late final RichCover cover;
   late final String version;
   late final String details;
+  late final List<String> environments;
   late final List<ApplicationFeature> features;
 
   @override
@@ -148,6 +149,7 @@ class Application extends MetaEntity<Application> {
       ..cover = RichCover().parse(data["cover"] ?? name, path)
       ..details = data["details"] ?? "Empty"
       ..version = data["version"] ?? "Unknown Version"
+      ..environments = data["environments"] ?? []
       ..features = (data["features"] as YamlList? ?? [])
           .map((e) => ApplicationFeature().loadm(e, path))
           .toList();
@@ -164,10 +166,24 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   ApplicationPackage loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..name = data["name"] ?? "Unknown Apps"
-      ..version = data["version"] ?? "v1.0.0"
+      ..version = data["version"] ?? "1.0.0"
       ..cover = RichCover().parse(data["cover"] ?? name, path)
       ..manifest = (data["manifest"] as YamlList? ?? [])
           .map((m) => Application().loadm(m, path))
           .toList();
+  }
+}
+
+class Environment extends MetaEntity<Environment> {
+  late final String name;
+  late final String version;
+  late final List<String> includes;
+
+  @override
+  Environment loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
+      ..name = data["name"]!
+      ..version = data["version"] ?? "1.0.0"
+      ..includes = data["includes"]!;
   }
 }

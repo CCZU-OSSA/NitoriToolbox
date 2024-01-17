@@ -15,9 +15,11 @@ import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
 import 'package:nitoritoolbox/views/pages/terminal.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
+import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
   var data = AppData(Directory("AppData").check());
   ArcheBus.bus
       .provide(data)
