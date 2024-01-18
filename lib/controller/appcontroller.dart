@@ -66,6 +66,12 @@ class AppController {
     refreshAppValueConfig(key, target.index);
   }
 
+  static bool controllerVisible = true;
+
+  static void setControllerVisible({bool visible = true}) {
+    controllerVisible = visible;
+  }
+
   static void refreshAppValueConfig<V>(String key, V value) {
     ArcheBus.config.write(key, value);
     refreshApp();

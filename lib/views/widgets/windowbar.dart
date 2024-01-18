@@ -1,5 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/controller/appcontroller.dart';
 
 class WindowBar extends StatelessWidget {
   const WindowBar({super.key});
@@ -31,7 +32,9 @@ class WindowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const WindowBar(),
+        AppController.controllerVisible
+            ? const WindowBar()
+            : const SizedBox.shrink(),
         Expanded(child: child),
       ],
     );

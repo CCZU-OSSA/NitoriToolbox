@@ -60,53 +60,56 @@ class StateMainApplication extends State<MainApplication> {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         return MaterialApp(
-            theme: ThemeData(
-                fontFamily: "GlowSans",
-                brightness: Brightness.light,
-                useMaterial3: true,
-                colorScheme: lightDynamic,
-                appBarTheme:
-                    const AppBarTheme(surfaceTintColor: Colors.transparent),
-                typography: Typography.material2021()),
-            darkTheme: ThemeData(
-                fontFamily: "GlowSans",
-                brightness: Brightness.dark,
-                useMaterial3: true,
-                colorScheme: darkDynamic,
-                appBarTheme:
-                    const AppBarTheme(surfaceTintColor: Colors.transparent),
-                typography: Typography.material2021()),
-            themeMode: ThemeMode.values[config.getOr(ConfigKeys.theme, 2)],
-            home: WindowContainer(
-                child: Scaffold(
-                    body: NavigationView(
-              key: viewkey,
-              items: const [
-                NavigationItem(
-                  icon: Icon(Icons.home),
-                  label: "Home",
-                  page: HomePage(),
-                ),
-                NavigationItem(
-                  icon: Icon(Icons.apps),
-                  label: "Gallery",
-                  page: GalleryPage(),
-                ),
-                NavigationItem(
-                  icon: Icon(Icons.terminal),
-                  label: "Terminal",
-                  page: TerminalPage(),
-                ),
-                NavigationItem(
-                  name: "Settings",
-                  icon: Icon(Icons.settings),
-                  label: "Settings",
-                  page: SettingsPage(),
-                )
-              ],
-              labelType: NavigationLabelType
-                  .values[config.getOr(ConfigKeys.labelType, 0)],
-            ))));
+          theme: ThemeData(
+              fontFamily: "GlowSans",
+              brightness: Brightness.light,
+              useMaterial3: true,
+              colorScheme: lightDynamic,
+              appBarTheme:
+                  const AppBarTheme(surfaceTintColor: Colors.transparent),
+              typography: Typography.material2021()),
+          darkTheme: ThemeData(
+              fontFamily: "GlowSans",
+              brightness: Brightness.dark,
+              useMaterial3: true,
+              colorScheme: darkDynamic,
+              appBarTheme:
+                  const AppBarTheme(surfaceTintColor: Colors.transparent),
+              typography: Typography.material2021()),
+          themeMode: ThemeMode.values[config.getOr(ConfigKeys.theme, 2)],
+          home: WindowContainer(
+            child: Scaffold(
+              body: NavigationView(
+                key: viewkey,
+                items: const [
+                  NavigationItem(
+                    icon: Icon(Icons.home),
+                    label: "Home",
+                    page: HomePage(),
+                  ),
+                  NavigationItem(
+                    icon: Icon(Icons.apps),
+                    label: "Gallery",
+                    page: GalleryPage(),
+                  ),
+                  NavigationItem(
+                    icon: Icon(Icons.terminal),
+                    label: "Terminal",
+                    page: TerminalPage(),
+                  ),
+                  NavigationItem(
+                    name: "Settings",
+                    icon: Icon(Icons.settings),
+                    label: "Settings",
+                    page: SettingsPage(),
+                  )
+                ],
+                labelType: NavigationLabelType
+                    .values[config.getOr(ConfigKeys.labelType, 0)],
+              ),
+            ),
+          ),
+        );
       },
     );
   }

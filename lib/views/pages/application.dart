@@ -33,21 +33,15 @@ class ApplicationPage extends StatelessWidget {
               child: Wrap(
                   children: application.features
                       .map(
-                        (feature) => Hero(
-                          tag: feature,
-                          child: CardButton(
-                            onTap: () => AppController.pushHeroPage(
-                              builder:
-                                  (context, animation, secondaryAnimation) =>
-                                      ExecCommandsPage(
-                                feature,
-                                workingDirectory: application.path,
-                              ),
-                              tag: feature,
+                        (feature) => CardButton(
+                          onTap: () => AppController.pushPage(
+                            builder: (context) => ExecCommandsPage(
+                              feature,
+                              workingDirectory: application.path,
                             ),
-                            size: const Size.square(80),
-                            child: feature.cover.build(size: 56),
                           ),
+                          size: const Size.square(80),
+                          child: feature.cover.build(size: 56),
                         ),
                       )
                       .toList()))

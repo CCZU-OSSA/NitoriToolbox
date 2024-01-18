@@ -6,7 +6,6 @@
 
 import 'package:arche/arche.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nitoritoolbox/models/version.dart';
 
 void main() {
   test("Chore test", () {

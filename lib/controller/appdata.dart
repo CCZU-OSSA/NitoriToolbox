@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:arche/arche.dart';
 import 'package:arche/extensions/io.dart';
 import 'package:arche/modules/application.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
@@ -18,15 +19,23 @@ class AppData {
 
 class GalleryManager {
   final Directory initialDirectory;
-  const GalleryManager(this.initialDirectory);
-  Directory get applications =>
+  GalleryManager(this.initialDirectory);
+  Directory get applicationsDir =>
       initialDirectory.subDirectory("applications").check();
-  Directory get environments =>
+  Directory get environmentsDir =>
       initialDirectory.subDirectory("environments").check();
-  Directory get documents => initialDirectory.subDirectory("documents").check();
+  Directory get documentsDir =>
+      initialDirectory.subDirectory("documents").check();
+  static GalleryManager get manager => ArcheBus.bus.of();
 
+  final LazyCan<List<ApplicationPackage>> applications = LazyCan(
+      builder: () =>
+          collect(manager.applicationsDir, ApplicationPackage().loads));
 
-  List<T> collect<T extends MetaEntity<T>>(
+  final LazyCan<List<Environment>> environments = LazyCan(
+      builder: () => collect(manager.environmentsDir, Environment().loads));
+
+  static List<T> collect<T extends MetaEntity<T>>(
       Directory directory, T Function(String data, String path) converter) {
     return directory
         .listSync()
@@ -39,7 +48,4 @@ class GalleryManager {
             ))
         .toList();
   }
-
-
-
 }
