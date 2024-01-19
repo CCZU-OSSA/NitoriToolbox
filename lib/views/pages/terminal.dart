@@ -44,7 +44,13 @@ class _StateTerminalPage extends State<TerminalPage> {
   @override
   void initState() {
     super.initState();
+
     var config = ArcheBus.config;
+
+    if (!config.getOr(ConfigKeys.dev, false)) {
+      return;
+    }
+
     if (config.getOr(ConfigKeys.customShell, false)) {
       shell.perferShell = ArcheBus.config.tryGet(ConfigKeys.shellPath);
     }

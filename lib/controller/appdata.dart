@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:arche/arche.dart';
 import 'package:arche/extensions/io.dart';
-import 'package:arche/modules/application.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
 
 class AppData {

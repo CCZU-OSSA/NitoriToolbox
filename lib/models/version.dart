@@ -22,4 +22,21 @@ extension Version on (int, int, int) {
       fromIterator(version.iterator);
   static VersionType fromString(String version) =>
       fromIterable(version.split(".").map((e) => int.parse(e)));
+
+  static VersionType? parse(version) {
+    if (version is String) {
+      return fromString(version);
+    }
+    if (version is Iterable<int>) {
+      return fromIterable(version);
+    }
+    if (version is Iterator<int>) {
+      return fromIterator(version);
+    }
+    return null;
+  }
+
+  String format() {
+    return "v$first.$middle.$last";
+  }
 }

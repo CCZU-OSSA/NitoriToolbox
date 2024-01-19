@@ -70,6 +70,7 @@ class AppController {
 
   static void setControllerVisible({bool visible = true}) {
     controllerVisible = visible;
+    rootKey.currentState!.refresh();
   }
 
   static void refreshAppValueConfig<V>(String key, V value) {

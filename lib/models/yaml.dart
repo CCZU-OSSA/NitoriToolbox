@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:arche/extensions/io.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/utils/shell.dart';
 import 'package:yaml/yaml.dart';
 
@@ -137,7 +138,7 @@ class ApplicationFeature extends MetaEntity<ApplicationFeature> {
 class Application extends MetaEntity<Application> {
   late final String name;
   late final RichCover cover;
-  late final String version;
+  late final VersionType version;
   late final String details;
   late final List<String> environments;
   late final List<ApplicationFeature> features;
@@ -148,8 +149,8 @@ class Application extends MetaEntity<Application> {
       ..name = data["name"] ?? "Unknown App"
       ..cover = RichCover().parse(data["cover"] ?? name, path)
       ..details = data["details"] ?? "Empty"
-      ..version = data["version"] ?? "Unknown Version"
-      ..environments = data["environments"] ?? []
+      ..version = Version.fromString(data["version"] ?? "1.0.0")
+      ..environments = ((data["environments"] as YamlList?) ?? []).cast()
       ..features = (data["features"] as YamlList? ?? [])
           .map((e) => ApplicationFeature().loadm(e, path))
           .toList();
@@ -160,7 +161,7 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   late final String name;
   late final String version;
   late final RichCover cover;
-  late final List<Application> manifest;
+  late final List<Application> includes;
 
   @override
   ApplicationPackage loadm(Map data, [String? path]) {
@@ -168,7 +169,7 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
       ..name = data["name"] ?? "Unknown Apps"
       ..version = data["version"] ?? "1.0.0"
       ..cover = RichCover().parse(data["cover"] ?? name, path)
-      ..manifest = (data["manifest"] as YamlList? ?? [])
+      ..includes = (data["includes"] as YamlList? ?? [])
           .map((m) => Application().loadm(m, path))
           .toList();
   }
@@ -176,14 +177,32 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
 
 class Environment extends MetaEntity<Environment> {
   late final String name;
-  late final String version;
-  late final List<String> includes;
-
+  late final VersionType version;
+  late final String details;
+  late final EnvironmentIncludes includes;
+  late final RichCover cover;
   @override
   Environment loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..name = data["name"]!
-      ..version = data["version"] ?? "1.0.0"
-      ..includes = data["includes"]!;
+      ..version = Version.fromString(data["version"] ?? "1.0.0")
+      ..cover = RichCover().parse(data["cover"] ?? name, path)
+      ..details = data["details"] ?? "Empty"
+      ..includes = EnvironmentIncludes().loadm(data["includes"], path);
+  }
+}
+
+class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
+  late final List<String> paths;
+  late final Map<String, String> overwrite;
+  @override
+  EnvironmentIncludes loadm(Map data, [String? path]) {
+    var root = Directory(path ?? "");
+    return super.loadm(data, path)
+      ..overwrite = ((data["overwrite"] as YamlMap?) ?? {})
+          .map((key, value) => MapEntry(key.toString(), value.toString()))
+      ..paths = (((data["paths"] as YamlList?)?.toList() ?? []).cast())
+          .map((pth) => "${root.absolute.subPath(pth)};")
+          .toList();
   }
 }
