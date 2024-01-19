@@ -32,9 +32,8 @@ class StateExecCommandsPage extends State<ExecCommandsPage> {
     super.initState();
 
     var galleryManager = ArcheBus.bus.of<GalleryManager>();
-    Map<String, String> env = {};
+    Map<String, String> env = {"PATH": Platform.environment["PATH"].toString()};
     missEnvironments = [];
-    env.addAll(Platform.environment);
     var additional = galleryManager.environments.value;
     var require = widget.application.environments.map((name) {
       var filter = additional.where((add) => add.name == name);
