@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter_pty/flutter_pty.dart';
-import 'package:nitoritoolbox/utils/extension.dart';
 
 typedef MessageHandler<T> = void Function(T data);
 
@@ -54,9 +53,13 @@ abstract class Shell<T> {
     connect = false;
   }
 
-  void reload() async {
+  void reload() {
     deactivate();
     activate();
+  }
+
+  void clearbinds() {
+    _subscription.clear();
   }
 
   void write(String data);
@@ -113,7 +116,7 @@ class ISolateShell extends Shell<Isolate> {
     super.workingDirectory,
   });
 
-  static _internalShell(SendPort port) {
+  static void _internalShell(SendPort port) {
     ReceivePort rev = ReceivePort();
     late PtyShell shell;
     port.send(rev.sendPort);
@@ -135,35 +138,39 @@ class ISolateShell extends Shell<Isolate> {
   }
 
   @override
-  Future<void> activate() async {
+  void activate() {
     if (connect) {
       deactivate();
     }
 
     _rev = ReceivePort();
-    _rev!.listen((message) {
-      if (message is SendPort) {
-        message.send(config);
-        connect = true;
-        _sed = message;
-        while (_queue.isNotEmpty) {
-          message.send(_queue.removeAt(0));
-        }
-      }
+    _rev!.listen(
+      (message) {
+        if (message is SendPort) {
+          message.send(config);
+          connect = true;
+          _sed = message;
 
-      if (message is String) {
-        for (var subf in _subscription) {
-          subf(message);
+          while (_queue.isNotEmpty) {
+            message.send(_queue.removeAt(0));
+          }
         }
-      }
-    });
-    container = await Isolate.spawn(_internalShell, _rev!.sendPort);
+
+        if (message is String) {
+          for (var subf in _subscription) {
+            subf(message);
+          }
+        }
+      },
+    );
+    Isolate.spawn(_internalShell, _rev!.sendPort)
+        .then((value) => container = value);
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    _rev?.close();
+    _queue.clear();
     container?.kill();
   }
 
@@ -196,5 +203,13 @@ extension StringSplit on String {
     } else {
       return "$this\n";
     }
+  }
+
+  String displayFilter() {
+    return replaceAllMapped(
+            RegExp(r"\x1b\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"), (match) => "")
+        .replaceAllMapped(RegExp(r"\x1b[PX^_].*?\x1b\\"), (match) => "")
+        .replaceAllMapped(RegExp(r"\x1b\][^\a]*(?:\a|\x1b\\)"), (match) => "")
+        .replaceAllMapped(RegExp(r"\x1b[\[\]A-Z\\^_@]"), (match) => "");
   }
 }

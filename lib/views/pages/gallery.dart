@@ -45,7 +45,7 @@ class _StateGalleryPage extends State<GalleryPage>
             children: galleryManager.applications.value
                 .map(
                   (data) => CardButton(
-                    size: const Size.square(120),
+                    size: galleryButtonSize,
                     child: data.cover.build(size: 84),
                     onTap: () => showModalBottomSheet(
                       context: context,

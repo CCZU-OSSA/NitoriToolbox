@@ -32,9 +32,7 @@ class _StateTerminalPage extends State<TerminalPage> {
       return;
     }
     if (!shell.connect) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("请先激活Shell环境")));
-      return;
+      shell.activate();
     }
 
     shell.write(textController.text);

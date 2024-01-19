@@ -23,7 +23,6 @@ class ExecCommandsPage extends StatefulWidget {
 }
 
 class StateExecCommandsPage extends State<ExecCommandsPage> {
-  final List<String> contents = [];
   late ISolateShell shell;
   late final List<String> missEnvironments;
 
@@ -53,8 +52,7 @@ class StateExecCommandsPage extends State<ExecCommandsPage> {
     }
 
     shell = ISolateShell(
-        workingDirectory: widget.workingDirectory, perferEnvironment: env);
-    shell.bind((data) => setState(() => contents.add(data.trim())));
+        workingDirectory: widget.application.path, perferEnvironment: env);
   }
 
   @override
@@ -81,50 +79,90 @@ class StateExecCommandsPage extends State<ExecCommandsPage> {
               ),
             )
           : ListView(
-              children: [
-                Row(children: [
-                  ElevatedButton.icon(
-                      label: const Text("执行"),
-                      onPressed: () {
-                        if (!shell.connect) {
-                          shell.activate();
-                        }
-                        for (var element in widget.feature.run) {
-                          shell.write(element);
-                        }
-                      },
-                      icon: const Icon(Icons.play_arrow)),
-                  ElevatedButton.icon(
-                      onPressed: () => setState(() => shell.deactivate()),
-                      icon: const Icon(Icons.stop),
-                      label: const Text("停止")),
-                  ElevatedButton.icon(
-                      onPressed: () => setState(() => contents.clear()),
-                      icon: const Icon(Icons.cleaning_services),
-                      label: const Text("清空"))
-                ]),
-                Card(
-                  child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children:
-                            widget.feature.run.map((e) => Text(e)).toList(),
-                      )).padding12(),
-                ),
-                Card(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: contents.map((e) => Text(e)).toList(),
-                    ),
-                  ).padding12(),
-                )
-              ],
+              children: widget.feature.run
+                  .map((e) => CommandBlockView(
+                        commands: e.lines(),
+                        shell: shell,
+                      ))
+                  .toList(),
             ).padding12(),
+    );
+  }
+}
+
+class CommandBlockView extends StatefulWidget {
+  final List<String> commands;
+  final Shell shell;
+  const CommandBlockView({
+    super.key,
+    required this.commands,
+    required this.shell,
+  });
+
+  @override
+  State<StatefulWidget> createState() => StateCommandBlockView();
+}
+
+class StateCommandBlockView extends State<CommandBlockView> {
+  final List<String> contents = [];
+
+  void add(String data) {
+    setState(() {
+      contents.add(data);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var shell = widget.shell;
+    return Card(
+      color: Theme.of(context).colorScheme.surfaceVariant,
+      child: Column(
+        children: [
+          Row(children: [
+            ElevatedButton.icon(
+                label: const Text("执行"),
+                onPressed: () {
+                  contents.clear();
+                  add("正在激活Pty...");
+                  shell.clearbinds();
+                  shell.bind(add);
+                  shell.activate();
+                  for (var element in widget.commands) {
+                    shell.write(element);
+                  }
+                },
+                icon: const Icon(Icons.play_arrow)),
+            ElevatedButton.icon(
+                onPressed: () => setState(() => shell.deactivate()),
+                icon: const Icon(Icons.stop),
+                label: const Text("停止")),
+            ElevatedButton.icon(
+                onPressed: () => setState(() => contents.clear()),
+                icon: const Icon(Icons.cleaning_services),
+                label: const Text("清空"))
+          ]),
+          Card(
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.commands.map((e) => Text(e)).toList(),
+              ).padding12(),
+            ),
+          ),
+          Card(
+            child: SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: ListView(
+                children: contents.map((e) => Text(e)).toList(),
+              ).padding12(),
+            ),
+          )
+        ],
+      ).padding12(),
     );
   }
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:arche/extensions/io.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/version.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
 import 'package:yaml/yaml.dart';
 
 abstract class MetaEntity<T extends MetaEntity<T>> {
@@ -128,10 +127,18 @@ class ApplicationFeature extends MetaEntity<ApplicationFeature> {
 
   @override
   ApplicationFeature loadm(Map data, [String? path]) {
+    var rundata = data["run"];
+    if (rundata is String) {
+      run = [rundata];
+    } else if (rundata is YamlList) {
+      run = rundata.toList().cast();
+    } else {
+      throw Exception("Run is invaild type");
+    }
+
     return super.loadm(data, path)
       ..name = data["name"]!
-      ..cover = RichCover().parse(data["cover"] ?? name, path)
-      ..run = (data["run"] as String).lines();
+      ..cover = RichCover().parse(data["cover"] ?? name, path);
   }
 }
 
@@ -159,7 +166,7 @@ class Application extends MetaEntity<Application> {
 
 class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   late final String name;
-  late final String version;
+  late final VersionType version;
   late final RichCover cover;
   late final List<Application> includes;
 
@@ -167,7 +174,7 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   ApplicationPackage loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..name = data["name"] ?? "Unknown Apps"
-      ..version = data["version"] ?? "1.0.0"
+      ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..cover = RichCover().parse(data["cover"] ?? name, path)
       ..includes = (data["includes"] as YamlList? ?? [])
           .map((m) => Application().loadm(m, path))
@@ -204,5 +211,14 @@ class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
       ..paths = (((data["paths"] as YamlList?)?.toList() ?? []).cast())
           .map((pth) => "${root.absolute.subPath(pth)};")
           .toList();
+  }
+}
+
+class ImportMeta extends MetaEntity<ImportMeta> {
+  late final String type;
+
+  @override
+  ImportMeta loadm(Map data, [String? path]) {
+    return super.loadm(data, path)..type = data["type"]!;
   }
 }
