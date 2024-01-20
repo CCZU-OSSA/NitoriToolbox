@@ -27,17 +27,19 @@ class GalleryManager {
       initialDirectory.subDirectory("documents").check();
   static GalleryManager get manager => ArcheBus.bus.of();
 
-  final LazyCan<List<ApplicationPackage>> applications = LazyCan(
-      builder: () =>
-          collect(manager.applicationsDir, ApplicationPackage().loads));
+  final FutureLazyDynamicCan<List<ApplicationPackage>> applications =
+      FutureLazyDynamicCan(
+          builder: () =>
+              collect(manager.applicationsDir, ApplicationPackage().loads));
 
-  final LazyCan<List<Environment>> environments = LazyCan(
-      builder: () => collect(manager.environmentsDir, Environment().loads));
+  final FutureLazyDynamicCan<List<Environment>> environments =
+      FutureLazyDynamicCan(
+          builder: () => collect(manager.environmentsDir, Environment().loads));
 
-  static List<T> collect<T extends MetaEntity<T>>(
-      Directory directory, T Function(String data, String path) converter) {
+  static Future<List<T>> collect<T extends MetaEntity<T>>(Directory directory,
+      T Function(String data, String path) converter) async {
     return directory
-        .listSync()
+        .list()
         .where((fs) =>
             fs.statSync().type == FileSystemEntityType.directory &&
             fs.subFile("meta.yml").existsSync())

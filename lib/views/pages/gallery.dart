@@ -7,6 +7,7 @@ import 'package:nitoritoolbox/controller/appdata.dart';
 import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
 import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/views/widgets/builder.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
 
@@ -155,24 +156,49 @@ class GalleryPage extends StatefulWidget {
 
 class _StateApplicationFeaturePage extends State<ApplicationFeaturePage> {
   late ISolateShell shell;
-  late final List<String> missEnvironments;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("控制台"),
-      ),
-      body: missEnvironments.isNotEmpty
-          ? Center(
+    var galleryManager = ArcheBus.bus.of<GalleryManager>();
+    return galleryManager.environments.widgetBuilder(
+      snapshotLoading(
+        builder: (data) {
+          Map<String, String> env = {
+            "PATH": Platform.environment["PATH"].toString()
+          };
+          var missEnvironments = [];
+          var require = widget.application.environments.map((name) {
+            var filter = data.where((add) => add.name == name);
+            if (filter.isEmpty) {
+              missEnvironments.add(name);
+            } else {
+              return filter.first;
+            }
+          }).toList();
+          if (missEnvironments.isNotEmpty) {
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children:
                     missEnvironments.map((e) => Text("缺失环境: $e")).toList(),
               ),
-            )
-          : ListView(
+            );
+          }
+          for (var reqenv in require) {
+            var includes = reqenv!.includes;
+            env.addAll(includes.overwrite);
+            env["PATH"] = "${includes.paths.join()}${env["PATH"]}";
+          }
+
+          shell = ISolateShell(
+              workingDirectory: widget.application.path,
+              perferEnvironment: env);
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("控制台"),
+            ),
+            body: ListView(
               children: widget.feature.steps
                   .map((e) => ApplicationStepView(
                         step: e,
@@ -180,6 +206,9 @@ class _StateApplicationFeaturePage extends State<ApplicationFeaturePage> {
                       ))
                   .toList(),
             ).padding12(),
+          );
+        },
+      ),
     );
   }
 
@@ -194,30 +223,6 @@ class _StateApplicationFeaturePage extends State<ApplicationFeaturePage> {
   @override
   void initState() {
     super.initState();
-
-    var galleryManager = ArcheBus.bus.of<GalleryManager>();
-    Map<String, String> env = {"PATH": Platform.environment["PATH"].toString()};
-    missEnvironments = [];
-    var additional = galleryManager.environments.value;
-    var require = widget.application.environments.map((name) {
-      var filter = additional.where((add) => add.name == name);
-      if (filter.isEmpty) {
-        missEnvironments.add(name);
-      } else {
-        return filter.first;
-      }
-    }).toList();
-    if (missEnvironments.isNotEmpty) {
-      return;
-    }
-    for (var reqenv in require) {
-      var includes = reqenv!.includes;
-      env.addAll(includes.overwrite);
-      env["PATH"] = "${includes.paths.join()}${env["PATH"]}";
-    }
-
-    shell = ISolateShell(
-        workingDirectory: widget.application.path, perferEnvironment: env);
   }
 }
 
@@ -300,70 +305,84 @@ class _StateGalleryPage extends State<GalleryPage>
     GalleryManager galleryManager = ArcheBus.bus.of();
     return NavigationView(
       items: [
-        const NavigationItem(
-          icon: Icon(Icons.get_app),
-          label: "Import",
-          page: Text("开发中"),
-        ),
         NavigationItem(
           icon: const Icon(Icons.apps),
-          page: Wrap(
-            children: galleryManager.applications.value
-                .map(
-                  (data) => CardButton(
-                    size: galleryButtonSize,
-                    child: data.cover.build(size: 84),
-                    onTap: () => showModalBottomSheet(
-                      context: context,
-                      builder: (context) => SizedBox.expand(
-                        child: SingleChildScrollView(
-                            child: Column(children: [
-                          const Text(
-                            "应用列表",
-                            style: TextStyle(fontSize: 24),
-                          ).padding12(),
-                          Wrap(
-                            children: data.includes
-                                .map((app) => CardButton(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceVariant,
-                                    size: const Size.square(100),
-                                    onTap: () => AppController.pushPage(
-                                          builder: (context) =>
-                                              ApplicationPage(application: app),
-                                        ),
-                                    child: app.cover.build(size: 70)))
-                                .toList(),
-                          ),
-                        ])).padding12(),
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
           label: "Application",
+          page: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () =>
+                  galleryManager.applications.reload().then((value) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text("刷新完成")));
+                setState(() {});
+              }),
+              child: const Icon(Icons.refresh),
+            ),
+            body: galleryManager.applications.widgetBuilder(
+              snapshotLoading(
+                builder: (data) => SingleChildScrollView(
+                  child: Wrap(
+                    children: data
+                        .map(
+                          (data) => CardButton(
+                            size: galleryButtonSize,
+                            child: data.cover.build(size: 84),
+                            onTap: () => showModalBottomSheet(
+                              context: context,
+                              builder: (context) => SizedBox.expand(
+                                child: SingleChildScrollView(
+                                    child: Column(children: [
+                                  const Text(
+                                    "应用列表",
+                                    style: TextStyle(fontSize: 24),
+                                  ).padding12(),
+                                  Wrap(
+                                    children: data.includes
+                                        .map((app) => CardButton(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceVariant,
+                                            size: const Size.square(100),
+                                            onTap: () => AppController.pushPage(
+                                                  builder: (context) =>
+                                                      ApplicationPage(
+                                                          application: app),
+                                                ),
+                                            child: app.cover.build(size: 70)))
+                                        .toList(),
+                                  ),
+                                ])).padding12(),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
         NavigationItem(
-          icon: const Icon(Icons.code),
-          label: "Environment",
-          page: Wrap(
-            children: galleryManager.environments.value
-                .map(
-                  (data) => CardButton(
-                    size: galleryButtonSize,
-                    child: data.cover.build(),
-                    onTap: () => AppController.pushPage(
-                      builder: (context) => EnvironmentPage(
-                        environment: data,
+            icon: const Icon(Icons.code),
+            label: "Environment",
+            page: galleryManager.environments.widgetBuilder(snapshotLoading(
+              builder: (data) => Wrap(
+                children: data
+                    .map(
+                      (data) => CardButton(
+                        size: galleryButtonSize,
+                        child: data.cover.build(),
+                        onTap: () => AppController.pushPage(
+                          builder: (context) => EnvironmentPage(
+                            environment: data,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        ),
+                    )
+                    .toList(),
+              ),
+            ))),
         const NavigationItem(
           icon: Icon(Icons.book),
           page: Text("开发中"),

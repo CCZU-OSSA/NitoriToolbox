@@ -15,6 +15,26 @@ abstract class MetaEntity<T extends MetaEntity<T>> {
   T loads(String data, [String? path]) {
     return loadm(loadYaml(data), path);
   }
+
+  T? load(data, [String? path]) {
+    if (data is Map) {
+      return loadm(data, path);
+    } else if (data is String) {
+      return loads(data, path);
+    }
+    return null;
+  }
+
+  bool check(data) {
+    try {
+      if (load(data) == null) {
+        return false;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 }
 
 abstract interface class Widgetlize {
