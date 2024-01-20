@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:arche/extensions/io.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/version.dart';
+import 'package:nitoritoolbox/utils/shell.dart';
 import 'package:yaml/yaml.dart';
 
 abstract class MetaEntity<T extends MetaEntity<T>> {
@@ -120,24 +121,30 @@ class CoverImage extends MetaEntity<CoverImage>
   }
 }
 
-class ApplicationFeature extends MetaEntity<ApplicationFeature> {
-  late final String name;
-  late final RichCover cover;
+class ApplicationFeatureStep extends MetaEntity<ApplicationFeatureStep> {
+  late final String details;
   late final List<String> run;
 
   @override
-  ApplicationFeature loadm(Map data, [String? path]) {
-    var rundata = data["run"];
-    if (rundata is String) {
-      run = [rundata];
-    } else if (rundata is YamlList) {
-      run = rundata.toList().cast();
-    } else {
-      throw Exception("Run is invaild type");
-    }
+  ApplicationFeatureStep loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
+      ..details = data["details"] ?? ""
+      ..run = (data["run"] as String).lines();
+  }
+}
 
+class ApplicationFeature extends MetaEntity<ApplicationFeature> {
+  late final String name;
+  late final RichCover cover;
+  late final List<ApplicationFeatureStep> steps;
+
+  @override
+  ApplicationFeature loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..name = data["name"]!
+      ..steps = (data["steps"] as YamlList)
+          .map((data) => ApplicationFeatureStep().loadm(data, path))
+          .toList()
       ..cover = RichCover().parse(data["cover"] ?? name, path);
   }
 }
@@ -155,7 +162,7 @@ class Application extends MetaEntity<Application> {
     return super.loadm(data, path)
       ..name = data["name"] ?? "Unknown App"
       ..cover = RichCover().parse(data["cover"] ?? name, path)
-      ..details = data["details"] ?? "Empty"
+      ..details = data["details"] ?? ""
       ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..environments = ((data["environments"] as YamlList?) ?? []).cast()
       ..features = (data["features"] as YamlList? ?? [])
@@ -194,7 +201,7 @@ class Environment extends MetaEntity<Environment> {
       ..name = data["name"]!
       ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..cover = RichCover().parse(data["cover"] ?? name, path)
-      ..details = data["details"] ?? "Empty"
+      ..details = data["details"] ?? ""
       ..includes = EnvironmentIncludes().loadm(data["includes"], path);
   }
 }

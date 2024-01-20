@@ -6,7 +6,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "8409c72c36ec9ece38796a87381405555672a6a7"
+      resolved-ref: "89751309ad9def153619eb82368872a5c85fe872"
       url: "https://github.com/H2Sxxa/Arche.git"
     source: git
     version: "0.0.4"
@@ -341,10 +341,10 @@ packages:
     dependency: "direct main"
     description:
       name: markdown
-      sha256: "4e304b422905967f1f7e35a03cd2a3f8f34306b3e1b0cc7a8677d7a306471a0e"
+      sha256: "1b134d9f8ff2da15cb298efe6cd8b7d2a78958c1b00384ebcbdf13fe340a6c90"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.2.0"
+    version: "7.2.1"
   markdown_syntax_highlighter:
     dependency: "direct main"
     description:

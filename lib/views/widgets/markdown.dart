@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class MarkdownBlockWidget extends StatelessWidget {
   final String data;
-  const MarkdownBlockWidget({super.key, required this.data});
+  const MarkdownBlockWidget(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {
