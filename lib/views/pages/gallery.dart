@@ -311,107 +311,60 @@ class _StateGalleryPage extends State<GalleryPage>
         NavigationItem(
           icon: const Icon(Icons.apps),
           label: "Application",
-          page: Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () =>
-                  galleryManager.applications.reload().then((value) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text("刷新完成")));
-                setState(() {});
-              }),
-              child: const Icon(Icons.refresh),
-            ),
-            body: galleryManager.applications.widgetBuilder(
-              snapshotLoading(
-                builder: (data) => SingleChildScrollView(
-                  child: Wrap(
-                    children: data
-                        .map(
-                          (data) => CardButton(
-                            size: galleryButtonSize,
-                            child: data.cover.build(size: 84),
-                            onTap: () => showModalBottomSheet(
-                              context: context,
-                              builder: (context) => SizedBox.expand(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        "应用列表",
-                                        style: TextStyle(fontSize: 24),
-                                      ).padding12(),
-                                      Wrap(
-                                        children: data.includes
-                                            .map(
-                                              (app) => CardButton(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surfaceVariant,
-                                                size: galleryButtonSize,
-                                                onTap: () =>
-                                                    AppController.pushPage(
-                                                  builder: (context) =>
-                                                      ApplicationPage(
-                                                          application: app),
-                                                ),
-                                                child:
-                                                    app.cover.build(size: 70),
-                                              ),
-                                            )
-                                            .toList(),
-                                      ),
-                                    ],
-                                  ),
-                                ).padding12(),
+          page: GalleryContent(
+            data: galleryManager.applications,
+            onTap: (data) => showModalBottomSheet(
+              context: context,
+              builder: (context) => SizedBox.expand(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Text(
+                        "应用列表",
+                        style: TextStyle(fontSize: 24),
+                      ).padding12(),
+                      Wrap(
+                        children: data.includes
+                            .map(
+                              (app) => CardButton(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant,
+                                size: galleryButtonSize,
+                                onTap: () => AppController.pushPage(
+                                  builder: (context) =>
+                                      ApplicationPage(application: app),
+                                ),
+                                child: app.cover.build(size: 70.0),
                               ),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                            )
+                            .cast<Widget>()
+                            .toList(),
+                      ),
+                    ],
                   ),
-                ),
+                ).padding12(),
               ),
             ),
           ),
         ),
         NavigationItem(
-            icon: const Icon(Icons.code),
-            label: "Environment",
-            page: galleryManager.environments.widgetBuilder(snapshotLoading(
-              builder: (data) => Wrap(
-                children: data
-                    .map(
-                      (data) => CardButton(
-                        size: galleryButtonSize,
-                        child: data.cover.build(),
-                        onTap: () => AppController.pushPage(
-                          builder: (context) => EnvironmentPage(
-                            environment: data,
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ))),
+          icon: const Icon(Icons.code),
+          label: "Environment",
+          page: GalleryContent(
+            data: galleryManager.environments,
+            onTap: (data) => AppController.pushPage(
+              builder: (context) => EnvironmentPage(environment: data),
+            ),
+          ),
+        ),
         NavigationItem(
           icon: const Icon(Icons.book),
           label: "Document",
-          page: galleryManager.documents.widgetBuilder(
-            snapshotLoading(
-              builder: (data) => Wrap(
-                children: data
-                    .map(
-                      (data) => CardButton(
-                        size: galleryButtonSize,
-                        child: data.cover.build(),
-                        onTap: () => AppController.pushPage(
-                            builder: (context) =>
-                                DocumentPage(documents: data)),
-                      ),
-                    )
-                    .toList(),
-              ),
+          page: GalleryContent(
+            data: galleryManager.documents,
+            onTap: (data) => AppController.pushPage(
+              builder: (context) => DocumentPage(documents: data),
             ),
           ),
         ),
@@ -420,6 +373,54 @@ class _StateGalleryPage extends State<GalleryPage>
       reversed: true,
       vertical:
           const NavigationVerticalConfig(surfaceTintColor: Colors.transparent),
+    );
+  }
+}
+
+class GalleryContent<T> extends StatefulWidget {
+  final FutureLazyDynamicCan<List<T>> data;
+  final void Function(T data) onTap;
+  const GalleryContent({
+    super.key,
+    required this.data,
+    required this.onTap,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _StateGalleryContent<T>();
+}
+
+class _StateGalleryContent<T> extends State<GalleryContent<T>> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.refresh),
+        onPressed: () => widget.data.reload().then(
+              (value) => setState(
+                () => ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text("刷新完成"))),
+              ),
+            ),
+      ),
+      body: widget.data.widgetBuilder(
+        snapshotLoading(
+          builder: (data) => SingleChildScrollView(
+            child: Wrap(
+              children: data
+                  .map(
+                    (entry) => CardButton(
+                      size: const Size.square(120),
+                      child: ((entry as dynamic).cover as RichCover)
+                          .build(size: 84),
+                      onTap: () => widget.onTap(entry),
+                    ),
+                  )
+                  .toList(),
+            ).padding12(),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -454,15 +455,10 @@ class _StateDocumentPage extends State<DocumentPage>
         selectedIndex: currentIndex,
         onDestinationSelected: pushIndex,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(28.0, 18.0, 8.0, 18.0),
-            child: Text(
-              widget.documents.name,
-              style: Theme.of(context).textTheme.titleSmall,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+          ListTile(
+            title: Text(widget.documents.name),
+            subtitle: Text(widget.documents.version.format()),
+          )
         ].addAllThen(
           widget.documents.documents.mapEnumerate(
             (index, entry) => NavigationDrawerDestination(
