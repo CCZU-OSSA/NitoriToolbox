@@ -6,8 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/models/dataclass.dart';
-import 'package:nitoritoolbox/models/translators.dart';
+import 'package:nitoritoolbox/models/static/fields.dart';
+import 'package:nitoritoolbox/models/static/translators.dart';
 import 'package:nitoritoolbox/views/pages/license.dart';
 import 'package:nitoritoolbox/views/widgets/config.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
@@ -55,8 +55,8 @@ class _StateSettingsPage extends State<SettingsPage> {
                     title: const Text("警告"),
                     content: const Text("此功能可能会对此计算机造成损害，开启后所有责任与损失均由使用者承担"),
                     context: context,
-                    confirmData: true,
-                    cancelData: false,
+                    confirmData: () => true,
+                    cancelData: () => false,
                   ))!;
                 },
               )
@@ -84,7 +84,7 @@ class _StateSettingsPage extends State<SettingsPage> {
                 trailing: CETPopupMenuButton(
                   translator: trNavigationLabelType,
                   config: config,
-                  configKey: ConfigKeys.railLabelType,
+                  configKey: ConfigKeys.labelType,
                 )),
             ExpansionTile(
               leading: const Icon(Icons.image),

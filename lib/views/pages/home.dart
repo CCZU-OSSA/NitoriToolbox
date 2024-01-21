@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/views/pages/software.dart';
+import 'package:nitoritoolbox/views/widgets/extension.dart';
+import 'package:window_manager/window_manager.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,22 +15,21 @@ class _StateHomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Wrap(
-            children: List.generate(
-                1,
-                (index) => Material(
-                    child: Card(
-                        child: InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () => AppController.pushPage(
-                                builder: (context) => const SoftWare()),
-                            child: const SizedBox.square(
-                              dimension: 128,
-                              child: Center(
-                                child: Text("Hello"),
-                              ),
-                            )))))),
+        FilledButton(
+            onPressed: () {
+              AppController.setControllerVisible(visible: false);
+              windowManager.setResizable(false);
+              windowManager.setFullScreen(true);
+            },
+            child: const Text("Full Screen")),
+        FilledButton(
+            onPressed: () {
+              AppController.setControllerVisible(visible: true);
+              windowManager.setResizable(true);
+              windowManager.setFullScreen(false);
+            },
+            child: const Text("Exit Full Screen"))
       ],
-    );
+    ).padding12();
   }
 }

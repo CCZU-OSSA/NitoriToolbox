@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/models/dataclass.dart';
-import 'package:nitoritoolbox/models/keys.dart';
+import 'package:nitoritoolbox/models/static/fields.dart';
+import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
@@ -11,14 +11,19 @@ class AppController {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
   static StateNavigationView get viewstate => viewkey.currentState!;
   static void pushPage({required WidgetBuilder builder}) {
-    navigator.push(PageRouteBuilder(
+    navigator.push(
+      PageRouteBuilder(
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
+          opacity: animation,
+          child: child,
+        ),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            WindowContainer(child: builder(context))));
+            WindowContainer(
+          child: builder(context),
+        ),
+      ),
+    );
   }
 
   static void pushMaterialPage({required WidgetBuilder builder}) {
@@ -28,12 +33,17 @@ class AppController {
   }
 
   static void pushHeroPage({required RoutePageBuilder builder, Object? tag}) {
-    navigator.push(PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => Hero(
+    navigator.push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            WindowContainer(
+          child: Hero(
             tag: tag ?? "",
-            child: WindowContainer(
-              child: builder(context, animation, secondaryAnimation),
-            ))));
+            child: builder(context, animation, secondaryAnimation),
+          ),
+        ),
+      ),
+    );
   }
 
   static T viewContextBuilder<T>(
@@ -54,6 +64,13 @@ class AppController {
 
   static void refreshAppEnumConfig(String key, Enum target) {
     refreshAppValueConfig(key, target.index);
+  }
+
+  static bool controllerVisible = true;
+
+  static void setControllerVisible({bool visible = true}) {
+    controllerVisible = visible;
+    rootKey.currentState!.refresh();
   }
 
   static void refreshAppValueConfig<V>(String key, V value) {
