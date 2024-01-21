@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:arche/arche.dart';
+import 'package:arche/extensions/iter.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
@@ -53,22 +54,24 @@ class ApplicationPage extends StatelessWidget {
             ),
           ),
           Center(
-              child: Wrap(
-                  children: application.features
-                      .map(
-                        (feature) => CardButton(
-                          onTap: () => AppController.pushPage(
-                            builder: (context) => ApplicationFeaturePage(
-                              feature: feature,
-                              application: application,
-                              workingDirectory: application.path,
-                            ),
-                          ),
-                          size: const Size.square(80),
-                          child: feature.cover.build(size: 56),
+            child: Wrap(
+              children: application.features
+                  .map(
+                    (feature) => CardButton(
+                      onTap: () => AppController.pushPage(
+                        builder: (context) => ApplicationFeaturePage(
+                          feature: feature,
+                          application: application,
+                          workingDirectory: application.path,
                         ),
-                      )
-                      .toList()))
+                      ),
+                      size: const Size.square(80),
+                      child: feature.cover.build(size: 56),
+                    ),
+                  )
+                  .toList(),
+            ),
+          )
         ],
       ).padding12(),
     );
@@ -331,27 +334,35 @@ class _StateGalleryPage extends State<GalleryPage>
                               context: context,
                               builder: (context) => SizedBox.expand(
                                 child: SingleChildScrollView(
-                                    child: Column(children: [
-                                  const Text(
-                                    "应用列表",
-                                    style: TextStyle(fontSize: 24),
-                                  ).padding12(),
-                                  Wrap(
-                                    children: data.includes
-                                        .map((app) => CardButton(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surfaceVariant,
-                                            size: const Size.square(100),
-                                            onTap: () => AppController.pushPage(
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                        "应用列表",
+                                        style: TextStyle(fontSize: 24),
+                                      ).padding12(),
+                                      Wrap(
+                                        children: data.includes
+                                            .map(
+                                              (app) => CardButton(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surfaceVariant,
+                                                size: galleryButtonSize,
+                                                onTap: () =>
+                                                    AppController.pushPage(
                                                   builder: (context) =>
                                                       ApplicationPage(
                                                           application: app),
                                                 ),
-                                            child: app.cover.build(size: 70)))
-                                        .toList(),
+                                                child:
+                                                    app.cover.build(size: 70),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ],
                                   ),
-                                ])).padding12(),
+                                ).padding12(),
                               ),
                             ),
                           ),
@@ -383,16 +394,99 @@ class _StateGalleryPage extends State<GalleryPage>
                     .toList(),
               ),
             ))),
-        const NavigationItem(
-          icon: Icon(Icons.book),
-          page: Text("开发中"),
+        NavigationItem(
+          icon: const Icon(Icons.book),
           label: "Document",
+          page: galleryManager.documents.widgetBuilder(
+            snapshotLoading(
+              builder: (data) => Wrap(
+                children: data
+                    .map(
+                      (data) => CardButton(
+                        size: galleryButtonSize,
+                        child: data.cover.build(),
+                        onTap: () => AppController.pushPage(
+                            builder: (context) =>
+                                DocumentPage(documents: data)),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          ),
         ),
       ],
       direction: Axis.vertical,
       reversed: true,
       vertical:
           const NavigationVerticalConfig(surfaceTintColor: Colors.transparent),
+    );
+  }
+}
+
+class DocumentPage extends StatefulWidget {
+  final Documents documents;
+  const DocumentPage({
+    super.key,
+    required this.documents,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _StateDocumentPage();
+}
+
+class _StateDocumentPage extends State<DocumentPage>
+    with IndexedNavigatorStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(widget.documents.documents[currentIndex].name),
+        actions: const [
+          IconButton(
+            onPressed: AppController.pop,
+            icon: Icon(Icons.exit_to_app),
+          )
+        ],
+      ),
+      drawer: NavigationDrawer(
+        selectedIndex: currentIndex,
+        onDestinationSelected: pushIndex,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(28.0, 18.0, 8.0, 18.0),
+            child: Text(
+              widget.documents.name,
+              style: Theme.of(context).textTheme.titleSmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ].addAllThen(
+          widget.documents.documents.mapEnumerate(
+            (index, entry) => NavigationDrawerDestination(
+              icon: ConditionShrink(
+                  value: index == currentIndex,
+                  child: const Icon(Icons.arrow_right)),
+              label: Text(entry.name),
+            ),
+          ),
+        ),
+      ),
+      body: FutureBuilder(
+        future: File(widget.documents.documents[currentIndex].loacation)
+            .readAsString(),
+        builder: snapshotLoading(
+          builder: (data) {
+            return SingleChildScrollView(
+              child: MarkdownBlockWidget(
+                data.toString(),
+              ).padding12(),
+            );
+          },
+        ),
+      ),
     );
   }
 }

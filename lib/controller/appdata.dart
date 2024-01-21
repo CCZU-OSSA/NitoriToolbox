@@ -25,6 +25,7 @@ class GalleryManager {
       initialDirectory.subDirectory("environments").check();
   Directory get documentsDir =>
       initialDirectory.subDirectory("documents").check();
+
   static GalleryManager get manager => ArcheBus.bus.of();
 
   final FutureLazyDynamicCan<List<ApplicationPackage>> applications =
@@ -35,6 +36,10 @@ class GalleryManager {
   final FutureLazyDynamicCan<List<Environment>> environments =
       FutureLazyDynamicCan(
           builder: () => collect(manager.environmentsDir, Environment().loads));
+
+  final FutureLazyDynamicCan<List<Documents>> documents = FutureLazyDynamicCan(
+    builder: () => collect(manager.documentsDir, Documents().loads),
+  );
 
   static Future<List<T>> collect<T extends MetaEntity<T>>(Directory directory,
       T Function(String data, String path) converter) async {

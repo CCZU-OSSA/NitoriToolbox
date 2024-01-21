@@ -241,11 +241,30 @@ class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
   }
 }
 
-class ImportMeta extends MetaEntity<ImportMeta> {
-  late final String type;
-
+class Documents extends MetaEntity<Documents> {
+  late final String name;
+  late final RichCover cover;
+  late final VersionType version;
+  late final List<DocumentEntry> documents;
   @override
-  ImportMeta loadm(Map data, [String? path]) {
-    return super.loadm(data, path)..type = data["type"]!;
+  Documents loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
+      ..name = data["name"]
+      ..version = Version.fromString(data["version"] ?? "1.0.0")
+      ..cover = RichCover().parse(data["cover"] ?? name, path)
+      ..documents = ((data["includes"] as YamlList?) ?? [])
+          .map((data) => DocumentEntry().loadm(data, path))
+          .toList();
+  }
+}
+
+class DocumentEntry extends MetaEntity<DocumentEntry> {
+  late final String name;
+  late final String loacation;
+  @override
+  DocumentEntry loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
+      ..name = data["name"]
+      ..loacation = "${path!}//${data["location"]}";
   }
 }
