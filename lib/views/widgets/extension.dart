@@ -4,7 +4,7 @@ import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/static/enums.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
-import 'package:nitoritoolbox/utils/platform_windows.dart';
+import 'package:nitoritoolbox/models/platform/platform_windows.dart';
 import 'package:nitoritoolbox/views/widgets/windowbar.dart';
 
 extension NitoriWidgetExtension on Widget {

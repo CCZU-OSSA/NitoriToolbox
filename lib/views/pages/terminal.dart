@@ -1,7 +1,7 @@
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 

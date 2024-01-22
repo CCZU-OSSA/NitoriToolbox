@@ -6,12 +6,12 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "91ac2dbee2d0d9fb44b42b9650596c6a84f483b6"
+      resolved-ref: "83da6bc1c9a91c9b3e2f863249488fd4ccb3afbc"
       url: "https://github.com/H2Sxxa/Arche.git"
     source: git
     version: "0.0.4"
   archive:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: archive
       sha256: "22600aa1e926be775fa5fe7e6894e7fb3df9efda8891c73f70fb3262399a432d"

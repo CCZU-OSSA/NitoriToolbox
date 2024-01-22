@@ -5,13 +5,13 @@ import 'package:arche/extensions/io.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
+import 'package:nitoritoolbox/controllers/appdata.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/keys.dart';
-import 'package:nitoritoolbox/utils/github.dart';
+import 'package:nitoritoolbox/models/github.dart';
 import 'package:nitoritoolbox/views/pages/gallery.dart';
-import 'package:nitoritoolbox/views/pages/dashboard.dart';
+import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
 import 'package:nitoritoolbox/views/pages/terminal.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
@@ -27,7 +27,7 @@ Future<void> main() async {
       .provide(data.galleryManager)
       .provide(GithubRepository(ApplicationInfo.githubRepoName));
   runApp(MainApplication());
-  AppController.initLifeCycleListener();
+  AppNavigator.initLifeCycleListener();
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(800, 600);
@@ -83,9 +83,9 @@ class StateMainApplication extends State<MainApplication> {
                 key: viewkey,
                 items: const [
                   NavigationItem(
-                    icon: Icon(Icons.dashboard),
-                    label: "面板",
-                    page: DashBoardPage(),
+                    icon: Icon(Icons.home),
+                    label: "主页",
+                    page: HomePage(),
                   ),
                   NavigationItem(
                     icon: Icon(Icons.apps),

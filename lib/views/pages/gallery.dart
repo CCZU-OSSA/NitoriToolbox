@@ -5,11 +5,12 @@ import 'package:arche/extensions/iter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
+import 'package:nitoritoolbox/controllers/appdata.dart';
 import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:nitoritoolbox/views/widgets/builder.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
@@ -60,7 +61,7 @@ class ApplicationPage extends StatelessWidget {
               children: application.features
                   .map(
                     (feature) => CardButton(
-                      onTap: () => AppController.pushPage(
+                      onTap: () => AppNavigator.pushPage(
                         builder: (context) => ApplicationFeaturePage(
                           feature: feature,
                           application: application,
@@ -333,11 +334,11 @@ class _StateGalleryPage extends State<GalleryPage>
                                     .colorScheme
                                     .surfaceVariant,
                                 size: galleryButtonSize,
-                                onTap: () => AppController.pushPage(
+                                onTap: () => AppNavigator.pushPage(
                                   builder: (context) =>
                                       ApplicationPage(application: app),
                                 ),
-                                child: app.cover.build(size: 70.0),
+                                child: app.cover.build(size: 70),
                               ),
                             )
                             .cast<Widget>()
@@ -355,7 +356,7 @@ class _StateGalleryPage extends State<GalleryPage>
           label: "环境",
           page: GalleryContent(
             data: galleryManager.environments,
-            onTap: (data) => AppController.pushPage(
+            onTap: (data) => AppNavigator.pushPage(
               builder: (context) => EnvironmentPage(environment: data),
             ),
           ),
@@ -365,7 +366,7 @@ class _StateGalleryPage extends State<GalleryPage>
           label: "文档",
           page: GalleryContent(
             data: galleryManager.documents,
-            onTap: (data) => AppController.pushPage(
+            onTap: (data) => AppNavigator.pushPage(
               builder: (context) => DocumentPage(documents: data),
             ),
           ),
@@ -411,7 +412,17 @@ class _StateGalleryContent<T> extends State<GalleryContent<T>> {
           ),
           FloatingActionButton(
             heroTag: "import",
-            child: const Icon(Icons.get_app),
+            child: const Icon(FontAwesomeIcons.fileImport),
+            onPressed: () => widget.data.reload().then(
+                  (value) => setState(
+                    () => ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text("刷新完成"))),
+                  ),
+                ),
+          ),
+          FloatingActionButton(
+            heroTag: "export",
+            child: const Icon(FontAwesomeIcons.fileExport),
             onPressed: () => widget.data.reload().then(
                   (value) => setState(
                     () => ScaffoldMessenger.of(context)
@@ -423,19 +434,23 @@ class _StateGalleryContent<T> extends State<GalleryContent<T>> {
       ),
       body: widget.data.widgetBuilder(
         snapshotLoading(
-          builder: (data) => SingleChildScrollView(
-            child: Wrap(
-              children: data
-                  .map(
-                    (entry) => CardButton(
-                      size: const Size.square(120),
-                      child: ((entry as dynamic).cover as RichCover)
-                          .build(size: 84),
-                      onTap: () => widget.onTap(entry),
-                    ),
-                  )
-                  .toList(),
-            ).padding12(),
+          builder: (data) => Visibility(
+            visible: data.isNotEmpty,
+            replacement: const Center(child: Text("暂时为空")),
+            child: SingleChildScrollView(
+              child: Wrap(
+                children: data
+                    .map(
+                      (entry) => CardButton(
+                        size: const Size.square(160),
+                        child: ((entry as dynamic).cover as RichCover)
+                            .build(size: 160 * 0.7),
+                        onTap: () => widget.onTap(entry),
+                      ),
+                    )
+                    .toList(),
+              ).padding12(),
+            ),
           ),
         ),
       ),

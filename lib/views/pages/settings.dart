@@ -5,7 +5,7 @@ import 'package:arche/modules/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/translators.dart';
 import 'package:nitoritoolbox/views/pages/license.dart';
@@ -114,7 +114,7 @@ class _StateSettingsPage extends State<SettingsPage> {
                       max: 0.5,
                       onChanged: (value) => update(value),
                       onChangeEnd: (value) =>
-                          AppController.refreshAppValueConfig(
+                          AppNavigator.refreshAppValueConfig(
                               ConfigKeys.backgroundImageOpacity, value),
                     ),
                   ),
@@ -125,7 +125,7 @@ class _StateSettingsPage extends State<SettingsPage> {
                     child: InkWell(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       onTap: () async {
-                        AppController.loading();
+                        AppNavigator.loading();
                         await FilePicker.platform
                             .pickFiles(
                                 type: FileType.image, dialogTitle: "选择图片")
@@ -133,13 +133,13 @@ class _StateSettingsPage extends State<SettingsPage> {
                           (value) {
                             if (value != null) {
                               setState(
-                                () => AppController.refreshAppValueConfig(
+                                () => AppNavigator.refreshAppValueConfig(
                                   ConfigKeys.backgroundImageLocal,
                                   value.files.first.path,
                                 ),
                               );
                             }
-                            AppController.pop();
+                            AppNavigator.pop();
                           },
                         );
                       },
@@ -164,7 +164,7 @@ class _StateSettingsPage extends State<SettingsPage> {
                             initial: config.getOr(
                                 ConfigKeys.backgroundImageNetwork, "https://"));
                         if (value != null) {
-                          AppController.refreshAppValueConfig(
+                          AppNavigator.refreshAppValueConfig(
                               ConfigKeys.backgroundImageNetwork, value);
                         }
                       },

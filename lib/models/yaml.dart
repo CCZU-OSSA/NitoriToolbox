@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:arche/extensions/io.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/version.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:yaml/yaml.dart';
 
-abstract class MetaEntity<T extends MetaEntity<T>> {
+abstract class YamlMetaData<T extends YamlMetaData<T>> {
   late final String path;
   T loadm(Map data, [String? path]) {
     return (this..path = data["path"] ?? path ?? "") as T;
@@ -45,7 +45,7 @@ abstract interface class Parser<T> {
   T parse(data, [String? path]);
 }
 
-class RichCover extends MetaEntity<RichCover>
+class RichCover extends YamlMetaData<RichCover>
     implements Widgetlize, Parser<RichCover> {
   String? text;
   CoverIcon? icon;
@@ -76,7 +76,7 @@ class RichCover extends MetaEntity<RichCover>
   }
 }
 
-class CoverIcon extends MetaEntity<CoverIcon>
+class CoverIcon extends YamlMetaData<CoverIcon>
     implements Widgetlize, Parser<CoverIcon?> {
   late final int codePoint;
   late final String fontFamily;
@@ -108,7 +108,7 @@ class CoverIcon extends MetaEntity<CoverIcon>
   }
 }
 
-class CoverImage extends MetaEntity<CoverImage>
+class CoverImage extends YamlMetaData<CoverImage>
     implements Widgetlize, Parser<CoverImage?> {
   String? network;
   String? local;
@@ -141,7 +141,7 @@ class CoverImage extends MetaEntity<CoverImage>
   }
 }
 
-class ApplicationFeatureStep extends MetaEntity<ApplicationFeatureStep> {
+class ApplicationFeatureStep extends YamlMetaData<ApplicationFeatureStep> {
   late final String details;
   late final List<String> run;
 
@@ -153,7 +153,7 @@ class ApplicationFeatureStep extends MetaEntity<ApplicationFeatureStep> {
   }
 }
 
-class ApplicationFeature extends MetaEntity<ApplicationFeature> {
+class ApplicationFeature extends YamlMetaData<ApplicationFeature> {
   late final String name;
   late final RichCover cover;
   late final List<ApplicationFeatureStep> steps;
@@ -169,7 +169,7 @@ class ApplicationFeature extends MetaEntity<ApplicationFeature> {
   }
 }
 
-class Application extends MetaEntity<Application> {
+class Application extends YamlMetaData<Application> {
   late final String name;
   late final RichCover cover;
   late final VersionType version;
@@ -191,7 +191,7 @@ class Application extends MetaEntity<Application> {
   }
 }
 
-class ApplicationPackage extends MetaEntity<ApplicationPackage> {
+class ApplicationPackage extends YamlMetaData<ApplicationPackage> {
   late final String name;
   late final VersionType version;
   late final RichCover cover;
@@ -209,7 +209,7 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   }
 }
 
-class Environment extends MetaEntity<Environment> {
+class Environment extends YamlMetaData<Environment> {
   late final String name;
   late final VersionType version;
   late final String details;
@@ -226,7 +226,7 @@ class Environment extends MetaEntity<Environment> {
   }
 }
 
-class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
+class EnvironmentIncludes extends YamlMetaData<EnvironmentIncludes> {
   late final List<String> paths;
   late final Map<String, String> overwrite;
   @override
@@ -241,7 +241,7 @@ class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
   }
 }
 
-class Documents extends MetaEntity<Documents> {
+class Documents extends YamlMetaData<Documents> {
   late final String name;
   late final RichCover cover;
   late final VersionType version;
@@ -258,7 +258,7 @@ class Documents extends MetaEntity<Documents> {
   }
 }
 
-class DocumentEntry extends MetaEntity<DocumentEntry> {
+class DocumentEntry extends YamlMetaData<DocumentEntry> {
   late final String name;
   late final String loacation;
   @override
@@ -266,5 +266,15 @@ class DocumentEntry extends MetaEntity<DocumentEntry> {
     return super.loadm(data, path)
       ..name = data["name"]
       ..loacation = "${path!}//${data["location"]}";
+  }
+}
+
+class ImportMetaData extends YamlMetaData<ImportMetaData> {
+  late final String type;
+
+  @override
+  ImportMetaData loadm(Map data, [String? path]) {
+    data = data["import"];
+    return super.loadm(data, path)..type = data["type"]!;
   }
 }

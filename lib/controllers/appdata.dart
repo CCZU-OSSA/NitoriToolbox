@@ -41,7 +41,7 @@ class GalleryManager {
     builder: () => collect(manager.documentsDir, Documents().loads),
   );
 
-  static Future<List<T>> collect<T extends MetaEntity<T>>(Directory directory,
+  static Future<List<T>> collect<T extends YamlMetaData<T>>(Directory directory,
       T Function(String data, String path) converter) async {
     return directory
         .list()

@@ -7,7 +7,7 @@ import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
-class AppController {
+class AppNavigator {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
   static StateNavigationView get viewstate => viewkey.currentState!;
   static void pushPage({required WidgetBuilder builder}) {

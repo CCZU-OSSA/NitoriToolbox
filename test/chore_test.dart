@@ -8,7 +8,7 @@ import 'package:arche/arche.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test("Chore test", () {
-    debugWrite((2, 0, 0) == (2, 0, 0));
+  test("Test", () {
+    print(ArcheLogger().provider.has<ArcheLogger>());
   });
 }

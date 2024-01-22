@@ -1,6 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
 
 class WindowBar extends StatelessWidget {
   final Color? backgroundColor;
@@ -41,7 +41,7 @@ class WindowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppController.controllerVisible
+        AppNavigator.controllerVisible
             ? WindowBar(backgroundColor: backgroundColor)
             : const SizedBox.shrink(),
         Expanded(child: child),
