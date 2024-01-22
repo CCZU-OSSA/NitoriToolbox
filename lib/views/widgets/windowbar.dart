@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
 
 class WindowBar extends StatelessWidget {
-  const WindowBar({super.key});
+  final Color? backgroundColor;
+  const WindowBar({
+    super.key,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
         height: 30,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.background),
+        decoration: BoxDecoration(
+            color: backgroundColor ?? Theme.of(context).colorScheme.background),
         child: Row(children: [
           Expanded(child: MoveWindow()),
           Row(
@@ -26,14 +30,19 @@ class WindowBar extends StatelessWidget {
 
 class WindowWidget extends StatelessWidget {
   final Widget child;
-  const WindowWidget({super.key, required this.child});
+  final Color? backgroundColor;
+  const WindowWidget({
+    super.key,
+    required this.child,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         AppController.controllerVisible
-            ? const WindowBar()
+            ? WindowBar(backgroundColor: backgroundColor)
             : const SizedBox.shrink(),
         Expanded(child: child),
       ],

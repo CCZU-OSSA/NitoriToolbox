@@ -63,29 +63,42 @@ extension NitoriWidgetExtension on Widget {
         break;
     }
 
-    return Stack(children: [
-      this,
-      IgnorePointer(
+    return Stack(
+      children: [
+        this,
+        IgnorePointer(
           child: image == null
               ? const SizedBox.shrink()
               : Container(
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          opacity: config.getOr(
-                              ConfigKeys.backgroundImageOpacity, 0.4),
-                          image: image)),
-                  child: const SizedBox.expand()))
-    ]);
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        opacity: config.getOr(
+                            ConfigKeys.backgroundImageOpacity, 0.4),
+                        image: image),
+                  ),
+                  child: const SizedBox.expand(),
+                ),
+        )
+      ],
+    );
   }
 }
 
 class WindowContainer extends StatelessWidget {
   final Widget child;
-  const WindowContainer({super.key, required this.child});
+  final Color? backgroundColor;
+  const WindowContainer({
+    super.key,
+    required this.child,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return WindowWidget(child: child).background();
+    return WindowWidget(
+      backgroundColor: backgroundColor,
+      child: child,
+    ).background();
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:arche/arche.dart';
 import 'package:arche/extensions/iter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
@@ -48,8 +49,8 @@ class ApplicationPage extends StatelessWidget {
             title: Text(application.name),
             subtitle: Text(application.version.format()),
           )),
-          ConditionShrink(
-            value: application.details.isNotEmpty,
+          Visibility(
+            visible: application.details.isNotEmpty,
             child: Card(
               child: MarkdownBlockWidget(application.details),
             ),
@@ -108,8 +109,8 @@ class EnvironmentPage extends StatelessWidget {
             title: Text(environment.name),
             subtitle: Text(environment.version.format()),
           )),
-          ConditionShrink(
-            value: environment.details.isNotEmpty,
+          Visibility(
+            visible: environment.details.isNotEmpty,
             child: Card(
               child: MarkdownBlockWidget(environment.details),
             ),
@@ -123,14 +124,14 @@ class EnvironmentPage extends StatelessWidget {
               children: environment.includes.paths.map((e) => Text(e)).toList(),
             ).padding12(),
           ),
-          ConditionShrink(
-            value: environment.includes.overwrite.isNotEmpty,
+          Visibility(
+            visible: environment.includes.overwrite.isNotEmpty,
             child: const ListTile(
               title: Text("覆写变量"),
             ),
           ),
-          ConditionShrink(
-            value: environment.includes.overwrite.isNotEmpty,
+          Visibility(
+            visible: environment.includes.overwrite.isNotEmpty,
             child: Card(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,8 +245,8 @@ class _StateApplicationStepView extends State<ApplicationStepView> {
     var shell = widget.shell;
     return Column(
       children: [
-        ConditionShrink(
-          value: widget.step.details.isNotEmpty,
+        Visibility(
+          visible: widget.step.details.isNotEmpty,
           child: MarkdownBlockWidget(widget.step.details),
         ),
         Card(
@@ -399,6 +400,7 @@ class _StateGalleryContent<T> extends State<GalleryContent<T>> {
       floatingActionButton: ExpandableFab(
         children: [
           FloatingActionButton(
+            heroTag: "reload",
             child: const Icon(Icons.refresh),
             onPressed: () => widget.data.reload().then(
                   (value) => setState(
@@ -408,6 +410,7 @@ class _StateGalleryContent<T> extends State<GalleryContent<T>> {
                 ),
           ),
           FloatingActionButton(
+            heroTag: "import",
             child: const Icon(Icons.get_app),
             onPressed: () => widget.data.reload().then(
                   (value) => setState(
@@ -453,19 +456,52 @@ class DocumentPage extends StatefulWidget {
 
 class _StateDocumentPage extends State<DocumentPage>
     with IndexedNavigatorStateMixin {
+  late ScrollController controller;
+  bool fabVisible = true;
+  @override
+  void initState() {
+    super.initState();
+    controller = ScrollController();
+    controller.addListener(() {
+      setState(() {
+        fabVisible =
+            controller.position.userScrollDirection == ScrollDirection.forward;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        leading: const BackButton(),
         title: Text(widget.documents.documents[currentIndex].name),
-        actions: const [
-          IconButton(
-            onPressed: AppController.pop,
-            icon: Icon(Icons.exit_to_app),
-          )
-        ],
       ),
+      floatingActionButton: AnimatedOpacity(
+          duration: Durations.medium4,
+          opacity: fabVisible ? 1 : 0,
+          child: AnimatedRotation(
+            duration: Durations.medium4,
+            turns: fabVisible ? 0.5 : 0,
+            child: Builder(
+              builder: (context) => FloatingActionButton(
+                child: const Icon(Icons.menu),
+                onPressed: () {
+                  setState(() {
+                    fabVisible = true;
+                  });
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            ),
+          )),
       drawer: NavigationDrawer(
         selectedIndex: currentIndex,
         onDestinationSelected: pushIndex,
@@ -477,8 +513,8 @@ class _StateDocumentPage extends State<DocumentPage>
         ].addAllThen(
           widget.documents.documents.mapEnumerate(
             (index, entry) => NavigationDrawerDestination(
-              icon: ConditionShrink(
-                  value: index == currentIndex,
+              icon: Visibility(
+                  visible: index == currentIndex,
                   child: const Icon(Icons.arrow_right)),
               label: Text(entry.name),
             ),
@@ -491,6 +527,7 @@ class _StateDocumentPage extends State<DocumentPage>
         builder: snapshotLoading(
           builder: (data) {
             return SingleChildScrollView(
+              controller: controller,
               child: MarkdownBlockWidget(
                 data.toString(),
               ).padding12(),
