@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:arche/arche.dart';
 import 'package:arche/extensions/iter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:nitoritoolbox/controller/appcontroller.dart';
 import 'package:nitoritoolbox/controller/appdata.dart';
 import 'package:nitoritoolbox/models/version.dart';
@@ -310,7 +311,7 @@ class _StateGalleryPage extends State<GalleryPage>
       items: [
         NavigationItem(
           icon: const Icon(Icons.apps),
-          label: "Application",
+          label: "应用",
           page: GalleryContent(
             data: galleryManager.applications,
             onTap: (data) => showModalBottomSheet(
@@ -350,7 +351,7 @@ class _StateGalleryPage extends State<GalleryPage>
         ),
         NavigationItem(
           icon: const Icon(Icons.code),
-          label: "Environment",
+          label: "环境",
           page: GalleryContent(
             data: galleryManager.environments,
             onTap: (data) => AppController.pushPage(
@@ -360,7 +361,7 @@ class _StateGalleryPage extends State<GalleryPage>
         ),
         NavigationItem(
           icon: const Icon(Icons.book),
-          label: "Document",
+          label: "文档",
           page: GalleryContent(
             data: galleryManager.documents,
             onTap: (data) => AppController.pushPage(
@@ -394,14 +395,28 @@ class _StateGalleryContent<T> extends State<GalleryContent<T>> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.refresh),
-        onPressed: () => widget.data.reload().then(
-              (value) => setState(
-                () => ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text("刷新完成"))),
-              ),
-            ),
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        children: [
+          FloatingActionButton(
+            child: const Icon(Icons.refresh),
+            onPressed: () => widget.data.reload().then(
+                  (value) => setState(
+                    () => ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text("刷新完成"))),
+                  ),
+                ),
+          ),
+          FloatingActionButton(
+            child: const Icon(Icons.get_app),
+            onPressed: () => widget.data.reload().then(
+                  (value) => setState(
+                    () => ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text("刷新完成"))),
+                  ),
+                ),
+          ),
+        ],
       ),
       body: widget.data.widgetBuilder(
         snapshotLoading(

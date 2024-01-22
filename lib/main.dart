@@ -11,7 +11,7 @@ import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/utils/github.dart';
 import 'package:nitoritoolbox/views/pages/gallery.dart';
-import 'package:nitoritoolbox/views/pages/home.dart';
+import 'package:nitoritoolbox/views/pages/dashboard.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
 import 'package:nitoritoolbox/views/pages/terminal.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
@@ -83,24 +83,24 @@ class StateMainApplication extends State<MainApplication> {
                 key: viewkey,
                 items: const [
                   NavigationItem(
-                    icon: Icon(Icons.home),
-                    label: "Home",
-                    page: HomePage(),
+                    icon: Icon(Icons.dashboard),
+                    label: "面板",
+                    page: DashBoardPage(),
                   ),
                   NavigationItem(
                     icon: Icon(Icons.apps),
-                    label: "Gallery",
+                    label: "应用",
                     page: GalleryPage(),
                   ),
                   NavigationItem(
                     icon: Icon(Icons.terminal),
-                    label: "Terminal",
+                    label: "终端",
                     page: TerminalPage(),
                   ),
                   NavigationItem(
                     name: "Settings",
                     icon: Icon(Icons.settings),
-                    label: "Settings",
+                    label: "设置",
                     page: SettingsPage(),
                   )
                 ],
