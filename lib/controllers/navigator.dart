@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:arche/arche.dart';
@@ -82,7 +83,21 @@ class AppNavigator {
     loadingDialog(viewkey.currentContext!);
   }
 
-  static void pop() {
-    navigator.pop();
+  static void loadingDo<T>(
+    ValueUpdateChanged<String, FutureOr<dynamic>>? function,
+  ) {
+    loadingDialog(
+      viewkey.currentContext!,
+      textController: (context, value, update) async {
+        if (function != null) {
+          await function(context, value, update);
+        }
+        pop();
+      },
+    );
+  }
+
+  static void pop([Object? result]) {
+    navigator.pop(result);
   }
 }

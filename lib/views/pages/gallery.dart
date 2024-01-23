@@ -2,16 +2,20 @@ import 'dart:io';
 
 import 'package:arche/arche.dart';
 import 'package:arche/extensions/iter.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/controllers/navigator.dart';
 import 'package:nitoritoolbox/controllers/appdata.dart';
+import 'package:nitoritoolbox/models/package.dart';
+import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
 import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:nitoritoolbox/views/widgets/builder.dart';
+import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
 
@@ -390,17 +394,31 @@ class GalleryContent<T> extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _StateGalleryContent<T>();
+  State<StatefulWidget> createState() => StateGalleryContent<T>();
 }
 
-class _StateGalleryContent<T> extends State<GalleryContent<T>> {
+class StateGalleryContent<T> extends State<GalleryContent<T>> {
+  @override
+  void initState() {
+    super.initState();
+    ArcheBus.bus.replace<StateGalleryContent<dynamic>>(this);
+  }
+
+  void mountRefresh() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
+        distance: 60,
+        type: ExpandableFabType.fan,
         children: [
-          FloatingActionButton(
+          FloatingActionButton.small(
             heroTag: "reload",
             child: const Icon(Icons.refresh),
             onPressed: () => widget.data.reload().then(
@@ -410,25 +428,45 @@ class _StateGalleryContent<T> extends State<GalleryContent<T>> {
                   ),
                 ),
           ),
-          FloatingActionButton(
+          FloatingActionButton.small(
+              heroTag: "operate",
+              child: const Icon(Icons.list),
+              onPressed: () => AppNavigator.pushPage(
+                  builder: (context) => const GalleryManagerPage())),
+          FloatingActionButton.small(
             heroTag: "import",
             child: const Icon(FontAwesomeIcons.fileImport),
-            onPressed: () => widget.data.reload().then(
-                  (value) => setState(
-                    () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text("刷新完成"))),
-                  ),
-                ),
-          ),
-          FloatingActionButton(
-            heroTag: "export",
-            child: const Icon(FontAwesomeIcons.fileExport),
-            onPressed: () => widget.data.reload().then(
-                  (value) => setState(
-                    () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text("刷新完成"))),
-                  ),
-                ),
+            onPressed: () =>
+                AppNavigator.loadingDo((context, value, update) async {
+              update("选择文件导入...");
+              var result = await FilePicker.platform.pickFiles(
+                allowMultiple: true,
+                type: FileType.custom,
+                allowedExtensions: ["zip", "ntipkg", "ntrpkg"],
+              );
+              if (result != null) {
+                for (var (index, path) in result.paths.indexed) {
+                  var ntipkg = NitoriPackage(path!);
+                  update("从导入 $path ($index/${result.paths.length})...");
+                  var (ok, trace) = await ntipkg.import();
+                  if (!ok) {
+                    if ((await basicFullScreenDialog(
+                          context: viewkey.currentContext!,
+                          title: const Text("中止导入?"),
+                          content: Wrap(children: [
+                            Text("$path 导入失败"),
+                            Text(trace),
+                          ]),
+                          confirmData: () => true,
+                          cancelData: () => false,
+                        )) ??
+                        false) {
+                      break;
+                    }
+                  }
+                }
+              }
+            }),
           ),
         ],
       ),
@@ -550,6 +588,23 @@ class _StateDocumentPage extends State<DocumentPage>
           },
         ),
       ),
+    );
+  }
+}
+
+class GalleryManagerPage extends StatefulWidget {
+  const GalleryManagerPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _StateGalleryManagerPage();
+}
+
+class _StateGalleryManagerPage extends State<GalleryManagerPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: ListView(),
     );
   }
 }

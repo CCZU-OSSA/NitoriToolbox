@@ -124,13 +124,13 @@ class _StateSettingsPage extends State<SettingsPage> {
                   trailing: Card(
                     child: InkWell(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      onTap: () async {
-                        AppNavigator.loading();
-                        await FilePicker.platform
-                            .pickFiles(
-                                type: FileType.image, dialogTitle: "选择图片")
-                            .then(
-                          (value) {
+                      onTap: () => AppNavigator.loadingDo(
+                        (context, value, update) async {
+                          update("选择图片...");
+                          await FilePicker.platform
+                              .pickFiles(
+                                  type: FileType.image, dialogTitle: "选择图片")
+                              .then((value) {
                             if (value != null) {
                               setState(
                                 () => AppNavigator.refreshAppValueConfig(
@@ -139,10 +139,9 @@ class _StateSettingsPage extends State<SettingsPage> {
                                 ),
                               );
                             }
-                            AppNavigator.pop();
-                          },
-                        );
-                      },
+                          });
+                        },
+                      ),
                       child: config.tryGet(ConfigKeys.backgroundImageLocal) ==
                                   null ||
                               !File(config.get(ConfigKeys.backgroundImageLocal))

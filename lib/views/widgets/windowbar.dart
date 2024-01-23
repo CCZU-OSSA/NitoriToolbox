@@ -11,6 +11,19 @@ class WindowBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeButtonColors = WindowButtonColors(
+        normal: Colors.transparent,
+        iconNormal: Theme.of(context).colorScheme.primary,
+        mouseOver: const Color(0xFF404040),
+        mouseDown: const Color(0xFF202020),
+        iconMouseOver: const Color(0xFFFFFFFF),
+        iconMouseDown: const Color(0xFFF0F0F0));
+    final themeCloseButtonColors = WindowButtonColors(
+        mouseOver: const Color(0xFFD32F2F),
+        mouseDown: const Color(0xFFB71C1C),
+        iconNormal: Theme.of(context).colorScheme.primary,
+        iconMouseOver: const Color(0xFFFFFFFF));
+
     return Container(
         height: 30,
         decoration: BoxDecoration(
@@ -19,9 +32,9 @@ class WindowBar extends StatelessWidget {
           Expanded(child: MoveWindow()),
           Row(
             children: [
-              MinimizeWindowButton(animate: true),
-              MaximizeWindowButton(animate: true),
-              CloseWindowButton(animate: true),
+              MinimizeWindowButton(animate: true, colors: themeButtonColors),
+              MaximizeWindowButton(animate: true, colors: themeButtonColors),
+              CloseWindowButton(animate: true, colors: themeCloseButtonColors),
             ],
           ),
         ]));

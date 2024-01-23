@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
@@ -39,15 +40,31 @@ exitDialog(BuildContext context) => basicFullScreenDialog<AppExitResponse>(
       cancelData: () => AppExitResponse.cancel,
     );
 
-void loadingDialog(BuildContext context) => showDialog<void>(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => const Dialog.fullscreen(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ).windowbar(),
-    );
+Future<void> loadingDialog(BuildContext context,
+    {ValueUpdateChanged<String, dynamic>? textController}) async {
+  await showDialog<void>(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) => Dialog.fullscreen(
+      child: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const CircularProgressIndicator(),
+          ValueStateBuilder(
+            builder: (context, value, update) {
+              return Visibility(
+                visible: value.isNotEmpty,
+                child: Padding(
+                    padding: const EdgeInsets.all(12), child: Text(value)),
+              );
+            },
+            initial: "",
+            initState: textController,
+          )
+        ]),
+      ),
+    ).windowbar(),
+  );
+}
 
 Future<String?> editDialog(
   BuildContext context, {

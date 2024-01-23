@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:arche/arche.dart';
 import 'package:arche/extensions/io.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/controllers/appdata.dart';
 import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:yaml/yaml.dart';
@@ -18,9 +20,9 @@ abstract class YamlMetaData<T extends YamlMetaData<T>> {
 
   T? load(data, [String? path]) {
     if (data is Map) {
-      return loadm(data, path);
+      return loadm(data, path ?? "");
     } else if (data is String) {
-      return loads(data, path);
+      return loads(data, path ?? "");
     }
     return null;
   }
@@ -31,7 +33,7 @@ abstract class YamlMetaData<T extends YamlMetaData<T>> {
         return false;
       }
       return true;
-    } catch (_) {
+    } catch (e) {
       return false;
     }
   }
@@ -269,12 +271,55 @@ class DocumentEntry extends YamlMetaData<DocumentEntry> {
   }
 }
 
-class ImportMetaData extends YamlMetaData<ImportMetaData> {
-  late final String type;
+enum ImportMetaType {
+  app,
+  env,
+  doc,
+}
 
+class ImportMetaData extends YamlMetaData<ImportMetaData> {
+  late final ImportMetaType type;
+  late final String name;
+  late final Map _inner;
   @override
   ImportMetaData loadm(Map data, [String? path]) {
+    _inner = data;
     data = data["import"];
-    return super.loadm(data, path)..type = data["type"]!;
+    switch (data["type"]!) {
+      case "app":
+        type = ImportMetaType.app;
+        break;
+      case "env":
+        type = ImportMetaType.env;
+        break;
+      case "doc":
+        type = ImportMetaType.doc;
+        break;
+      default:
+        throw Exception("Unknown Import Type");
+    }
+
+    return super.loadm(data, path)..name = data["name"] ?? _inner["name"]!;
+  }
+
+  (Directory?, FutureLazyDynamicCan?) parse() {
+    GalleryManager galleryManager = ArcheBus.bus.of();
+    var error = (null, null);
+    switch (type) {
+      case ImportMetaType.app:
+        return ApplicationPackage().check(_inner)
+            ? (galleryManager.applicationsDir, galleryManager.applications)
+            : error;
+      case ImportMetaType.env:
+        return Environment().check(_inner)
+            ? (galleryManager.environmentsDir, galleryManager.environments)
+            : error;
+      case ImportMetaType.doc:
+        return Documents().check(_inner)
+            ? (galleryManager.documentsDir, galleryManager.documents)
+            : error;
+      default:
+        return (null, null);
+    }
   }
 }

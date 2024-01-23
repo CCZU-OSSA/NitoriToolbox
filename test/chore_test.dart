@@ -7,8 +7,14 @@
 import 'package:arche/arche.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+class Demo<T> {
+  T data;
+  Demo(this.data);
+}
+
 void main() {
   test("Test", () {
-    print(ArcheLogger().provider.has<ArcheLogger>());
+    ArcheBus().provide<Demo<dynamic>>(Demo(1));
+    print(ArcheBus().has<Demo>());
   });
 }
