@@ -43,12 +43,17 @@ abstract interface class Widgetlize {
   Widget build({double? size});
 }
 
-abstract interface class Parser<T> {
-  T parse(data, [String? path]);
+abstract mixin class Package<T> {
+  late final String name;
+  late final RichCover cover;
+  late final VersionType version;
+  late final T includes;
 }
 
-class RichCover extends YamlMetaData<RichCover>
-    implements Widgetlize, Parser<RichCover> {
+abstract class YamlMetaPackage<S, T extends YamlMetaPackage<S, T>>
+    extends YamlMetaData<T> with Package<S> {}
+
+class RichCover extends YamlMetaData<RichCover> implements Widgetlize {
   String? text;
   CoverIcon? icon;
   CoverImage? image;
@@ -60,7 +65,6 @@ class RichCover extends YamlMetaData<RichCover>
       ..icon = CoverIcon().parse(data["icon"], path);
   }
 
-  @override
   RichCover parse(data, [String? path]) {
     if (data is String) {
       return this..text = data;
@@ -78,8 +82,7 @@ class RichCover extends YamlMetaData<RichCover>
   }
 }
 
-class CoverIcon extends YamlMetaData<CoverIcon>
-    implements Widgetlize, Parser<CoverIcon?> {
+class CoverIcon extends YamlMetaData<CoverIcon> implements Widgetlize {
   late final int codePoint;
   late final String fontFamily;
   late final String? fontPackage;
@@ -100,7 +103,6 @@ class CoverIcon extends YamlMetaData<CoverIcon>
     );
   }
 
-  @override
   CoverIcon? parse(data, [String? path]) {
     if (data == null) {
       return null;
@@ -110,8 +112,7 @@ class CoverIcon extends YamlMetaData<CoverIcon>
   }
 }
 
-class CoverImage extends YamlMetaData<CoverImage>
-    implements Widgetlize, Parser<CoverImage?> {
+class CoverImage extends YamlMetaData<CoverImage> implements Widgetlize {
   String? network;
   String? local;
 
@@ -133,7 +134,6 @@ class CoverImage extends YamlMetaData<CoverImage>
     );
   }
 
-  @override
   CoverImage? parse(data, [String? path]) {
     if (data == null) {
       return null;
@@ -193,12 +193,8 @@ class Application extends YamlMetaData<Application> {
   }
 }
 
-class ApplicationPackage extends YamlMetaData<ApplicationPackage> {
-  late final String name;
-  late final VersionType version;
-  late final RichCover cover;
-  late final List<Application> includes;
-
+class ApplicationPackage
+    extends YamlMetaPackage<List<Application>, ApplicationPackage> {
   @override
   ApplicationPackage loadm(Map data, [String? path]) {
     return super.loadm(data, path)
@@ -211,12 +207,8 @@ class ApplicationPackage extends YamlMetaData<ApplicationPackage> {
   }
 }
 
-class Environment extends YamlMetaData<Environment> {
-  late final String name;
-  late final VersionType version;
+class Environment extends YamlMetaPackage<EnvironmentIncludes, Environment> {
   late final String details;
-  late final EnvironmentIncludes includes;
-  late final RichCover cover;
   @override
   Environment loadm(Map data, [String? path]) {
     return super.loadm(data, path)
@@ -243,18 +235,14 @@ class EnvironmentIncludes extends YamlMetaData<EnvironmentIncludes> {
   }
 }
 
-class Documents extends YamlMetaData<Documents> {
-  late final String name;
-  late final RichCover cover;
-  late final VersionType version;
-  late final List<DocumentEntry> documents;
+class Documents extends YamlMetaPackage<List<DocumentEntry>, Documents> {
   @override
   Documents loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..name = data["name"]
       ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..cover = RichCover().parse(data["cover"] ?? name, path)
-      ..documents = ((data["includes"] as YamlList?) ?? [])
+      ..includes = ((data["includes"] as YamlList?) ?? [])
           .map((data) => DocumentEntry().loadm(data, path))
           .toList();
   }
@@ -302,7 +290,7 @@ class ImportMetaData extends YamlMetaData<ImportMetaData> {
     return super.loadm(data, path)..name = data["name"] ?? _inner["name"]!;
   }
 
-  (Directory?, FutureLazyDynamicCan?) parse() {
+  (Directory?, FutureLazyDynamicCan<List<YamlMetaPackage>>?) parse() {
     GalleryManager galleryManager = ArcheBus.bus.of();
     var error = (null, null);
     switch (type) {

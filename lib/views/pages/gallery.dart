@@ -415,7 +415,7 @@ class StateGalleryContent<T> extends State<GalleryContent<T>> {
     return Scaffold(
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
-        distance: 60,
+        distance: 80,
         type: ExpandableFabType.fan,
         children: [
           FloatingActionButton.small(
@@ -535,7 +535,7 @@ class _StateDocumentPage extends State<DocumentPage>
       appBar: AppBar(
         centerTitle: true,
         leading: const BackButton(),
-        title: Text(widget.documents.documents[currentIndex].name),
+        title: Text(widget.documents.includes[currentIndex].name),
       ),
       floatingActionButton: AnimatedOpacity(
           duration: Durations.medium4,
@@ -564,7 +564,7 @@ class _StateDocumentPage extends State<DocumentPage>
             subtitle: Text(widget.documents.version.format()),
           )
         ].addAllThen(
-          widget.documents.documents.mapEnumerate(
+          widget.documents.includes.mapEnumerate(
             (index, entry) => NavigationDrawerDestination(
               icon: Visibility(
                   visible: index == currentIndex,
@@ -575,7 +575,7 @@ class _StateDocumentPage extends State<DocumentPage>
         ),
       ),
       body: FutureBuilder(
-        future: File(widget.documents.documents[currentIndex].loacation)
+        future: File(widget.documents.includes[currentIndex].loacation)
             .readAsString(),
         builder: snapshotLoading(
           builder: (data) {
@@ -600,11 +600,131 @@ class GalleryManagerPage extends StatefulWidget {
 }
 
 class _StateGalleryManagerPage extends State<GalleryManagerPage> {
+  final SearchController controller = SearchController();
+
+  Widget buildContent({
+    String keyword = "",
+    required FutureLazyDynamicCan<List<Package<dynamic>>> data,
+    required String title,
+    bool divider = true,
+  }) {
+    return data.widgetBuilder(
+      snapshotLoading(
+        builder: (data) => _GalleryManagerSearchContent(
+            data: data,
+            divider: divider,
+            keyword: keyword,
+            keyGenerator: (data) => data.name,
+            tileGenerator: (data) => ListTile(
+                  leading: SizedBox.square(
+                      dimension: 60, child: data.cover.build(size: 40.0)),
+                  title: Text(data.name),
+                  subtitle: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {}, icon: const Icon(Icons.delete)),
+                      IconButton(
+                          onPressed: () {}, icon: const Icon(Icons.output))
+                    ],
+                  ),
+                ),
+            title: title),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    GalleryManager galleryManager = ArcheBus.bus.of();
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: SearchAnchor.bar(
+          searchController: controller,
+          suggestionsBuilder:
+              (BuildContext context, SearchController controller) {
+            var text = controller.text;
+            return [
+              buildContent(
+                data: galleryManager.applications,
+                title: "应用",
+                keyword: text,
+              ),
+              buildContent(
+                data: galleryManager.environments,
+                title: "环境",
+                keyword: text,
+              ),
+              buildContent(
+                divider: false,
+                data: galleryManager.documents,
+                title: "文档",
+                keyword: text,
+              ),
+            ];
+          },
+        ),
+      ),
+      body: ListView(
+        children: [
+          buildContent(
+            data: galleryManager.applications,
+            title: "应用",
+          ),
+          buildContent(
+            data: galleryManager.environments,
+            title: "环境",
+          ),
+          buildContent(
+            divider: false,
+            data: galleryManager.documents,
+            title: "文档",
+          ),
+        ],
+      ).padding12(),
+    );
+  }
+}
+
+class _GalleryManagerSearchContent<T> extends StatelessWidget {
+  final String keyword;
+  final List<T> data;
+  final String Function(T data) keyGenerator;
+  final Widget Function(T data) tileGenerator;
+  final String title;
+  final bool divider;
+  const _GalleryManagerSearchContent({
+    super.key,
+    this.keyword = "",
+    required this.data,
+    required this.keyGenerator,
+    required this.tileGenerator,
+    required this.title,
+    this.divider = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> tiles = [ListTile(title: Text(title))];
+
+    tiles.addAll(
+      data
+          .where((e) => keyword.isEmpty
+              ? true
+              : keyGenerator(e).toLowerCase().contains(keyword.toLowerCase()))
+          .map((e) => tileGenerator(e)),
+    );
+
+    return Visibility(
+      visible: tiles.length > 1,
+      child: Column(
+        children: tiles.addThen(
+          Visibility(
+            visible: divider,
+            child: const Divider(),
+          ),
+        ),
+      ),
     );
   }
 }

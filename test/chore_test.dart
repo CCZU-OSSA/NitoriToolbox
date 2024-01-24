@@ -15,6 +15,5 @@ class Demo<T> {
 void main() {
   test("Test", () {
     ArcheBus().provide<Demo<dynamic>>(Demo(1));
-    print(ArcheBus().has<Demo>());
   });
 }
