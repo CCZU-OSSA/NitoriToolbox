@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:arche/arche.dart';
@@ -40,27 +41,51 @@ exitDialog(BuildContext context) => basicFullScreenDialog<AppExitResponse>(
       cancelData: () => AppExitResponse.cancel,
     );
 
+typedef ProgressControllerFunction = FutureOr<dynamic> Function(
+  BuildContext context,
+  ValueChanged<String> updateText,
+  ValueChanged<double?> updateProgress,
+);
+
 Future<void> loadingDialog(BuildContext context,
-    {ValueUpdateChanged<String, dynamic>? textController}) async {
+    {ProgressControllerFunction? controller, bool useLinear = false}) async {
   await showDialog<void>(
     barrierDismissible: false,
     context: context,
     builder: (context) => Dialog.fullscreen(
       child: Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const CircularProgressIndicator(),
-          ValueStateBuilder(
-            builder: (context, value, update) {
-              return Visibility(
-                visible: value.isNotEmpty,
+        child: ValueStateBuilder<(double?, String)>(
+          initial: (null, ""),
+          initState: (context, state) {
+            if (controller != null) {
+              controller(
+                  context,
+                  (data) => state.update((state.value.$1, data)),
+                  (data) => state.update((data, state.value.$2)));
+            }
+          },
+          builder: (context, state) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              useLinear
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: LinearProgressIndicator(
+                        value: state.value.$1,
+                      ))
+                  : CircularProgressIndicator(
+                      value: state.value.$1,
+                    ),
+              Visibility(
+                visible: state.value.$2.isNotEmpty,
                 child: Padding(
-                    padding: const EdgeInsets.all(12), child: Text(value)),
-              );
-            },
-            initial: "",
-            initState: textController,
-          )
-        ]),
+                  padding: const EdgeInsets.all(12),
+                  child: Text(state.value.$2),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     ).windowbar(),
   );

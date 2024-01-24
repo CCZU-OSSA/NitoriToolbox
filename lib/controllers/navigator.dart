@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:arche/arche.dart';
@@ -84,15 +83,20 @@ class AppNavigator {
   }
 
   static void loadingDo<T>(
-    ValueUpdateChanged<String, FutureOr<dynamic>>? function,
-  ) {
+    ProgressControllerFunction? function, {
+    bool useLinear = false,
+    bool autoPop = true,
+  }) {
     loadingDialog(
       viewkey.currentContext!,
-      textController: (context, value, update) async {
+      useLinear: useLinear,
+      controller: (context, updateText, updateProgress) async {
         if (function != null) {
-          await function(context, value, update);
+          await function(context, updateText, updateProgress);
         }
-        pop();
+        if (autoPop) {
+          pop();
+        }
       },
     );
   }

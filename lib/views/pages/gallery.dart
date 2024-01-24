@@ -429,44 +429,49 @@ class StateGalleryContent<T> extends State<GalleryContent<T>> {
                 ),
           ),
           FloatingActionButton.small(
-              heroTag: "operate",
+              heroTag: "manager",
               child: const Icon(Icons.list),
               onPressed: () => AppNavigator.pushPage(
                   builder: (context) => const GalleryManagerPage())),
           FloatingActionButton.small(
             heroTag: "import",
             child: const Icon(FontAwesomeIcons.fileImport),
-            onPressed: () =>
-                AppNavigator.loadingDo((context, value, update) async {
-              update("选择文件导入...");
-              var result = await FilePicker.platform.pickFiles(
-                allowMultiple: true,
-                type: FileType.custom,
-                allowedExtensions: ["zip", "ntipkg", "ntrpkg"],
-              );
-              if (result != null) {
-                for (var (index, path) in result.paths.indexed) {
-                  var ntipkg = NitoriPackage(path!);
-                  update("从导入 $path ($index/${result.paths.length})...");
-                  var (ok, trace) = await ntipkg.import();
-                  if (!ok) {
-                    if ((await basicFullScreenDialog(
-                          context: viewkey.currentContext!,
-                          title: const Text("中止导入?"),
-                          content: Wrap(children: [
-                            Text("$path 导入失败"),
-                            Text(trace),
-                          ]),
-                          confirmData: () => true,
-                          cancelData: () => false,
-                        )) ??
-                        false) {
-                      break;
+            onPressed: () => AppNavigator.loadingDo(
+              (context, updateText, updateProgress) async {
+                updateText("选择文件导入...");
+                var result = await FilePicker.platform.pickFiles(
+                  allowMultiple: true,
+                  type: FileType.custom,
+                  allowedExtensions: ["zip", "ntrpkg", "ntripkg"],
+                );
+                if (result != null) {
+                  updateProgress(0);
+                  var length = result.paths.length;
+                  for (var (index, path) in result.paths.indexed) {
+                    ++index;
+                    updateProgress(index / length);
+                    var ntipkg = NitoriPackage(path!);
+                    updateText("从导入 $path ($index/${result.paths.length})...");
+                    var (ok, trace) = await ntipkg.import();
+                    if (!ok) {
+                      if ((await basicFullScreenDialog(
+                            context: viewkey.currentContext!,
+                            title: const Text("中止导入?"),
+                            content: Wrap(children: [
+                              Text("$path 导入失败"),
+                              Text(trace),
+                            ]),
+                            confirmData: () => true,
+                            cancelData: () => false,
+                          )) ??
+                          false) {
+                        break;
+                      }
                     }
                   }
                 }
-              }
-            }),
+              },
+            ),
           ),
         ],
       ),
@@ -604,31 +609,93 @@ class _StateGalleryManagerPage extends State<GalleryManagerPage> {
 
   Widget buildContent({
     String keyword = "",
-    required FutureLazyDynamicCan<List<Package<dynamic>>> data,
+    required FutureLazyDynamicCan<List<YamlMetaPackage>> data,
     required String title,
     bool divider = true,
   }) {
     return data.widgetBuilder(
       snapshotLoading(
-        builder: (data) => _GalleryManagerSearchContent(
-            data: data,
-            divider: divider,
-            keyword: keyword,
-            keyGenerator: (data) => data.name,
-            tileGenerator: (data) => ListTile(
-                  leading: SizedBox.square(
-                      dimension: 60, child: data.cover.build(size: 40.0)),
-                  title: Text(data.name),
-                  subtitle: Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.delete)),
-                      IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.output))
-                    ],
+        builder: (packageData) => _GalleryManagerSearchContent(
+          data: packageData,
+          divider: divider,
+          keyword: keyword,
+          keyGenerator: (data) => data.name,
+          tileGenerator: (tileData) => ListTile(
+            onTap: () {},
+            leading: SizedBox.square(
+                dimension: 60, child: tileData.cover.build(size: 40.0)),
+            title: Text(tileData.name),
+            trailing: Wrap(
+              children: [
+                IconButton(
+                  onPressed: () => basicFullScreenDialog(
+                      title: const Text("确认"),
+                      content: Text("是否移除 ${tileData.path} 中的所有文件？"),
+                      context: context,
+                      confirmData: () => true,
+                      cancelData: () => false).then(
+                    (value) {
+                      if (value ?? false) {
+                        var dir = Directory(tileData.path);
+                        if (dir.existsSync()) {
+                          AppNavigator.loadingDo(
+                            (context, updateText, updateProgress) async {
+                              updateText("正在删除 ${tileData.path} ，请勿退出");
+                              await dir.delete(recursive: true);
+                              await data.reload();
+                              setState(() {
+                                if (ArcheBus.bus
+                                    .has<StateGalleryContent<dynamic>>()) {
+                                  ArcheBus.bus
+                                      .of<StateGalleryContent<dynamic>>()
+                                      .mountRefresh();
+                                }
+                              });
+                            },
+                          );
+                        }
+                      }
+                    },
                   ),
+                  icon: const Icon(Icons.delete),
                 ),
-            title: title),
+                IconButton(
+                  onPressed: () => AppNavigator.loadingDo(
+                    (context, updateText, updateProgress) async {
+                      updateText("选择保存路径");
+                      var path = await FilePicker.platform.saveFile(
+                        dialogTitle: "选择保存路径",
+                        fileName:
+                            "${tileData.name} - ${tileData.version.format()}.ntripkg",
+                      );
+
+                      updateText("正在添加文件");
+                      updateProgress(0);
+                      if (path != null) {
+                        NitoriPackage(path).export(
+                          tileData.path,
+                          onDone: AppNavigator.pop,
+                          onProgress: (progress) {
+                            updateProgress(progress);
+                            if (progress == 1) {
+                              updateText("正在写入");
+                              updateProgress(null);
+                            }
+                          },
+                        );
+                      } else {
+                        AppNavigator.pop();
+                      }
+                    },
+                    autoPop: false,
+                  ),
+                  icon: const Icon(Icons.output),
+                )
+              ],
+            ),
+          ),
+          title: title,
+        ),
       ),
     );
   }

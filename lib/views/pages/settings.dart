@@ -109,10 +109,10 @@ class _StateSettingsPage extends State<SettingsPage> {
                   subtitle: ValueStateBuilder(
                     initial: ArcheBus.config
                         .getOr(ConfigKeys.backgroundImageOpacity, 0.3),
-                    builder: (context, value, update) => Slider(
-                      value: value,
+                    builder: (context, state) => Slider(
+                      value: state.value,
                       max: 0.5,
-                      onChanged: (value) => update(value),
+                      onChanged: (value) => state.update(value),
                       onChangeEnd: (value) =>
                           AppNavigator.refreshAppValueConfig(
                               ConfigKeys.backgroundImageOpacity, value),
@@ -125,8 +125,8 @@ class _StateSettingsPage extends State<SettingsPage> {
                     child: InkWell(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       onTap: () => AppNavigator.loadingDo(
-                        (context, value, update) async {
-                          update("选择图片...");
+                        (context, updateText, updateProgress) async {
+                          updateText("选择图片...");
                           await FilePicker.platform
                               .pickFiles(
                                   type: FileType.image, dialogTitle: "选择图片")

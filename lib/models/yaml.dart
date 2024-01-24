@@ -272,42 +272,64 @@ class ImportMetaData extends YamlMetaData<ImportMetaData> {
   @override
   ImportMetaData loadm(Map data, [String? path]) {
     _inner = data;
-    data = data["import"];
-    switch (data["type"]!) {
-      case "app":
-        type = ImportMetaType.app;
-        break;
-      case "env":
-        type = ImportMetaType.env;
-        break;
-      case "doc":
-        type = ImportMetaType.doc;
-        break;
-      default:
-        throw Exception("Unknown Import Type");
+    var importData = data["import"];
+
+    if (importData != null) {
+      switch (importData["type"]!) {
+        case "app":
+          type = ImportMetaType.app;
+          break;
+        case "env":
+          type = ImportMetaType.env;
+          break;
+        case "doc":
+          type = ImportMetaType.doc;
+          break;
+        default:
+          type = detectType()!;
+          break;
+      }
+    } else {
+      type = detectType()!;
     }
 
-    return super.loadm(data, path)..name = data["name"] ?? _inner["name"]!;
+    return super.loadm(data, path)
+      ..name = importData?["name"] ?? _inner["name"]!;
   }
 
-  (Directory?, FutureLazyDynamicCan<List<YamlMetaPackage>>?) parse() {
+  ImportMetaType? detectType() {
+    if (ApplicationPackage().check(_inner)) {
+      return ImportMetaType.app;
+    }
+
+    if (Environment().check(_inner)) {
+      return ImportMetaType.env;
+    }
+
+    if (Documents().check(_inner)) {
+      return ImportMetaType.doc;
+    }
+
+    return null;
+  }
+
+  (Directory, FutureLazyDynamicCan<List<YamlMetaPackage>>)? parse() {
     GalleryManager galleryManager = ArcheBus.bus.of();
-    var error = (null, null);
     switch (type) {
       case ImportMetaType.app:
         return ApplicationPackage().check(_inner)
             ? (galleryManager.applicationsDir, galleryManager.applications)
-            : error;
+            : null;
       case ImportMetaType.env:
         return Environment().check(_inner)
             ? (galleryManager.environmentsDir, galleryManager.environments)
-            : error;
+            : null;
       case ImportMetaType.doc:
         return Documents().check(_inner)
             ? (galleryManager.documentsDir, galleryManager.documents)
-            : error;
+            : null;
       default:
-        return (null, null);
+        return null;
     }
   }
 }
