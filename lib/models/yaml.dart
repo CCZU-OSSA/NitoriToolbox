@@ -91,8 +91,8 @@ class CoverIcon extends YamlMetaData<CoverIcon> implements Widgetlize {
   CoverIcon loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..codePoint = (data["code"] ?? data["codePoint"])!
-      ..fontFamily = data["fontFamily"] ?? "MaterialIcons"
-      ..fontPackage = data["fontPackage"];
+      ..fontFamily = data["family"] ?? data["fontFamily"] ?? "MaterialIcons"
+      ..fontPackage = data["package"] ?? data["fontPackage"];
   }
 
   @override
@@ -198,7 +198,7 @@ class ApplicationPackage
   @override
   ApplicationPackage loadm(Map data, [String? path]) {
     return super.loadm(data, path)
-      ..name = data["name"] ?? "Unknown Apps"
+      ..name = data["name"]!
       ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..cover = RichCover().parse(data["cover"] ?? name, path)
       ..includes = (data["includes"] as YamlList? ?? [])
@@ -230,7 +230,7 @@ class EnvironmentIncludes extends YamlMetaData<EnvironmentIncludes> {
       ..overwrite = ((data["overwrite"] as YamlMap?) ?? {})
           .map((key, value) => MapEntry(key.toString(), value.toString()))
       ..paths = (((data["paths"] as YamlList?)?.toList() ?? []).cast())
-          .map((pth) => "${root.absolute.subPath(pth)};")
+          .map((path) => "${root.absolute.subPath(path)};")
           .toList();
   }
 }
