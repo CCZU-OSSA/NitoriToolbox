@@ -30,15 +30,17 @@ class GalleryManager {
 
   final FutureLazyDynamicCan<List<ApplicationPackage>> applications =
       FutureLazyDynamicCan(
-          builder: () =>
-              collect(manager.applicationsDir, ApplicationPackage().loads));
+          builder: () => collect(manager.applicationsDir,
+              (data, path) => ApplicationPackage().loads(data, path)));
 
   final FutureLazyDynamicCan<List<Environment>> environments =
       FutureLazyDynamicCan(
-          builder: () => collect(manager.environmentsDir, Environment().loads));
+          builder: () => collect(manager.environmentsDir,
+              (data, path) => Environment().loads(data, path)));
 
   final FutureLazyDynamicCan<List<Documents>> documents = FutureLazyDynamicCan(
-    builder: () => collect(manager.documentsDir, Documents().loads),
+    builder: () => collect(
+        manager.documentsDir, (data, path) => Documents().loads(data, path)),
   );
 
   static Future<List<T>> collect<T extends YamlMetaData<T>>(Directory directory,

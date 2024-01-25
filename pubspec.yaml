@@ -58,6 +58,7 @@ dependencies:
   flutter_expandable_fab: ^2.0.0
   archive: ^3.4.10
   intl: ^0.18.1
+  highlighting: ^0.9.0+11.8.0
 
 dev_dependencies:
   flutter_test:
@@ -100,9 +101,6 @@ flutter:
     - family: GlowSans
       fonts:
         - asset: resource/fonts/GlowSansSC-Normal-Bold.otf
-    - family: FiraCode
-      fonts:
-        - asset: resource/fonts/FiraCode-Bold.ttf
   # example:
   # fonts:
   #   - family: Schyler

@@ -565,8 +565,13 @@ class _StateDocumentPage extends State<DocumentPage>
         onDestinationSelected: pushIndex,
         children: <Widget>[
           ListTile(
-            title: Text(widget.documents.name),
-            subtitle: Text(widget.documents.version.format()),
+            title: Text(
+              widget.documents.name,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              widget.documents.version.format(),
+            ),
           )
         ].addAllThen(
           widget.documents.includes.mapEnumerate(
@@ -574,7 +579,12 @@ class _StateDocumentPage extends State<DocumentPage>
               icon: Visibility(
                   visible: index == currentIndex,
                   child: const Icon(Icons.arrow_right)),
-              label: Text(entry.name),
+              label: Expanded(
+                child: Text(
+                  entry.name,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           ),
         ),
@@ -623,7 +633,7 @@ class _StateGalleryManagerPage extends State<GalleryManagerPage> {
           tileGenerator: (tileData) => ListTile(
             onTap: () {},
             leading: SizedBox.square(
-                dimension: 60, child: tileData.cover.build(size: 40.0)),
+                dimension: 80, child: tileData.cover.build(size: 40)),
             title: Text(tileData.name),
             trailing: Wrap(
               children: [
@@ -704,32 +714,35 @@ class _StateGalleryManagerPage extends State<GalleryManagerPage> {
   Widget build(BuildContext context) {
     GalleryManager galleryManager = ArcheBus.bus.of();
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: SearchAnchor.bar(
-          searchController: controller,
-          suggestionsBuilder:
-              (BuildContext context, SearchController controller) {
-            var text = controller.text;
-            return [
-              buildContent(
-                data: galleryManager.applications,
-                title: "应用",
-                keyword: text,
-              ),
-              buildContent(
-                data: galleryManager.environments,
-                title: "环境",
-                keyword: text,
-              ),
-              buildContent(
-                divider: false,
-                data: galleryManager.documents,
-                title: "文档",
-                keyword: text,
-              ),
-            ];
-          },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120),
+        child: ListTile(
+          leading: const BackButton(),
+          title: SearchAnchor.bar(
+            searchController: controller,
+            suggestionsBuilder:
+                (BuildContext context, SearchController controller) {
+              var text = controller.text;
+              return [
+                buildContent(
+                  data: galleryManager.applications,
+                  title: "应用",
+                  keyword: text,
+                ),
+                buildContent(
+                  data: galleryManager.environments,
+                  title: "环境",
+                  keyword: text,
+                ),
+                buildContent(
+                  divider: false,
+                  data: galleryManager.documents,
+                  title: "文档",
+                  keyword: text,
+                ),
+              ];
+            },
+          ),
         ),
       ),
       body: ListView(

@@ -9,6 +9,7 @@ import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:yaml/yaml.dart';
 
 abstract class YamlMetaData<T extends YamlMetaData<T>> {
+  YamlMetaData();
   late final String path;
   T loadm(Map data, [String? path]) {
     return (this..path = data["path"] ?? path ?? "") as T;
@@ -75,10 +76,15 @@ class RichCover extends YamlMetaData<RichCover> implements Widgetlize {
 
   @override
   Widget build({double? size}) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      (icon ?? image)?.build(size: size) ?? const SizedBox.shrink(),
-      text != null ? Text(text!) : const SizedBox.shrink(),
-    ]);
+    return SizedBox.square(
+        dimension: size,
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          (icon ?? image)?.build(size: size != null ? size * 0.7 : null) ??
+              const SizedBox.shrink(),
+          text != null
+              ? Text(text!, overflow: TextOverflow.ellipsis)
+              : const SizedBox.shrink(),
+        ]));
   }
 }
 
