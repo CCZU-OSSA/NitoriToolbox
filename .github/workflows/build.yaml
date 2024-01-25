@@ -1,7 +1,7 @@
 # This workflows will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: Build Application
+name: Build Application & Document Plugin
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
 
 
 jobs:
-  build:
+  build-app:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -40,3 +40,32 @@ jobs:
         with:
           name: NitoriToolbox MSIX
           path: 'build/windows/x64/runner/Release/*.msix'
+  build-document:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: CCZU-OSSA/NitoriToolbox.wiki
+      - name: meta.yml
+        run: |
+          ls
+          cat << EOF > meta.yml
+          import:
+            type: doc
+            name: NitoriToolbox_Wiki
+          
+          name: NitoriToolbox Wiki
+          cover:
+            image:
+              default:
+            text: 官方文档
+          includes:
+            - name: 基本概念与插件类型解释以及如何编写插件
+              location: 基本概念与插件类型解释以及如何编写插件.md
+          EOF
+          zip -r offical-document.ntripkg *
+      - name: Upload Plugin
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: offical-plugin
+          path: '*.ntripkg'
