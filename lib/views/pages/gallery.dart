@@ -75,8 +75,8 @@ class ApplicationPage extends StatelessWidget {
                           workingDirectory: application.path,
                         ),
                       ),
-                      size: const Size.square(80),
-                      child: feature.cover.build(size: 56),
+                      size: const Size.square(120),
+                      child: feature.cover.build(size: 120),
                     ),
                   )
                   .toList(),
@@ -496,7 +496,7 @@ class StateGalleryContent<T> extends State<GalleryContent<T>> {
                       (entry) => CardButton(
                         size: const Size.square(160),
                         child: ((entry as dynamic).cover as RichCover)
-                            .build(size: 160 * 0.7),
+                            .build(size: 160),
                         onTap: () => widget.onTap(entry),
                       ),
                     )
@@ -645,6 +645,7 @@ class _StateGalleryManagerPage extends State<GalleryManagerPage> {
             leading: SizedBox.square(
                 dimension: 80, child: tileData.cover.build(size: 40)),
             title: Text(tileData.name),
+            subtitle: Text(tileData.version.format()),
             trailing: Wrap(
               children: [
                 IconButton(

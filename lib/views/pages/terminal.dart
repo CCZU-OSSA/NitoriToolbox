@@ -132,11 +132,12 @@ class _StateTerminalPage extends State<TerminalPage> {
             ).padding12(),
             bottomNavigationBar: ListTile(
               title: TextField(
-                  controller: textController,
-                  onSubmitted: (_) => sendProcess(context),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  )),
+                controller: textController,
+                onSubmitted: (_) => sendProcess(context),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
               trailing: IconButton(
                   onPressed: () => sendProcess(context),
                   icon: const Icon(Icons.send)),
