@@ -63,7 +63,7 @@ jobs:
             - name: 基本概念与插件类型解释以及如何编写插件
               location: 基本概念与插件类型解释以及如何编写插件.md
           EOF
-          zip -r offical-document.ntripkg *
+          zip -r offical-wiki-document.ntripkg *
       - name: Upload Plugin
         uses: actions/upload-artifact@v3.1.2
         with:
