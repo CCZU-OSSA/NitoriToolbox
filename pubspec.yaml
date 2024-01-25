@@ -101,6 +101,9 @@ flutter:
     - family: GlowSans
       fonts:
         - asset: resource/fonts/GlowSansSC-Normal-Bold.otf
+    - family: FiraCode
+      fonts:
+        - asset: resource/fonts/FiraCode-Bold.ttf
   # example:
   # fonts:
   #   - family: Schyler

@@ -71,7 +71,8 @@ class CodeElementBuilder extends MarkdownElementBuilder {
                 ? atomOneDarkReasonableTheme
                 : atomOneLightTheme,
             padding: const EdgeInsets.all(8),
-            textStyle: const TextStyle(fontFamily: "GlowSans"),
+            textStyle: const TextStyle(
+                fontFamily: "FiraCode", fontFamilyFallback: ["GlowSans"]),
           ),
         ));
   }
