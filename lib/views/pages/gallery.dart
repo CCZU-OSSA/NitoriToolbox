@@ -57,7 +57,10 @@ class ApplicationPage extends StatelessWidget {
           Visibility(
             visible: application.details.isNotEmpty,
             child: Card(
-              child: MarkdownBlockWidget(application.details),
+              child: MarkdownBlockWidget(
+                application.details,
+                imageDirectory: application.path,
+              ),
             ),
           ),
           Center(
@@ -117,7 +120,10 @@ class EnvironmentPage extends StatelessWidget {
           Visibility(
             visible: environment.details.isNotEmpty,
             child: Card(
-              child: MarkdownBlockWidget(environment.details),
+              child: MarkdownBlockWidget(
+                environment.details,
+                imageDirectory: environment.path,
+              ),
             ),
           ),
           const ListTile(
@@ -252,7 +258,10 @@ class _StateApplicationStepView extends State<ApplicationStepView> {
       children: [
         Visibility(
           visible: widget.step.details.isNotEmpty,
-          child: MarkdownBlockWidget(widget.step.details),
+          child: MarkdownBlockWidget(
+            widget.step.details,
+            imageDirectory: widget.step.path,
+          ),
         ),
         Card(
           color: Theme.of(context).colorScheme.surfaceVariant,
@@ -598,6 +607,7 @@ class _StateDocumentPage extends State<DocumentPage>
               controller: controller,
               child: MarkdownBlockWidget(
                 data.toString(),
+                imageDirectory: widget.documents.path,
               ).padding12(),
             );
           },

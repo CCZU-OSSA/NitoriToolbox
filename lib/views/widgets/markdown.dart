@@ -11,7 +11,8 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class MarkdownBlockWidget extends StatelessWidget {
   final String data;
-  const MarkdownBlockWidget(this.data, {super.key});
+  final String? imageDirectory;
+  const MarkdownBlockWidget(this.data, {super.key, this.imageDirectory});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class MarkdownBlockWidget extends StatelessWidget {
           launchUrlString(href);
         }
       },
+      imageDirectory: imageDirectory,
       shrinkWrap: true,
       builders: {
         "latex": LatexElementBuilder(),
