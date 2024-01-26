@@ -5,9 +5,10 @@ import 'package:arche/modules/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/translators.dart';
+import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/views/pages/license.dart';
 import 'package:nitoritoolbox/views/widgets/config.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
@@ -86,91 +87,103 @@ class _StateSettingsPage extends State<SettingsPage> {
                   config: config,
                   configKey: ConfigKeys.labelType,
                 )),
-            ExpansionTile(
-              leading: const Icon(Icons.image),
-              title: const Text("背景图片"),
-              shape: Border.all(color: Colors.transparent),
-              children: [
-                ConfigSwitchListTile(
-                  title: const Text("开启"),
-                  config: config,
-                  configKey: ConfigKeys.backgroundImageEnable,
-                ),
-                ListTile(
-                  title: const Text("图片类型"),
-                  trailing: CETPopupMenuButton(
-                    translator: trBackgroundImageType,
-                    config: config,
-                    configKey: ConfigKeys.backgroundImageType,
-                  ),
-                ),
-                ListTile(
-                  title: const Text("透明度"),
-                  subtitle: ValueStateBuilder(
-                    initial: ArcheBus.config
-                        .getOr(ConfigKeys.backgroundImageOpacity, 0.3),
-                    builder: (context, value, update) => Slider(
-                      value: value,
-                      max: 0.5,
-                      onChanged: (value) => update(value),
-                      onChangeEnd: (value) =>
-                          AppController.refreshAppValueConfig(
-                              ConfigKeys.backgroundImageOpacity, value),
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              child: Material(
+                color: Colors.transparent,
+                child: ExpansionTile(
+                  leading: const Icon(Icons.image),
+                  title: const Text("背景图片"),
+                  shape: Border.all(color: Colors.transparent),
+                  children: [
+                    ConfigSwitchListTile(
+                      title: const Text("开启"),
+                      config: config,
+                      configKey: ConfigKeys.backgroundImageEnable,
                     ),
-                  ),
-                ),
-                ListTile(
-                  title: const Text("本地图片"),
-                  trailing: Card(
-                    child: InkWell(
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      onTap: () async {
-                        AppController.loading();
-                        await FilePicker.platform
-                            .pickFiles(
-                                type: FileType.image, dialogTitle: "选择图片")
-                            .then(
-                          (value) {
-                            if (value != null) {
-                              setState(
-                                () => AppController.refreshAppValueConfig(
-                                  ConfigKeys.backgroundImageLocal,
-                                  value.files.first.path,
+                    ListTile(
+                      title: const Text("图片类型"),
+                      trailing: CETPopupMenuButton(
+                        translator: trBackgroundImageType,
+                        config: config,
+                        configKey: ConfigKeys.backgroundImageType,
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("透明度"),
+                      subtitle: ValueStateBuilder(
+                        initial: ArcheBus.config
+                            .getOr(ConfigKeys.backgroundImageOpacity, 0.3),
+                        builder: (context, state) => Slider(
+                          value: state.value,
+                          max: 0.5,
+                          onChanged: (value) => state.update(value),
+                          onChangeEnd: (value) =>
+                              AppNavigator.refreshAppValueConfig(
+                                  ConfigKeys.backgroundImageOpacity, value),
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("本地图片"),
+                      trailing: Card(
+                        child: InkWell(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8)),
+                          onTap: () => AppNavigator.loadingDo(
+                            (context, updateText, updateProgress) async {
+                              updateText("选择图片...");
+                              await FilePicker.platform
+                                  .pickFiles(
+                                      type: FileType.image, dialogTitle: "选择图片")
+                                  .then((value) {
+                                if (value != null) {
+                                  setState(
+                                    () => AppNavigator.refreshAppValueConfig(
+                                      ConfigKeys.backgroundImageLocal,
+                                      value.files.first.path,
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                          ),
+                          child: config.tryGet(
+                                          ConfigKeys.backgroundImageLocal) ==
+                                      null ||
+                                  !File(config
+                                          .get(ConfigKeys.backgroundImageLocal))
+                                      .existsSync()
+                              ? const SizedBox.square(
+                                  dimension: 120,
+                                )
+                              : Image.file(
+                                  File(config
+                                      .get(ConfigKeys.backgroundImageLocal)),
                                 ),
-                              );
-                            }
-                            AppController.pop();
-                          },
-                        );
-                      },
-                      child: config.tryGet(ConfigKeys.backgroundImageLocal) ==
-                                  null ||
-                              !File(config.get(ConfigKeys.backgroundImageLocal))
-                                  .existsSync()
-                          ? const SizedBox.square(
-                              dimension: 120,
-                            )
-                          : Image.file(
-                              File(config.get(ConfigKeys.backgroundImageLocal)),
-                            ),
+                        ),
+                      ),
                     ),
-                  ),
+                    ListTile(
+                      title: const Text("网络图片"),
+                      trailing: IconButton(
+                          onPressed: () async {
+                            var value = await editDialog(context,
+                                initial: config.getOr(
+                                    ConfigKeys.backgroundImageNetwork,
+                                    "https://"));
+                            if (value != null) {
+                              AppNavigator.refreshAppValueConfig(
+                                  ConfigKeys.backgroundImageNetwork, value);
+                            }
+                          },
+                          icon: const Icon(Icons.edit)),
+                    ),
+                  ],
                 ),
-                ListTile(
-                  title: const Text("网络图片"),
-                  trailing: IconButton(
-                      onPressed: () async {
-                        var value = await editDialog(context,
-                            initial: config.getOr(
-                                ConfigKeys.backgroundImageNetwork, "https://"));
-                        if (value != null) {
-                          AppController.refreshAppValueConfig(
-                              ConfigKeys.backgroundImageNetwork, value);
-                        }
-                      },
-                      icon: const Icon(Icons.edit)),
-                ),
-              ],
+              ),
             ),
           ],
         )),
@@ -183,19 +196,16 @@ class _StateSettingsPage extends State<SettingsPage> {
             children: [
               ListTile(
                 leading: const Icon(Icons.book),
-                title: const Text("许可证"),
+                title: const Text("第三方开源协议"),
                 trailing: IconButton(
                     onPressed: () => showLicensePageWithBar(
                         context: context,
                         applicationName: ApplicationInfo.applicationName,
-                        applicationVersion: ApplicationInfo.applicationVersion,
+                        applicationVersion:
+                            ApplicationInfo.applicationVersion.format(),
                         applicationLegalese:
                             ApplicationInfo.applicationLegalese),
                     icon: const Icon(Icons.navigate_next)),
-              ),
-              const ListTile(
-                leading: Icon(Icons.person),
-                title: Text("贡献者"),
               ),
               ListTile(
                 leading: const Icon(FontAwesomeIcons.github),
@@ -212,29 +222,6 @@ class _StateSettingsPage extends State<SettingsPage> {
                     onPressed: () => launchUrlString(
                         "https://github.com/CCZU-OSSA/NitoriToolbox/issues"),
                     icon: const Icon(Icons.public)),
-              ),
-              ExpansionTile(
-                leading: const Icon(Icons.chat),
-                title: const Text("用户交流"),
-                shape: Border.all(color: Colors.transparent),
-                children: [
-                  ListTile(
-                    leading: const Icon(FontAwesomeIcons.qq),
-                    title: const Text("QQ"),
-                    trailing: IconButton(
-                        onPressed: () => launchUrlString(
-                            "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=6wgGLJ_NmKQl7f9Ws6JAprbTwmG9Ouei&authKey=g7bXX%2Bn2dHlbecf%2B8QfGJ15IFVOmEdGTJuoLYfviLg7TZIsZCu45sngzZfL3KktN&noverify=0&group_code=947560153"),
-                        icon: const Icon(Icons.public)),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.discord),
-                    title: const Text("Discord"),
-                    trailing: IconButton(
-                        onPressed: () =>
-                            launchUrlString("https://discord.gg/zqhURaJ8"),
-                        icon: const Icon(Icons.public)),
-                  )
-                ],
               ),
             ],
           ),

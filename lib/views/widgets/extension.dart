@@ -4,7 +4,7 @@ import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/static/enums.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
-import 'package:nitoritoolbox/utils/platform_windows.dart';
+import 'package:nitoritoolbox/models/platform/platform_windows.dart';
 import 'package:nitoritoolbox/views/widgets/windowbar.dart';
 
 extension NitoriWidgetExtension on Widget {
@@ -63,29 +63,42 @@ extension NitoriWidgetExtension on Widget {
         break;
     }
 
-    return Stack(children: [
-      this,
-      IgnorePointer(
+    return Stack(
+      children: [
+        this,
+        IgnorePointer(
           child: image == null
               ? const SizedBox.shrink()
               : Container(
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          opacity: config.getOr(
-                              ConfigKeys.backgroundImageOpacity, 0.4),
-                          image: image)),
-                  child: const SizedBox.expand()))
-    ]);
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        opacity: config.getOr(
+                            ConfigKeys.backgroundImageOpacity, 0.4),
+                        image: image),
+                  ),
+                  child: const SizedBox.expand(),
+                ),
+        )
+      ],
+    );
   }
 }
 
 class WindowContainer extends StatelessWidget {
   final Widget child;
-  const WindowContainer({super.key, required this.child});
+  final Color? backgroundColor;
+  const WindowContainer({
+    super.key,
+    required this.child,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return WindowWidget(child: child).background();
+    return WindowWidget(
+      backgroundColor: backgroundColor,
+      child: child,
+    ).background();
   }
 }

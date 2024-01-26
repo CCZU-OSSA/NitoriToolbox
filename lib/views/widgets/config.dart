@@ -1,7 +1,7 @@
 import 'package:arche/extensions/iter.dart';
 import 'package:arche/modules/application.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
 
 /// ConfigEnumTranslatorPopupMenuButton
 class CETPopupMenuButton<T> extends StatefulWidget {
@@ -34,7 +34,7 @@ class _StateCETPopupMenuButton<T> extends State<CETPopupMenuButton<T>> {
       initialValue: widget.translator
           .keys[widget.config.getOr(widget.configKey, widget.initial)],
       onSelected: (value) => setState(
-          () => AppController.refreshAppEnumConfig(widget.configKey, value)),
+          () => AppNavigator.refreshAppEnumConfig(widget.configKey, value)),
       itemBuilder: (context) => ListExt.generatefrom(
         widget.translator.keys,
         functionFactory: (value) => PopupMenuItem(
@@ -85,7 +85,7 @@ class _StateConfigSwitch extends State<ConfigSwitchListTile> {
             if (value != widget.initial && confirm != null) {
               confirm().then((value) {
                 if (value) {
-                  setState(() => AppController.refreshAppValueConfig(
+                  setState(() => AppNavigator.refreshAppValueConfig(
                       widget.configKey, value));
                 }
               });
@@ -93,7 +93,7 @@ class _StateConfigSwitch extends State<ConfigSwitchListTile> {
               return;
             }
             setState(() =>
-                AppController.refreshAppValueConfig(widget.configKey, value));
+                AppNavigator.refreshAppValueConfig(widget.configKey, value));
           }),
     );
   }

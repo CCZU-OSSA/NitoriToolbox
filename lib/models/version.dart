@@ -20,8 +20,12 @@ extension Version on (int, int, int) {
       (version.next()!, version.next()!, version.next()!);
   static VersionType fromIterable(Iterable<int> version) =>
       fromIterator(version.iterator);
-  static VersionType fromString(String version) =>
-      fromIterable(version.split(".").map((e) => int.parse(e)));
+  static VersionType fromString(String version) {
+    if (version.startsWith("v")) {
+      version = version.substring(1);
+    }
+    return fromIterable(version.split(".").map((e) => int.parse(e)));
+  }
 
   static VersionType? parse(version) {
     if (version is String) {

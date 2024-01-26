@@ -1,3 +1,5 @@
+import 'package:nitoritoolbox/models/version.dart';
+
 class ConfigKeys {
   static const String labelType = "labelType";
   static const String theme = "theme";
@@ -15,7 +17,7 @@ class ConfigKeys {
 
 class ApplicationInfo {
   static const String applicationName = "Nitori Toolbox";
-  static const String applicationVersion = "0.0.1-Preview";
+  static const VersionType applicationVersion = (1, 0, 0);
   static const String applicationLegalese = "copyright © 常州大学开源软件协会";
   static const String githubRepo = "https://github.com/CCZU-OSSA/NitoriToolbox";
   static const String githubRepoName = "CCZU-OSSA/NitoriToolbox";

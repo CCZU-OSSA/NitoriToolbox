@@ -7,7 +7,7 @@ import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
-class AppController {
+class AppNavigator {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
   static StateNavigationView get viewstate => viewkey.currentState!;
   static void pushPage({required WidgetBuilder builder}) {
@@ -82,7 +82,26 @@ class AppController {
     loadingDialog(viewkey.currentContext!);
   }
 
-  static void pop() {
-    navigator.pop();
+  static void loadingDo<T>(
+    ProgressControllerFunction? function, {
+    bool useLinear = false,
+    bool autoPop = true,
+  }) {
+    loadingDialog(
+      viewkey.currentContext!,
+      useLinear: useLinear,
+      controller: (context, updateText, updateProgress) async {
+        if (function != null) {
+          await function(context, updateText, updateProgress);
+        }
+        if (autoPop) {
+          pop();
+        }
+      },
+    );
+  }
+
+  static void pop([Object? result]) {
+    navigator.pop(result);
   }
 }

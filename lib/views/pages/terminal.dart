@@ -1,7 +1,7 @@
 import 'package:arche/arche.dart';
 import 'package:flutter/material.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 
@@ -16,6 +16,7 @@ class _StateTerminalPage extends State<TerminalPage> {
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
   Shell shell = ISolateShell();
+  FocusNode input = FocusNode();
 
   static List<String> output = [];
 
@@ -24,13 +25,12 @@ class _StateTerminalPage extends State<TerminalPage> {
     super.dispose();
     textController.dispose();
     scrollController.dispose();
+    input.dispose();
     shell.deactivate();
   }
 
   void sendProcess(BuildContext context) {
-    if (textController.text.isEmpty) {
-      return;
-    }
+    input.requestFocus();
     if (!shell.connect) {
       shell.activate();
     }
@@ -132,11 +132,13 @@ class _StateTerminalPage extends State<TerminalPage> {
             ).padding12(),
             bottomNavigationBar: ListTile(
               title: TextField(
-                  controller: textController,
-                  onSubmitted: (_) => sendProcess(context),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  )),
+                focusNode: input,
+                controller: textController,
+                onSubmitted: (_) => sendProcess(context),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
               trailing: IconButton(
                   onPressed: () => sendProcess(context),
                   icon: const Icon(Icons.send)),

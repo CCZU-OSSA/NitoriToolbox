@@ -1,12 +1,15 @@
 import 'dart:io';
 
+import 'package:arche/arche.dart';
 import 'package:arche/extensions/io.dart';
 import 'package:flutter/material.dart';
+import 'package:nitoritoolbox/controllers/appdata.dart';
 import 'package:nitoritoolbox/models/version.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:yaml/yaml.dart';
 
-abstract class MetaEntity<T extends MetaEntity<T>> {
+abstract class YamlMetaData<T extends YamlMetaData<T>> {
+  YamlMetaData();
   late final String path;
   T loadm(Map data, [String? path]) {
     return (this..path = data["path"] ?? path ?? "") as T;
@@ -18,9 +21,9 @@ abstract class MetaEntity<T extends MetaEntity<T>> {
 
   T? load(data, [String? path]) {
     if (data is Map) {
-      return loadm(data, path);
+      return loadm(data, path ?? "");
     } else if (data is String) {
-      return loads(data, path);
+      return loads(data, path ?? "");
     }
     return null;
   }
@@ -31,7 +34,7 @@ abstract class MetaEntity<T extends MetaEntity<T>> {
         return false;
       }
       return true;
-    } catch (_) {
+    } catch (e) {
       return false;
     }
   }
@@ -41,12 +44,17 @@ abstract interface class Widgetlize {
   Widget build({double? size});
 }
 
-abstract interface class Parser<T> {
-  T parse(data, [String? path]);
+abstract mixin class Package<T> {
+  late final String name;
+  late final RichCover cover;
+  late final VersionType version;
+  late final T includes;
 }
 
-class RichCover extends MetaEntity<RichCover>
-    implements Widgetlize, Parser<RichCover> {
+abstract class YamlMetaPackage<S, T extends YamlMetaPackage<S, T>>
+    extends YamlMetaData<T> with Package<S> {}
+
+class RichCover extends YamlMetaData<RichCover> implements Widgetlize {
   String? text;
   CoverIcon? icon;
   CoverImage? image;
@@ -58,7 +66,6 @@ class RichCover extends MetaEntity<RichCover>
       ..icon = CoverIcon().parse(data["icon"], path);
   }
 
-  @override
   RichCover parse(data, [String? path]) {
     if (data is String) {
       return this..text = data;
@@ -69,15 +76,26 @@ class RichCover extends MetaEntity<RichCover>
 
   @override
   Widget build({double? size}) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      (icon ?? image)?.build(size: size) ?? const SizedBox.shrink(),
-      text != null ? Text(text!) : const SizedBox.shrink(),
-    ]);
+    return SizedBox.square(
+      dimension: size,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            (icon ?? image)?.build(size: size != null ? size * 0.7 : null) ??
+                const SizedBox.shrink(),
+            text != null
+                ? Text(text!, overflow: TextOverflow.ellipsis)
+                : const SizedBox.shrink(),
+          ],
+        ),
+      ),
+    );
   }
 }
 
-class CoverIcon extends MetaEntity<CoverIcon>
-    implements Widgetlize, Parser<CoverIcon?> {
+class CoverIcon extends YamlMetaData<CoverIcon> implements Widgetlize {
   late final int codePoint;
   late final String fontFamily;
   late final String? fontPackage;
@@ -86,8 +104,8 @@ class CoverIcon extends MetaEntity<CoverIcon>
   CoverIcon loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..codePoint = (data["code"] ?? data["codePoint"])!
-      ..fontFamily = data["fontFamily"] ?? "MaterialIcons"
-      ..fontPackage = data["fontPackage"];
+      ..fontFamily = data["family"] ?? data["fontFamily"] ?? "MaterialIcons"
+      ..fontPackage = data["package"] ?? data["fontPackage"];
   }
 
   @override
@@ -98,7 +116,6 @@ class CoverIcon extends MetaEntity<CoverIcon>
     );
   }
 
-  @override
   CoverIcon? parse(data, [String? path]) {
     if (data == null) {
       return null;
@@ -108,8 +125,7 @@ class CoverIcon extends MetaEntity<CoverIcon>
   }
 }
 
-class CoverImage extends MetaEntity<CoverImage>
-    implements Widgetlize, Parser<CoverImage?> {
+class CoverImage extends YamlMetaData<CoverImage> implements Widgetlize {
   String? network;
   String? local;
 
@@ -131,7 +147,6 @@ class CoverImage extends MetaEntity<CoverImage>
     );
   }
 
-  @override
   CoverImage? parse(data, [String? path]) {
     if (data == null) {
       return null;
@@ -141,7 +156,7 @@ class CoverImage extends MetaEntity<CoverImage>
   }
 }
 
-class ApplicationFeatureStep extends MetaEntity<ApplicationFeatureStep> {
+class ApplicationFeatureStep extends YamlMetaData<ApplicationFeatureStep> {
   late final String details;
   late final List<String> run;
 
@@ -153,7 +168,7 @@ class ApplicationFeatureStep extends MetaEntity<ApplicationFeatureStep> {
   }
 }
 
-class ApplicationFeature extends MetaEntity<ApplicationFeature> {
+class ApplicationFeature extends YamlMetaData<ApplicationFeature> {
   late final String name;
   late final RichCover cover;
   late final List<ApplicationFeatureStep> steps;
@@ -169,7 +184,7 @@ class ApplicationFeature extends MetaEntity<ApplicationFeature> {
   }
 }
 
-class Application extends MetaEntity<Application> {
+class Application extends YamlMetaData<Application> {
   late final String name;
   late final RichCover cover;
   late final VersionType version;
@@ -191,16 +206,12 @@ class Application extends MetaEntity<Application> {
   }
 }
 
-class ApplicationPackage extends MetaEntity<ApplicationPackage> {
-  late final String name;
-  late final VersionType version;
-  late final RichCover cover;
-  late final List<Application> includes;
-
+class ApplicationPackage
+    extends YamlMetaPackage<List<Application>, ApplicationPackage> {
   @override
   ApplicationPackage loadm(Map data, [String? path]) {
     return super.loadm(data, path)
-      ..name = data["name"] ?? "Unknown Apps"
+      ..name = data["name"]!
       ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..cover = RichCover().parse(data["cover"] ?? name, path)
       ..includes = (data["includes"] as YamlList? ?? [])
@@ -209,12 +220,8 @@ class ApplicationPackage extends MetaEntity<ApplicationPackage> {
   }
 }
 
-class Environment extends MetaEntity<Environment> {
-  late final String name;
-  late final VersionType version;
+class Environment extends YamlMetaPackage<EnvironmentIncludes, Environment> {
   late final String details;
-  late final EnvironmentIncludes includes;
-  late final RichCover cover;
   @override
   Environment loadm(Map data, [String? path]) {
     return super.loadm(data, path)
@@ -226,7 +233,7 @@ class Environment extends MetaEntity<Environment> {
   }
 }
 
-class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
+class EnvironmentIncludes extends YamlMetaData<EnvironmentIncludes> {
   late final List<String> paths;
   late final Map<String, String> overwrite;
   @override
@@ -236,29 +243,25 @@ class EnvironmentIncludes extends MetaEntity<EnvironmentIncludes> {
       ..overwrite = ((data["overwrite"] as YamlMap?) ?? {})
           .map((key, value) => MapEntry(key.toString(), value.toString()))
       ..paths = (((data["paths"] as YamlList?)?.toList() ?? []).cast())
-          .map((pth) => "${root.absolute.subPath(pth)};")
+          .map((path) => "${root.absolute.subPath(path)};")
           .toList();
   }
 }
 
-class Documents extends MetaEntity<Documents> {
-  late final String name;
-  late final RichCover cover;
-  late final VersionType version;
-  late final List<DocumentEntry> documents;
+class Documents extends YamlMetaPackage<List<DocumentEntry>, Documents> {
   @override
   Documents loadm(Map data, [String? path]) {
     return super.loadm(data, path)
       ..name = data["name"]
       ..version = Version.fromString(data["version"] ?? "1.0.0")
       ..cover = RichCover().parse(data["cover"] ?? name, path)
-      ..documents = ((data["includes"] as YamlList?) ?? [])
+      ..includes = ((data["includes"] as YamlList?) ?? [])
           .map((data) => DocumentEntry().loadm(data, path))
           .toList();
   }
 }
 
-class DocumentEntry extends MetaEntity<DocumentEntry> {
+class DocumentEntry extends YamlMetaData<DocumentEntry> {
   late final String name;
   late final String loacation;
   @override
@@ -266,5 +269,80 @@ class DocumentEntry extends MetaEntity<DocumentEntry> {
     return super.loadm(data, path)
       ..name = data["name"]
       ..loacation = "${path!}//${data["location"]}";
+  }
+}
+
+enum ImportMetaType {
+  app,
+  env,
+  doc,
+}
+
+class ImportMetaData extends YamlMetaData<ImportMetaData> {
+  late final ImportMetaType type;
+  late final String name;
+  late final Map _inner;
+  @override
+  ImportMetaData loadm(Map data, [String? path]) {
+    _inner = data;
+    var importData = data["import"];
+
+    if (importData != null) {
+      switch (importData["type"]!) {
+        case "app":
+          type = ImportMetaType.app;
+          break;
+        case "env":
+          type = ImportMetaType.env;
+          break;
+        case "doc":
+          type = ImportMetaType.doc;
+          break;
+        default:
+          type = detectType()!;
+          break;
+      }
+    } else {
+      type = detectType()!;
+    }
+
+    return super.loadm(data, path)
+      ..name = importData?["name"] ?? _inner["name"]!;
+  }
+
+  ImportMetaType? detectType() {
+    if (ApplicationPackage().check(_inner)) {
+      return ImportMetaType.app;
+    }
+
+    if (Environment().check(_inner)) {
+      return ImportMetaType.env;
+    }
+
+    if (Documents().check(_inner)) {
+      return ImportMetaType.doc;
+    }
+
+    return null;
+  }
+
+  (Directory, FutureLazyDynamicCan<List<YamlMetaPackage>>)? parse() {
+    GalleryManager galleryManager = ArcheBus.bus.of();
+    switch (type) {
+      case ImportMetaType.app:
+        return ApplicationPackage().check(_inner)
+            ? (galleryManager.applicationsDir, galleryManager.applications)
+            : null;
+      case ImportMetaType.env:
+        return Environment().check(_inner)
+            ? (galleryManager.environmentsDir, galleryManager.environments)
+            : null;
+      case ImportMetaType.doc:
+        return Documents().check(_inner)
+            ? (galleryManager.documentsDir, galleryManager.documents)
+            : null;
+      default:
+        return null;
+    }
   }
 }

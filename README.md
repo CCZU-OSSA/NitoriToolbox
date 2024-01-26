@@ -1,16 +1,21 @@
-# nitoritoolbox
+# NitoriToolBox
 
-A new Flutter project.
+## 这是什么？
 
-## Getting Started
+NitoriToolbox是一个开放式应用工具箱，通过插件式便捷地将应用、应用所需要的环境导入导出，并提供类似于Jupyter Notebook的方式来运行应用
 
-This project is a starting point for a Flutter application.
+## 制作插件
 
-A few resources to get you started if this is your first Flutter project:
+请参考 Wiki，如有意见欢迎提出 Issue
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+https://github.com/CCZU-OSSA/NitoriToolbox/wiki
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 平台支持
+
+|Windows|Linux|MacOS|
+|--|--|---|
+|✅|❌|❌|
+
+## 应用截图
+
+![DEMO](https://raw.githubusercontent.com/CCZU-OSSA/NitoriToolbox/main/doc/screenshot.jpg)

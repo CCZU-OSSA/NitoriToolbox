@@ -5,11 +5,11 @@ import 'package:arche/extensions/io.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
+import 'package:nitoritoolbox/controllers/appdata.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/keys.dart';
-import 'package:nitoritoolbox/utils/github.dart';
+import 'package:nitoritoolbox/models/github.dart';
 import 'package:nitoritoolbox/views/pages/gallery.dart';
 import 'package:nitoritoolbox/views/pages/home.dart';
 import 'package:nitoritoolbox/views/pages/settings.dart';
@@ -27,7 +27,7 @@ Future<void> main() async {
       .provide(data.galleryManager)
       .provide(GithubRepository(ApplicationInfo.githubRepoName));
   runApp(MainApplication());
-  AppController.initLifeCycleListener();
+  AppNavigator.initLifeCycleListener();
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(800, 600);
@@ -37,8 +37,11 @@ Future<void> main() async {
     win.title = ApplicationInfo.applicationName;
     win.show();
     if (ArcheBus.config.getOr(ConfigKeys.checkUpdate, false)) {
-      //GithubRepository gr = ArcheBus.bus.of();
-      //gr.version();
+      GithubRepository gr = ArcheBus.bus.of();
+      AppNavigator.loadingDo((context, updateText, updateProgress) async {
+        updateText("正在检查更新");
+        await gr.updateDialog();
+      });
     }
   });
 }
@@ -83,24 +86,26 @@ class StateMainApplication extends State<MainApplication> {
                 key: viewkey,
                 items: const [
                   NavigationItem(
-                    icon: Icon(Icons.home),
-                    label: "Home",
-                    page: HomePage(),
-                  ),
+                      icon: Icon(Icons.home),
+                      label: "主页",
+                      page: HomePage(),
+                      name: "home"),
                   NavigationItem(
                     icon: Icon(Icons.apps),
-                    label: "Gallery",
+                    label: "应用",
                     page: GalleryPage(),
+                    name: "apps",
                   ),
                   NavigationItem(
                     icon: Icon(Icons.terminal),
-                    label: "Terminal",
+                    label: "终端",
                     page: TerminalPage(),
+                    name: "terminal",
                   ),
                   NavigationItem(
-                    name: "Settings",
+                    name: "settings",
                     icon: Icon(Icons.settings),
-                    label: "Settings",
+                    label: "设置",
                     page: SettingsPage(),
                   )
                 ],

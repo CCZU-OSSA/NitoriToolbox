@@ -2,17 +2,22 @@ import 'dart:io';
 
 import 'package:arche/arche.dart';
 import 'package:arche/extensions/iter.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:nitoritoolbox/controller/appcontroller.dart';
-import 'package:nitoritoolbox/controller/appdata.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nitoritoolbox/controllers/navigator.dart';
+import 'package:nitoritoolbox/controllers/appdata.dart';
+import 'package:nitoritoolbox/models/package.dart';
+import 'package:nitoritoolbox/models/static/keys.dart';
 import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/models/yaml.dart';
-import 'package:nitoritoolbox/utils/shell.dart';
+import 'package:nitoritoolbox/controllers/shell.dart';
 import 'package:nitoritoolbox/views/widgets/builder.dart';
+import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
-
-const Size galleryButtonSize = Size.square(120);
 
 class ApplicationFeaturePage extends StatefulWidget {
   final ApplicationFeature feature;
@@ -47,10 +52,13 @@ class ApplicationPage extends StatelessWidget {
             title: Text(application.name),
             subtitle: Text(application.version.format()),
           )),
-          ConditionShrink(
-            value: application.details.isNotEmpty,
+          Visibility(
+            visible: application.details.isNotEmpty,
             child: Card(
-              child: MarkdownBlockWidget(application.details),
+              child: MarkdownBlockWidget(
+                application.details,
+                imageDirectory: application.path,
+              ),
             ),
           ),
           Center(
@@ -58,15 +66,15 @@ class ApplicationPage extends StatelessWidget {
               children: application.features
                   .map(
                     (feature) => CardButton(
-                      onTap: () => AppController.pushPage(
+                      size: const Size.square(120),
+                      onTap: () => AppNavigator.pushPage(
                         builder: (context) => ApplicationFeaturePage(
                           feature: feature,
                           application: application,
                           workingDirectory: application.path,
                         ),
                       ),
-                      size: const Size.square(80),
-                      child: feature.cover.build(size: 56),
+                      child: feature.cover.build(size: 120),
                     ),
                   )
                   .toList(),
@@ -107,10 +115,13 @@ class EnvironmentPage extends StatelessWidget {
             title: Text(environment.name),
             subtitle: Text(environment.version.format()),
           )),
-          ConditionShrink(
-            value: environment.details.isNotEmpty,
+          Visibility(
+            visible: environment.details.isNotEmpty,
             child: Card(
-              child: MarkdownBlockWidget(environment.details),
+              child: MarkdownBlockWidget(
+                environment.details,
+                imageDirectory: environment.path,
+              ),
             ),
           ),
           const ListTile(
@@ -122,14 +133,14 @@ class EnvironmentPage extends StatelessWidget {
               children: environment.includes.paths.map((e) => Text(e)).toList(),
             ).padding12(),
           ),
-          ConditionShrink(
-            value: environment.includes.overwrite.isNotEmpty,
+          Visibility(
+            visible: environment.includes.overwrite.isNotEmpty,
             child: const ListTile(
               title: Text("覆写变量"),
             ),
           ),
-          ConditionShrink(
-            value: environment.includes.overwrite.isNotEmpty,
+          Visibility(
+            visible: environment.includes.overwrite.isNotEmpty,
             child: Card(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,37 +254,47 @@ class _StateApplicationStepView extends State<ApplicationStepView> {
     var shell = widget.shell;
     return Column(
       children: [
-        ConditionShrink(
-          value: widget.step.details.isNotEmpty,
-          child: MarkdownBlockWidget(widget.step.details),
+        Visibility(
+          visible: widget.step.details.isNotEmpty,
+          child: MarkdownBlockWidget(
+            widget.step.details,
+            imageDirectory: widget.step.path,
+          ),
         ),
         Card(
           color: Theme.of(context).colorScheme.surfaceVariant,
           child: Column(
             children: [
-              Row(children: [
-                ElevatedButton.icon(
-                    label: const Text("执行"),
-                    onPressed: () {
-                      contents.clear();
-                      add("正在激活Pty...");
-                      shell.clearbinds();
-                      shell.bind(add);
-                      shell.activate();
-                      for (var command in widget.step.run) {
-                        shell.write(command);
-                      }
-                    },
-                    icon: const Icon(Icons.play_arrow)),
-                ElevatedButton.icon(
-                    onPressed: () => setState(() => shell.deactivate()),
-                    icon: const Icon(Icons.stop),
-                    label: const Text("停止")),
-                ElevatedButton.icon(
-                    onPressed: () => setState(() => contents.clear()),
-                    icon: const Icon(Icons.cleaning_services),
-                    label: const Text("清空"))
-              ]),
+              Padding(
+                padding: const EdgeInsets.only(left: 3, bottom: 5),
+                child: Row(children: [
+                  ElevatedButton.icon(
+                      label: const Text("执行"),
+                      onPressed: () {
+                        contents.clear();
+                        add("正在激活Pty...");
+                        shell.clearbinds();
+                        shell.bind(add);
+                        shell.activate();
+                        for (var command in widget.step.run) {
+                          shell.write(command);
+                        }
+                      },
+                      icon: const Icon(Icons.play_arrow)),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, right: 4),
+                    child: ElevatedButton.icon(
+                      onPressed: () => setState(() => shell.deactivate()),
+                      icon: const Icon(Icons.stop),
+                      label: const Text("停止"),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                      onPressed: () => setState(() => contents.clear()),
+                      icon: const Icon(Icons.cleaning_services),
+                      label: const Text("清空"))
+                ]),
+              ),
               Card(
                 child: SizedBox(
                   width: double.infinity,
@@ -310,108 +331,61 @@ class _StateGalleryPage extends State<GalleryPage>
       items: [
         NavigationItem(
           icon: const Icon(Icons.apps),
-          label: "Application",
-          page: Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () =>
-                  galleryManager.applications.reload().then((value) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text("刷新完成")));
-                setState(() {});
-              }),
-              child: const Icon(Icons.refresh),
-            ),
-            body: galleryManager.applications.widgetBuilder(
-              snapshotLoading(
-                builder: (data) => SingleChildScrollView(
-                  child: Wrap(
-                    children: data
-                        .map(
-                          (data) => CardButton(
-                            size: galleryButtonSize,
-                            child: data.cover.build(size: 84),
-                            onTap: () => showModalBottomSheet(
-                              context: context,
-                              builder: (context) => SizedBox.expand(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        "应用列表",
-                                        style: TextStyle(fontSize: 24),
-                                      ).padding12(),
-                                      Wrap(
-                                        children: data.includes
-                                            .map(
-                                              (app) => CardButton(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surfaceVariant,
-                                                size: galleryButtonSize,
-                                                onTap: () =>
-                                                    AppController.pushPage(
-                                                  builder: (context) =>
-                                                      ApplicationPage(
-                                                          application: app),
-                                                ),
-                                                child:
-                                                    app.cover.build(size: 70),
-                                              ),
-                                            )
-                                            .toList(),
-                                      ),
-                                    ],
-                                  ),
-                                ).padding12(),
+          label: "应用",
+          page: GalleryContent(
+            data: galleryManager.applications,
+            onTap: (data) => showModalBottomSheet(
+              context: context,
+              builder: (context) => SizedBox.expand(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Text(
+                        "应用列表",
+                        style: TextStyle(fontSize: 24),
+                      ).padding12(),
+                      Wrap(
+                        children: data.includes
+                            .map(
+                              (app) => CardButton(
+                                size: const Size.square(120),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant,
+                                onTap: () => AppNavigator.pushPage(
+                                  builder: (context) =>
+                                      ApplicationPage(application: app),
+                                ),
+                                child: app.cover.build(size: 80),
                               ),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                            )
+                            .cast<Widget>()
+                            .toList(),
+                      ),
+                    ],
                   ),
-                ),
+                ).padding12(),
               ),
             ),
           ),
         ),
         NavigationItem(
-            icon: const Icon(Icons.code),
-            label: "Environment",
-            page: galleryManager.environments.widgetBuilder(snapshotLoading(
-              builder: (data) => Wrap(
-                children: data
-                    .map(
-                      (data) => CardButton(
-                        size: galleryButtonSize,
-                        child: data.cover.build(),
-                        onTap: () => AppController.pushPage(
-                          builder: (context) => EnvironmentPage(
-                            environment: data,
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ))),
+          icon: const Icon(Icons.code),
+          label: "环境",
+          page: GalleryContent(
+            data: galleryManager.environments,
+            onTap: (data) => AppNavigator.pushPage(
+              builder: (context) => EnvironmentPage(environment: data),
+            ),
+          ),
+        ),
         NavigationItem(
           icon: const Icon(Icons.book),
-          label: "Document",
-          page: galleryManager.documents.widgetBuilder(
-            snapshotLoading(
-              builder: (data) => Wrap(
-                children: data
-                    .map(
-                      (data) => CardButton(
-                        size: galleryButtonSize,
-                        child: data.cover.build(),
-                        onTap: () => AppController.pushPage(
-                            builder: (context) =>
-                                DocumentPage(documents: data)),
-                      ),
-                    )
-                    .toList(),
-              ),
+          label: "文档",
+          page: GalleryContent(
+            data: galleryManager.documents,
+            onTap: (data) => AppNavigator.pushPage(
+              builder: (context) => DocumentPage(documents: data),
             ),
           ),
         ),
@@ -420,6 +394,123 @@ class _StateGalleryPage extends State<GalleryPage>
       reversed: true,
       vertical:
           const NavigationVerticalConfig(surfaceTintColor: Colors.transparent),
+    );
+  }
+}
+
+class GalleryContent<T> extends StatefulWidget {
+  final FutureLazyDynamicCan<List<T>> data;
+  final void Function(T data) onTap;
+  const GalleryContent({
+    super.key,
+    required this.data,
+    required this.onTap,
+  });
+
+  @override
+  State<StatefulWidget> createState() => StateGalleryContent<T>();
+}
+
+class StateGalleryContent<T> extends State<GalleryContent<T>> {
+  @override
+  void initState() {
+    super.initState();
+    ArcheBus.bus.replace<StateGalleryContent<dynamic>>(this);
+  }
+
+  void mountRefresh() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        distance: 80,
+        type: ExpandableFabType.fan,
+        children: [
+          FloatingActionButton.small(
+            heroTag: "reload",
+            child: const Icon(Icons.refresh),
+            onPressed: () => widget.data.reload().then(
+                  (value) => setState(
+                    () => ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text("刷新完成"))),
+                  ),
+                ),
+          ),
+          FloatingActionButton.small(
+              heroTag: "manager",
+              child: const Icon(Icons.list),
+              onPressed: () => AppNavigator.pushPage(
+                  builder: (context) => const GalleryManagerPage())),
+          FloatingActionButton.small(
+            heroTag: "import",
+            child: const Icon(FontAwesomeIcons.fileImport),
+            onPressed: () => AppNavigator.loadingDo(
+              (context, updateText, updateProgress) async {
+                updateText("选择文件导入...");
+                var result = await FilePicker.platform.pickFiles(
+                  allowMultiple: true,
+                  type: FileType.custom,
+                  allowedExtensions: ["zip", "ntrpkg", "ntripkg"],
+                );
+                if (result != null) {
+                  updateProgress(0);
+                  var length = result.paths.length;
+                  for (var (index, path) in result.paths.indexed) {
+                    ++index;
+                    updateProgress(index / length);
+                    var ntipkg = NitoriPackage(path!);
+                    updateText("从导入 $path ($index/${result.paths.length})...");
+                    var (ok, trace) = await ntipkg.import();
+                    if (!ok) {
+                      if ((await basicFullScreenDialog(
+                            context: viewkey.currentContext!,
+                            title: const Text("中止导入?"),
+                            content: Wrap(children: [
+                              Text("$path 导入失败"),
+                              Text(trace),
+                            ]),
+                            confirmData: () => true,
+                            cancelData: () => false,
+                          )) ??
+                          false) {
+                        break;
+                      }
+                    }
+                  }
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      body: widget.data.widgetBuilder(
+        snapshotLoading(
+          builder: (data) => Visibility(
+            visible: data.isNotEmpty,
+            replacement: const Center(child: Text("暂时为空")),
+            child: SingleChildScrollView(
+              child: Wrap(
+                children: data
+                    .map(
+                      (entry) => CardButton(
+                        size: const Size.square(160),
+                        child: ((entry as dynamic).cover as RichCover)
+                            .build(size: 160),
+                        onTap: () => widget.onTap(entry),
+                      ),
+                    )
+                    .toList(),
+              ).padding12(),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -437,54 +528,297 @@ class DocumentPage extends StatefulWidget {
 
 class _StateDocumentPage extends State<DocumentPage>
     with IndexedNavigatorStateMixin {
+  late ScrollController controller;
+  bool fabVisible = true;
+  @override
+  void initState() {
+    super.initState();
+    controller = ScrollController();
+    controller.addListener(() {
+      setState(() {
+        fabVisible =
+            controller.position.userScrollDirection == ScrollDirection.forward;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.documents.documents[currentIndex].name),
-        actions: const [
-          IconButton(
-            onPressed: AppController.pop,
-            icon: Icon(Icons.exit_to_app),
-          )
-        ],
+        leading: const BackButton(),
+        title: Text(widget.documents.includes[currentIndex].name),
       ),
+      floatingActionButton: AnimatedOpacity(
+          duration: Durations.medium4,
+          opacity: fabVisible ? 1 : 0,
+          child: AnimatedRotation(
+            duration: Durations.medium4,
+            turns: fabVisible ? 0.5 : 0,
+            child: Builder(
+              builder: (context) => FloatingActionButton(
+                child: const Icon(Icons.menu),
+                onPressed: () {
+                  setState(() {
+                    fabVisible = true;
+                  });
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            ),
+          )),
       drawer: NavigationDrawer(
         selectedIndex: currentIndex,
         onDestinationSelected: pushIndex,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(28.0, 18.0, 8.0, 18.0),
-            child: Text(
+          ListTile(
+            title: Text(
               widget.documents.name,
-              style: Theme.of(context).textTheme.titleSmall,
-              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
+            subtitle: Text(
+              widget.documents.version.format(),
+            ),
+          )
         ].addAllThen(
-          widget.documents.documents.mapEnumerate(
+          widget.documents.includes.mapEnumerate(
             (index, entry) => NavigationDrawerDestination(
-              icon: ConditionShrink(
-                  value: index == currentIndex,
+              icon: Visibility(
+                  visible: index == currentIndex,
                   child: const Icon(Icons.arrow_right)),
-              label: Text(entry.name),
+              label: Expanded(
+                child: Text(
+                  entry.name,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           ),
         ),
       ),
       body: FutureBuilder(
-        future: File(widget.documents.documents[currentIndex].loacation)
+        future: File(widget.documents.includes[currentIndex].loacation)
             .readAsString(),
         builder: snapshotLoading(
           builder: (data) {
             return SingleChildScrollView(
+              controller: controller,
               child: MarkdownBlockWidget(
                 data.toString(),
+                imageDirectory: widget.documents.path,
               ).padding12(),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class GalleryManagerPage extends StatefulWidget {
+  const GalleryManagerPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _StateGalleryManagerPage();
+}
+
+class _StateGalleryManagerPage extends State<GalleryManagerPage> {
+  final SearchController controller = SearchController();
+
+  Widget buildContent({
+    String keyword = "",
+    required FutureLazyDynamicCan<List<YamlMetaPackage>> data,
+    required String title,
+    bool divider = true,
+  }) {
+    return data.widgetBuilder(
+      snapshotLoading(
+        builder: (packageData) => _GalleryManagerSearchContent(
+          data: packageData,
+          divider: divider,
+          keyword: keyword,
+          keyGenerator: (data) => data.name,
+          tileGenerator: (tileData) => ListTile(
+            onTap: () {},
+            leading: SizedBox.square(
+                dimension: 80, child: tileData.cover.build(size: 40)),
+            title: Text(tileData.name),
+            subtitle: Text(tileData.version.format()),
+            trailing: Wrap(
+              children: [
+                IconButton(
+                  onPressed: () => basicFullScreenDialog(
+                      title: const Text("确认"),
+                      content: Text("是否移除 ${tileData.path} 中的所有文件？"),
+                      context: context,
+                      confirmData: () => true,
+                      cancelData: () => false).then(
+                    (value) {
+                      if (value ?? false) {
+                        var dir = Directory(tileData.path);
+                        if (dir.existsSync()) {
+                          AppNavigator.loadingDo(
+                            (context, updateText, updateProgress) async {
+                              updateText("正在删除 ${tileData.path} ，请勿退出");
+                              await dir.delete(recursive: true);
+                              await data.reload();
+                              setState(() {
+                                if (ArcheBus.bus
+                                    .has<StateGalleryContent<dynamic>>()) {
+                                  ArcheBus.bus
+                                      .of<StateGalleryContent<dynamic>>()
+                                      .mountRefresh();
+                                }
+                              });
+                            },
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  icon: const Icon(Icons.delete),
+                ),
+                IconButton(
+                  onPressed: () => AppNavigator.loadingDo(
+                    (context, updateText, updateProgress) async {
+                      updateText("选择保存路径");
+                      var path = await FilePicker.platform.saveFile(
+                        dialogTitle: "选择保存路径",
+                        fileName:
+                            "${tileData.name} - ${tileData.version.format()}.ntripkg",
+                      );
+
+                      updateText("正在添加文件");
+                      updateProgress(0);
+                      if (path != null) {
+                        NitoriPackage(path).export(
+                          tileData.path,
+                          onDone: AppNavigator.pop,
+                          onProgress: (progress) {
+                            updateProgress(progress);
+                            if (progress == 1) {
+                              updateText("正在写入");
+                              updateProgress(null);
+                            }
+                          },
+                        );
+                      } else {
+                        AppNavigator.pop();
+                      }
+                    },
+                    autoPop: false,
+                  ),
+                  icon: const Icon(Icons.output),
+                )
+              ],
+            ),
+          ),
+          title: title,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    GalleryManager galleryManager = ArcheBus.bus.of();
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120),
+        child: ListTile(
+          leading: const BackButton(),
+          title: SearchAnchor.bar(
+            searchController: controller,
+            suggestionsBuilder:
+                (BuildContext context, SearchController controller) {
+              var text = controller.text;
+              return [
+                buildContent(
+                  data: galleryManager.applications,
+                  title: "应用",
+                  keyword: text,
+                ),
+                buildContent(
+                  data: galleryManager.environments,
+                  title: "环境",
+                  keyword: text,
+                ),
+                buildContent(
+                  divider: false,
+                  data: galleryManager.documents,
+                  title: "文档",
+                  keyword: text,
+                ),
+              ];
+            },
+          ),
+        ),
+      ),
+      body: ListView(
+        children: [
+          buildContent(
+            data: galleryManager.applications,
+            title: "应用",
+          ),
+          buildContent(
+            data: galleryManager.environments,
+            title: "环境",
+          ),
+          buildContent(
+            divider: false,
+            data: galleryManager.documents,
+            title: "文档",
+          ),
+        ],
+      ).padding12(),
+    );
+  }
+}
+
+class _GalleryManagerSearchContent<T> extends StatelessWidget {
+  final String keyword;
+  final List<T> data;
+  final String Function(T data) keyGenerator;
+  final Widget Function(T data) tileGenerator;
+  final String title;
+  final bool divider;
+  const _GalleryManagerSearchContent({
+    super.key,
+    this.keyword = "",
+    required this.data,
+    required this.keyGenerator,
+    required this.tileGenerator,
+    required this.title,
+    this.divider = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> tiles = [ListTile(title: Text(title))];
+
+    tiles.addAll(
+      data
+          .where((e) => keyword.isEmpty
+              ? true
+              : keyGenerator(e).toLowerCase().contains(keyword.toLowerCase()))
+          .map((e) => tileGenerator(e)),
+    );
+
+    return Visibility(
+      visible: tiles.length > 1,
+      child: Column(
+        children: tiles.addThen(
+          Visibility(
+            visible: divider,
+            child: const Divider(),
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 name: nitoritoolbox
-description: "A new Flutter project."
+description: "A Cross-Platform Open Application Toolbox"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=3.2.2 <4.0.0"
@@ -34,6 +34,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
+  flutter_localizations:
+    sdk: flutter
   dynamic_color: ^1.6.9
   bitsdojo_window: ^0.1.6
   arche: 
@@ -52,6 +55,12 @@ dependencies:
   markdown: ^7.1.1
   flutter_markdown_latex: ^0.1.4
   window_manager: ^0.3.7
+  flutter_expandable_fab: ^2.0.0
+  archive: ^3.4.10
+  intl: ^0.18.1
+  highlighting: ^0.9.0+11.8.0
+  device_info_plus: ^9.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,13 +82,14 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
     - resource/images/document.jpg
+    - README.md
+    - LICENSE
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
