@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:arche/arche.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/controllers/navigator.dart';
+import 'package:nitoritoolbox/models/github.dart';
 import 'package:nitoritoolbox/views/widgets/builder.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
@@ -91,6 +93,17 @@ class HomePage extends StatelessWidget {
                           "https://github.com/CCZU-OSSA/NitoriToolbox"),
                       icon: const Icon(FontAwesomeIcons.github),
                     ).text("开源仓库"),
+                    IconButton.filled(
+                      onPressed: () async {
+                        GithubRepository gr = ArcheBus.bus.of();
+                        AppNavigator.loadingDo(
+                            (context, updateText, updateProgress) async {
+                          updateText("正在检查更新");
+                          await gr.updateDialog();
+                        });
+                      },
+                      icon: const Icon(Icons.update),
+                    ).text("检查更新")
                   ],
                 ).padding12(),
               ),

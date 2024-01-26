@@ -4,8 +4,8 @@
 // utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 
-import 'package:arche/arche.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nitoritoolbox/models/github.dart';
 
 class Demo<T> {
   T data;
@@ -13,7 +13,8 @@ class Demo<T> {
 }
 
 void main() {
-  test("Test", () {
-    ArcheBus().provide<Demo<dynamic>>(Demo(1));
+  test("Test", () async {
+    var data = await GithubRepository("H2Sxxa/Arche").checkUpdate();
+    print(data?.changeLog);
   });
 }

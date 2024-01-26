@@ -37,8 +37,11 @@ Future<void> main() async {
     win.title = ApplicationInfo.applicationName;
     win.show();
     if (ArcheBus.config.getOr(ConfigKeys.checkUpdate, false)) {
-      //GithubRepository gr = ArcheBus.bus.of();
-      //gr.version();
+      GithubRepository gr = ArcheBus.bus.of();
+      AppNavigator.loadingDo((context, updateText, updateProgress) async {
+        updateText("正在检查更新");
+        await gr.updateDialog();
+      });
     }
   });
 }

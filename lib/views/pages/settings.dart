@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nitoritoolbox/controllers/navigator.dart';
 import 'package:nitoritoolbox/models/static/fields.dart';
 import 'package:nitoritoolbox/models/static/translators.dart';
+import 'package:nitoritoolbox/models/version.dart';
 import 'package:nitoritoolbox/views/pages/license.dart';
 import 'package:nitoritoolbox/views/widgets/config.dart';
 import 'package:nitoritoolbox/views/widgets/dialogs.dart';
@@ -200,7 +201,8 @@ class _StateSettingsPage extends State<SettingsPage> {
                     onPressed: () => showLicensePageWithBar(
                         context: context,
                         applicationName: ApplicationInfo.applicationName,
-                        applicationVersion: ApplicationInfo.applicationVersion,
+                        applicationVersion:
+                            ApplicationInfo.applicationVersion.format(),
                         applicationLegalese:
                             ApplicationInfo.applicationLegalese),
                     icon: const Icon(Icons.navigate_next)),
