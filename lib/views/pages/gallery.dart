@@ -19,8 +19,6 @@ import 'package:nitoritoolbox/views/widgets/dialogs.dart';
 import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:nitoritoolbox/views/widgets/markdown.dart';
 
-const Size galleryButtonSize = Size.square(120);
-
 class ApplicationFeaturePage extends StatefulWidget {
   final ApplicationFeature feature;
   final Application application;
@@ -68,6 +66,7 @@ class ApplicationPage extends StatelessWidget {
               children: application.features
                   .map(
                     (feature) => CardButton(
+                      size: const Size.square(120),
                       onTap: () => AppNavigator.pushPage(
                         builder: (context) => ApplicationFeaturePage(
                           feature: feature,
@@ -75,7 +74,6 @@ class ApplicationPage extends StatelessWidget {
                           workingDirectory: application.path,
                         ),
                       ),
-                      size: const Size.square(120),
                       child: feature.cover.build(size: 120),
                     ),
                   )
@@ -267,29 +265,36 @@ class _StateApplicationStepView extends State<ApplicationStepView> {
           color: Theme.of(context).colorScheme.surfaceVariant,
           child: Column(
             children: [
-              Row(children: [
-                ElevatedButton.icon(
-                    label: const Text("执行"),
-                    onPressed: () {
-                      contents.clear();
-                      add("正在激活Pty...");
-                      shell.clearbinds();
-                      shell.bind(add);
-                      shell.activate();
-                      for (var command in widget.step.run) {
-                        shell.write(command);
-                      }
-                    },
-                    icon: const Icon(Icons.play_arrow)),
-                ElevatedButton.icon(
-                    onPressed: () => setState(() => shell.deactivate()),
-                    icon: const Icon(Icons.stop),
-                    label: const Text("停止")),
-                ElevatedButton.icon(
-                    onPressed: () => setState(() => contents.clear()),
-                    icon: const Icon(Icons.cleaning_services),
-                    label: const Text("清空"))
-              ]),
+              Padding(
+                padding: const EdgeInsets.only(left: 3, bottom: 5),
+                child: Row(children: [
+                  ElevatedButton.icon(
+                      label: const Text("执行"),
+                      onPressed: () {
+                        contents.clear();
+                        add("正在激活Pty...");
+                        shell.clearbinds();
+                        shell.bind(add);
+                        shell.activate();
+                        for (var command in widget.step.run) {
+                          shell.write(command);
+                        }
+                      },
+                      icon: const Icon(Icons.play_arrow)),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, right: 4),
+                    child: ElevatedButton.icon(
+                      onPressed: () => setState(() => shell.deactivate()),
+                      icon: const Icon(Icons.stop),
+                      label: const Text("停止"),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                      onPressed: () => setState(() => contents.clear()),
+                      icon: const Icon(Icons.cleaning_services),
+                      label: const Text("清空"))
+                ]),
+              ),
               Card(
                 child: SizedBox(
                   width: double.infinity,
@@ -343,15 +348,15 @@ class _StateGalleryPage extends State<GalleryPage>
                         children: data.includes
                             .map(
                               (app) => CardButton(
+                                size: const Size.square(120),
                                 color: Theme.of(context)
                                     .colorScheme
                                     .surfaceVariant,
-                                size: galleryButtonSize,
                                 onTap: () => AppNavigator.pushPage(
                                   builder: (context) =>
                                       ApplicationPage(application: app),
                                 ),
-                                child: app.cover.build(size: 70),
+                                child: app.cover.build(size: 80),
                               ),
                             )
                             .cast<Widget>()

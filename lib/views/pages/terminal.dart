@@ -16,6 +16,7 @@ class _StateTerminalPage extends State<TerminalPage> {
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
   Shell shell = ISolateShell();
+  FocusNode input = FocusNode();
 
   static List<String> output = [];
 
@@ -24,13 +25,12 @@ class _StateTerminalPage extends State<TerminalPage> {
     super.dispose();
     textController.dispose();
     scrollController.dispose();
+    input.dispose();
     shell.deactivate();
   }
 
   void sendProcess(BuildContext context) {
-    if (textController.text.isEmpty) {
-      return;
-    }
+    input.requestFocus();
     if (!shell.connect) {
       shell.activate();
     }
@@ -132,6 +132,7 @@ class _StateTerminalPage extends State<TerminalPage> {
             ).padding12(),
             bottomNavigationBar: ListTile(
               title: TextField(
+                focusNode: input,
                 controller: textController,
                 onSubmitted: (_) => sendProcess(context),
                 decoration: const InputDecoration(

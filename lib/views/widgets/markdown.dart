@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_highlighting/flutter_highlighting.dart';
 import 'package:flutter_highlighting/themes/atom-one-dark-reasonable.dart';
 import 'package:flutter_highlighting/themes/atom-one-light.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_markdown_latex/flutter_markdown_latex.dart';
 import 'package:highlighting/languages/all.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:nitoritoolbox/controllers/shell.dart';
+import 'package:nitoritoolbox/views/widgets/builder.dart';
+import 'package:nitoritoolbox/views/widgets/extension.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MarkdownBlockWidget extends StatelessWidget {
@@ -60,22 +63,47 @@ class CodeElementBuilder extends MarkdownElementBuilder {
       lang = "plaintext";
     }
     return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: colorScheme.onSurfaceVariant)),
-        width: element.textContent.lines().length > 1 ? double.infinity : null,
-        child: ClipRRect(
+      decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          child: HighlightView(
-            element.textContent,
-            languageId: lang,
-            theme: colorScheme.brightness == Brightness.dark
-                ? atomOneDarkReasonableTheme
-                : atomOneLightTheme,
-            padding: const EdgeInsets.all(8),
-            textStyle: const TextStyle(
-                fontFamily: "FiraCode", fontFamilyFallback: ["GlowSans"]),
-          ),
-        ));
+          border: Border.all(color: colorScheme.onSurfaceVariant)),
+      width: element.textContent.lines().length > 1 ? double.infinity : null,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: HighlightView(
+          element.textContent,
+          languageId: lang,
+          theme: colorScheme.brightness == Brightness.dark
+              ? atomOneDarkReasonableTheme
+              : atomOneLightTheme,
+          padding: const EdgeInsets.all(8),
+          textStyle: const TextStyle(
+              fontFamily: "FiraCode", fontFamilyFallback: ["GlowSans"]),
+        ),
+      ),
+    );
+  }
+}
+
+class AssetTextPage extends StatelessWidget {
+  final String asset;
+  final bool markdown;
+  const AssetTextPage(this.asset, {this.markdown = true, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(asset)),
+      body: FutureBuilder(
+        future: rootBundle.loadString(asset),
+        builder: snapshotLoading<String>(
+          builder: (data) => (markdown
+                  ? MarkdownBlockWidget(data)
+                  : SingleChildScrollView(
+                      child:
+                          SizedBox(width: double.infinity, child: Text(data))))
+              .padding12(),
+        ),
+      ),
+    );
   }
 }

@@ -83,22 +83,24 @@ class StateMainApplication extends State<MainApplication> {
                 key: viewkey,
                 items: const [
                   NavigationItem(
-                    icon: Icon(Icons.home),
-                    label: "主页",
-                    page: HomePage(),
-                  ),
+                      icon: Icon(Icons.home),
+                      label: "主页",
+                      page: HomePage(),
+                      name: "home"),
                   NavigationItem(
                     icon: Icon(Icons.apps),
                     label: "应用",
                     page: GalleryPage(),
+                    name: "apps",
                   ),
                   NavigationItem(
                     icon: Icon(Icons.terminal),
                     label: "终端",
                     page: TerminalPage(),
+                    name: "terminal",
                   ),
                   NavigationItem(
-                    name: "Settings",
+                    name: "settings",
                     icon: Icon(Icons.settings),
                     label: "设置",
                     page: SettingsPage(),

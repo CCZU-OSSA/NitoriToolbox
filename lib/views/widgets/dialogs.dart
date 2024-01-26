@@ -56,7 +56,7 @@ Future<void> loadingDialog(BuildContext context,
       child: Center(
         child: ValueStateBuilder<(double?, String)>(
           initial: (null, ""),
-          initState: (context, state) {
+          onInit: (context, state) {
             if (controller != null) {
               controller(
                   context,

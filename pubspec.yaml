@@ -59,6 +59,7 @@ dependencies:
   archive: ^3.4.10
   intl: ^0.18.1
   highlighting: ^0.9.0+11.8.0
+  device_info_plus: ^9.1.1
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +88,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - resource/images/document.jpg
+    - README.md
+    - LICENSE
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

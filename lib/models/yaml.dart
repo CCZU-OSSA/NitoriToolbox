@@ -77,14 +77,21 @@ class RichCover extends YamlMetaData<RichCover> implements Widgetlize {
   @override
   Widget build({double? size}) {
     return SizedBox.square(
-        dimension: size,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          (icon ?? image)?.build(size: size != null ? size * 0.7 : null) ??
-              const SizedBox.shrink(),
-          text != null
-              ? Text(text!, overflow: TextOverflow.ellipsis)
-              : const SizedBox.shrink(),
-        ]));
+      dimension: size,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            (icon ?? image)?.build(size: size != null ? size * 0.7 : null) ??
+                const SizedBox.shrink(),
+            text != null
+                ? Text(text!, overflow: TextOverflow.ellipsis)
+                : const SizedBox.shrink(),
+          ],
+        ),
+      ),
+    );
   }
 }
 
