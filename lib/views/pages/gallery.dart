@@ -48,7 +48,7 @@ class ApplicationPage extends StatelessWidget {
         children: [
           Card(
               child: ListTile(
-            leading: const Icon(Icons.terminal),
+            leading: application.cover.build(),
             title: Text(application.name),
             subtitle: Text(application.version.format()),
           )),

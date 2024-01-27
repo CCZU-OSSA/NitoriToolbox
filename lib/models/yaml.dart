@@ -154,6 +154,13 @@ class CoverImage extends YamlMetaData<CoverImage> implements Widgetlize {
 
     return CoverImage().loadm(data, path);
   }
+
+  @override
+  CoverImage loadm(Map data, [String? path]) {
+    return super.loadm(data, path)
+      ..network = data["network"]
+      ..local = data["local"];
+  }
 }
 
 class ApplicationFeatureStep extends YamlMetaData<ApplicationFeatureStep> {
