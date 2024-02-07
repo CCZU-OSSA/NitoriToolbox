@@ -113,8 +113,8 @@ class _StateSettingsPage extends State<SettingsPage> {
                     ),
                     ListTile(
                       title: const Text("透明度"),
-                      subtitle: ValueStateBuilder(
-                        initial: ArcheBus.config
+                      subtitle: ValueStateBuilder<double>(
+                        init: ArcheBus.config
                             .getOr(ConfigKeys.backgroundImageOpacity, 0.3),
                         builder: (context, state) => Slider(
                           value: state.value,

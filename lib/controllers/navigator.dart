@@ -9,7 +9,7 @@ import 'package:nitoritoolbox/views/widgets/extension.dart';
 
 class AppNavigator {
   static NavigatorState get navigator => Navigator.of(viewkey.currentContext!);
-  static StateNavigationView get viewstate => viewkey.currentState!;
+  static NavigationViewState get viewstate => viewkey.currentState!;
   static void pushPage({required WidgetBuilder builder}) {
     navigator.push(
       PageRouteBuilder(
@@ -49,6 +49,7 @@ class AppNavigator {
   static T viewContextBuilder<T>(
           {required T Function(BuildContext context) builder}) =>
       builder(viewkey.currentContext!);
+
   static void refreshApp() {
     rootKey.currentState!.refresh();
   }

@@ -55,7 +55,7 @@ Future<void> loadingDialog(BuildContext context,
     builder: (context) => Dialog.fullscreen(
       child: Center(
         child: ValueStateBuilder<(double?, String)>(
-          initial: (null, ""),
+          init: (null, ""),
           onInit: (context, state) {
             if (controller != null) {
               controller(
